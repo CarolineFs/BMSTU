@@ -19,8 +19,8 @@ c = float(input('c = '))
 
 if a == 0:
     if b != 0:
-        x = round(-c/b)
-        print ('\nx = ', x)
+        x = -c/b
+        print ('\nx = ','{:0.2f}'.format(x))
     else:
         if c == 0:
             print ('\nx ∈ (-∞; +∞)')
@@ -31,11 +31,11 @@ else:
     if D > 0:
         x1 = (-b+D**(1/2))/(2*a)
         x2 = (-b-D**(1/2))/(2*a)
-        print ('\nx1 = ', x1)
-        print ('x2 = ', x2)
+        print ('\nx = ', '{:0.2f}'.format(x1))
+        print ('x = ', '{:0.2f}'.format(x2))
     elif D < 0:
         print ('\nНет действительных корней.')
     elif D == 0:
-        x = (-b+D**(1/2))/(2*a)
-        print ('\nx = ', x)
+        x = -b/(2*a)
+        print ('\nx = ','{:0.2f}'.format(x))
     
