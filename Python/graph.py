@@ -68,7 +68,8 @@ if k2 > 0 or (k1 == 0 and k2 == 0):
         if x < 0:
             if q2 < 0:
                 q2 *= -1
-                print('{:0.3f} '.format(x)+(len(s)-q2-1)*' '+'*'+(q2-1)*' '+'\u2502')
+                print('{:0.3f} '.format(x)+(len(s)-q2-1)*' '+'*'+(q2-1)*' '\
+                      +'\u2502')
             elif q2 == 0:
                 print('{:0.3f} '.format(x)+(len(s)-1)*' ')
             elif q2 > 0:
@@ -79,25 +80,31 @@ if k2 > 0 or (k1 == 0 and k2 == 0):
                 f = 1
                 if q2 > 0:
                     q2 *= -1
-                    print('x      ', (len(s)-2)*'\u2500'+'\u253C'+(q2-1)+'\u2500'+'*'+(len(s)-q2-2)*'\u2500'+' y')
+                    print('x      ', (len(s)-2)*'\u2500'+'\u253C'+(q2-1)+\
+                          '\u2500'+'*'+(len(s)-q2-2)*'\u2500'+' y')
                 elif q2 == 0:
-                    print('x      ', (len(s)-2)*'\u2500'+'\u253C'+'*'+(len(s)-2)*'\u2500'+' y')
+                    print('x      ', (len(s)-2)*'\u2500'+'\u253C'+'*'+\
+                          (len(s)-2)*'\u2500'+' y')
                 elif q2 < 0:
                     q2 *= -1
-                    print('x      ', (len(s)-q2-3)*'\u2500'+'*'+q2*'\u2500'+'\u253C'+(len(s)-2)*'\u2500'+' y')
+                    print('x      ', (len(s)-q2-3)*'\u2500'+'*'+\
+                          q2*'\u2500'+'\u253C'+(len(s)-2)*'\u2500'+' y')
             else:
                 if f ==0:
-                    print('x      ', (len(s)-2)*'\u2500'+'\u253C'+(len(s)-2)*'\u2500'+' y')
+                    print('x      ', (len(s)-2)*'\u2500'+'\u253C'+\
+                          (len(s)-2)*'\u2500'+' y')
                     for j in range(round(first)-1):
                         print((6+len(s))*' '+'\u2502')
                     f = 1
                 if q2 > 0:
-                    print('{:0.3f}  '.format(x)+(len(s)-1)*' '+'\u2502'+(q2-1)*' '+'*')
+                    print('{:0.3f}  '.format(x)+(len(s)-1)*' '+'\u2502'+\
+                          (q2-1)*' '+'*')
                 elif q2 == 0:
                     print('{:0.3f} '.format(x)+len(s)*' '+'*')
                 elif q2 < 0:
                     q2 *= -1
-                    print('{:0.3f}  '.format(x)+(len(s)-q2-1)*' '+'*'+(q2-1)*' '+'\u2502')
+                    print('{:0.3f}  '.format(x)+(len(s)-q2-1)*' '+'*'+\
+                          (q2-1)*' '+'\u2502')
         x = round(x + step, 7)
 elif k1 > 0 and k2 < 0:
     print('\nГрафик функции q1 = x^x + 2x - 6: \n')
@@ -111,7 +118,8 @@ elif k1 > 0 and k2 < 0:
         if x < 0:
             if q1 < 0:
                 q1 *= -1
-                print('{:0.3f} '.format(x)+(len(s)-q1-1)*' '+'*'+(q1-1)*' '+'\u2502')
+                print('{:0.3f} '.format(x)+(len(s)-q1-1)*' '+'*'+(q1-1)*' '\
+                      +'\u2502')
             elif q1 == 0:
                 print('{:0.3f} '.format(x)+(len(s)-1)*' ')
             elif q1 > 0:
@@ -122,26 +130,32 @@ elif k1 > 0 and k2 < 0:
                 f = 1
                 if q1 > 0:
                     q1 *= -1
-                    print('x      ', (len(s)-2)*'\u2500'+'\u253C'+(q1-1)+'\u2500'+'*'+(len(s)-2-q1)*'\u2500'+' y')
+                    print('x      ', (len(s)-2)*'\u2500'+'\u253C'+(q1-1)+\
+                          '\u2500'+'*'+(len(s)-2-q1)*'\u2500'+' y')
                 elif q1 == 0:
-                    print('x      ', (len(s)-2)*'\u2500'+'\u253C'+'*'+(len(s)-2)*'\u2500'+' y')
+                    print('x      ', (len(s)-2)*'\u2500'+'\u253C'+'*'+\
+                          (len(s)-2)*'\u2500'+' y')
                 elif q1 < 0:
                     q1 *= -1
-                    print('x      ', (len(s)-q1-3)*'\u2500'+'*'+q1*'\u2500'+'\u253C'+(len(s)-2)*'\u2500'+' y')
+                    print('x      ', (len(s)-q1-3)*'\u2500'+'*'+q1*'\u2500'+\
+                          '\u253C'+(len(s)-2)*'\u2500'+' y')
             else:
                 if f ==0:
-                    print('x      ', (len(s)-2)*'\u2500'+'\u253C'+(len(s)-2)*'\u2500'+' y')
+                    print('x      ', (len(s)-2)*'\u2500'+'\u253C'+\
+                          (len(s)-2)*'\u2500'+' y')
                     for j in range(round(first)):
                         print((6+len(s))*' '+'\u2502')
                     f = 1
                 if q1 > 0:
                     q1 *= -1
-                    print('{:0.3f}  '.format(x)+(len(s)-1)*' '+'\u2502'+(q1-1)*' '+'*')
+                    print('{:0.3f}  '.format(x)+(len(s)-1)*' '+'\u2502'+\
+                          (q1-1)*' '+'*')
                 elif q1 == 0:
                     print('{:0.3f} '.format(x)+len(s)*' '+'*')
                 elif q1 < 0:
                     q1 *= -1
-                    print('{:0.3f}  '.format(x)+(len(s)-q1-1)*' '+'*'+(q1-1)*' '+'\u2502')
+                    print('{:0.3f}  '.format(x)+(len(s)-q1-1)*' '+'*'+\
+                          (q1-1)*' '+'\u2502')
         x = round(x + step, 7)
 if f == 0:
         for j in range(round(last)*-1):
@@ -149,4 +163,3 @@ if f == 0:
         print('x      ', (len(s)-2)*'\u2500'+'\u253C'+(len(s)-2)*'\u2500'+' y')
         f = 1
 print((6+len(s))*'\u0000'+'x')
-
