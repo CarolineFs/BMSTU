@@ -34,7 +34,7 @@ max2 = x**3 - x - 1
 print('\n   x\t*','       q1', '\t*       q2', '\t*  q3')
 print(49*'*')
 
-for i in range(arg):
+for i in range(arg+1):
     q1 = copysign(abs(x)**abs(x), x) + 2*x - 6
     if q1 < 0:
         k1 += 1
@@ -63,7 +63,7 @@ if k2 > 0 or (k1 == 0 and k2 == 0):
     if max2 > (arg//2+1)+m:
         m = max2
         s = m*'\u0000'
-    for i in range(arg):
+    for i in range(arg+1):
         q2 = round(x**3 - x - 1)
         if x < 0:
             if q2 < 0:
@@ -92,7 +92,6 @@ if k2 > 0 or (k1 == 0 and k2 == 0):
                         print((6+len(s))*' '+'\u2502')
                     f = 1
                 if q2 > 0:
-                    q2 *= -1
                     print('{:0.3f}  '.format(x)+(len(s)-1)*' '+'\u2502'+(q2-1)*' '+'*')
                 elif q2 == 0:
                     print('{:0.3f} '.format(x)+len(s)*' '+'*')
@@ -107,7 +106,7 @@ elif k1 > 0 and k2 < 0:
     if max1 > (arg//2+1)+m:
         m = max1
         s = m*'\u0000'
-    for i in range(arg):
+    for i in range(arg+1):
         q1 = round(copysign(abs(x)**abs(x), x) + 2*x - 6)
         if x < 0:
             if q1 < 0:
@@ -150,3 +149,4 @@ if f == 0:
         print('x      ', (len(s)-2)*'\u2500'+'\u253C'+(len(s)-2)*'\u2500'+' y')
         f = 1
 print((6+len(s))*'\u0000'+'x')
+
