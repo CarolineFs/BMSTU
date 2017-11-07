@@ -167,3 +167,5 @@ else:
     print('\nВВНИМАНИЕ, вы неправильно задали выравнивание. ')
     al = 'left'
     text_alignment(text, al)
+
+input()
