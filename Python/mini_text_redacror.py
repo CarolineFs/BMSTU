@@ -182,7 +182,7 @@ def get_let(text):
         max_letter(text, letter)
     else:
         if letter not in alphabet:
-            print('Это не буква. ')
+            print('Это не буква русского алфавита. ')
         elif letter == '':
             print('\nВНИМАНИЕ, вы не ввели букву. ')
         elif len(letter) > 1:
