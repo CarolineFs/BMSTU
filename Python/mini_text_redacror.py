@@ -131,7 +131,7 @@ def get_del(text):
                 delete_word(text, del_w)
                 break
             if i == len(text)-1: print('\nВНИМАНИЕ, слова, которое вы просите удалить, нет в тексте. ')
-        else: print('\nВНИМАНИЕ, вы попросили удалить пустое слово. ')
+    else: print('\nВНИМАНИЕ, вы попросили удалить пустое слово. ')
 
 def get_rep(text):
     rep_w_obj = input('\nВведите слово, которое нужно заменить: ')
