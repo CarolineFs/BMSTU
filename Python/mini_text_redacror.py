@@ -27,6 +27,11 @@ s - текущее предложение
 smax - предложение с максимальным количеством слов, начинающихся на заданную букву
 '''
 
+def printer(text):
+    print()
+    for i in text:
+        print(i)
+        
 def delete_word(text, del_w):
     for i in range(len(text)):
         copy = text[i]
@@ -41,6 +46,7 @@ def delete_word(text, del_w):
             dlt = copy.find(del_w, dlt+len(del_w))
             if dlt == -1:
                 break
+    printer(text)
 
       
 def replace_word(text, rep_w_obj, rep_w_sbj):
@@ -58,6 +64,7 @@ def replace_word(text, rep_w_obj, rep_w_sbj):
             dlt = copy.find(rep_w_obj, dlt+len(rep_w_obj))
             if dlt == -1:
                 break
+    printer(text)
 
 def max_letter(text, letter):
     mx = - 1
@@ -84,7 +91,7 @@ def max_letter(text, letter):
     if ind == -1:
         print('\nВ тексте нет слов, начинающихся на букву "'+letter+'".')
     else:
-        print('\nВ предложении "'+smax+'" больше всего слов, начинающихся на букву "'+letter+'"')  
+        print('\nВ предложении "'+smax+'" больше всего слов, начинающихся на букву "'+letter+'"')
 
 def text_alignment(text, al):
     print()
@@ -111,6 +118,86 @@ def text_alignment(text, al):
             else:
                print(int((sp//2))*' '+i+int(((sp//2)+1))*' ')'''
 
+def menu() :
+    print('\nВыберите действие и введите соответствующую цифру:\n1 - удалить слово\
+    \n2 - заменить слово\n3 - найти предложение с максимальным колличеством слов,\
+    начинающихся на заданную бувкву\n4 - выравнивание текста\nИли нажмите ENTER, чтобы выйти.')
+    opt = input()
+    if opt == '1':
+        get_del(text)
+        menu()
+    elif opt == '2':
+        get_rep(text)
+        menu()
+    elif opt == '3':
+        get_let(text)
+        menu()
+    elif opt == '4':
+        get_al(text)
+        menu()
+    elif opt != '':
+        print('\nНекорректный ввод, попробуйте снова. ')
+        menu()
+        
+def get_del(text):
+    del_w = input('\nВведите слово, которое нужно удалить в тексте: ')
+    del_w = del_w.lower()
+    if del_w != '':
+        for i in range(len(text)):
+            m = text[i].split()
+            for j in range(len(m)):
+                m[j] = m[j].strip('.,!?*()«»\'";:-+=[]{}/ ')
+                m[j] = m[j].lower()
+            if del_w in m:
+                delete_word(text, del_w)
+                break
+            if i == len(text)-1:
+               print('\nВНИМАНИЕ, слова, которое вы просите удалить, нет в тексте. ')
+        else:
+            print('\nВНИМАНИЕ, вы попросили удалить пустое слово. ')
+
+def get_rep(text):
+    rep_w_obj = input('\nВведите слово, которое нужно заменить: ')
+    rep_w_sbj= input('Введите слово, на которое нужно заменить: ')
+    rep_w_obj = rep_w_obj.lower()
+    if rep_w_obj != '':
+        for i in range(len(text)):
+            m = text[i].split()
+            for j in range(len(m)):
+                m[j] = m[j].strip('.,!?*()«»\'";:-+=[]{}/ ')
+                m[j] = m[j].lower()
+            if rep_w_obj in m:
+                replace_word(text, rep_w_obj, rep_w_sbj)
+                break
+            if i == len(text)-1:
+                print('\nВНИМАНИЕ, слова, которое вы просите заменить, нет в тексте. ') 
+    else:
+        print('\nВВНИМАНИЕ, вы попросили заменить пустое слово. ')
+
+def get_let(text):
+    alphabet = 'абвгдеёжзийклмнопрстуфхцчшщыъьэюя'
+    letter = input('\nВведите букву: ')
+    letter = letter.lower().strip('.,!?*()«»\'";:-+=[]{}/ ')
+    if letter != '' and len(letter) == 1 and letter in alphabet:
+        max_letter(text, letter)
+    else:
+        if letter not in alphabet:
+            print('Это не буква. ')
+        elif letter == '':
+            print('\nВНИМАНИЕ, вы не ввели букву. ')
+        elif len(letter) > 1:
+            print('\nВНИМАНИЕ, вы ввели не одну букву. ')
+
+def get_al(text):
+    al = input('\nВведите "left"/"right" или "center", чтобы  задать выравнивание: ')
+    al = al.lower().strip('.,!?*()«»\'";:-+=[]{}/ ')
+    if al == 'right' or al == 'left' or al == 'center':
+        text_alignment(text, al)
+    else:
+        print('\nВВНИМАНИЕ, вы неправильно задали выравнивание. ')
+        al = 'left'
+        text_alignment(text, al)
+
 text = ['Когда взрывается звезда, массивнее Солнца в 4-8 раз, остается ядро с большой плотностью, ', \
 'продолжающее разрушаться. Гравитация так сильно давит на материал, что заставляет',\
 'протоны и электроны сливаться, чтобы предстать в виде нейтронов. Так и рождается нейтронная',\
@@ -120,57 +207,6 @@ text = ['Когда взрывается звезда, массивнее Сол
 позволяющего ученым рассмотреть заднюю часть ','звезды. Толчок от взрыва оставляет импульс, \
 который заставляет нейтронную звезду вращаться, достигая нескольких оборотов в секунду.']
 
-print('Исходный текст:\n')
-for i in text:
-    print(i)
-
-del_w = input('\nВведите слово, которое нужно удалить в тексте: ')
-rep_w_obj = input('\nВведите слово, которое нужно заменить: ')
-rep_w_sbj= input('Введите слово, на которое нужно заменить: ')
-letter = input('\nВведите букву: ')
-al = input('\nВведите "left"/"right" или "center", чтобы  задать выравнивание: ')
-letter = letter.lower().strip('.,!?*()«»\'";:-+=[]{}/ ')
-al = al.lower().strip('.,!?*()«»\'";:-+=[]{}/ ')
-
-if del_w != '':
-    for i in range(len(text)):
-        m = text[i].split()
-        for j in range(len(m)):
-            m[j] = m[j].strip('.,!?*()«»\'";:-+=[]{}/ ')
-        if del_w in m:
-            delete_word(text, del_w)
-            break
-        if i == len(text)-1:
-            print('\nВНИМАНИЕ, слова, которое вы просите удалить, нет в тексте. ')
-else:
-    print('\nВНИМАНИЕ, вы попросили удалить пустое слово. ')
-
-if rep_w_obj != '':
-    for i in range(len(text)):
-        m = text[i].split()
-        for j in range(len(m)):
-            m[j] = m[j].strip('.,!?*()«»\'";:-+=[]{}/ ')
-        if rep_w_obj in text[i].strip('.,!?*()«»\'";:-+=[]{}/ ').split():
-            replace_word(text, rep_w_obj, rep_w_sbj)
-            break
-        if i == len(text)-1:
-            print('\nВНИМАНИЕ, слова, которое вы просите заменить, нет в тексте. ') 
-else:
-    print('\nВВНИМАНИЕ, вы попросили заменить пустое слово. ')
-
-if letter != '' and len(letter) == 1:
-    max_letter(text, letter)
-else:
-    if letter == '':
-        print('\nВНИМАНИЕ, вы не ввели букву. ')
-    elif len(letter) > 1:
-        print('\nВНИМАНИЕ, вы ввели не одну букву. ')
-        
-if al == 'right' or al == 'left' or al == 'center':
-    text_alignment(text, al)
-else:
-    print('\nВВНИМАНИЕ, вы неправильно задали выравнивание. ')
-    al = 'left'
-    text_alignment(text, al)
-
-input()
+print('Исходный текст: ')
+printer(text)
+menu()
