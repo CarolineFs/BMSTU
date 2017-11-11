@@ -70,7 +70,7 @@ def max_letter(text, letter):
     mx = - 1
     ind = -1
     s = ''
-    ends = ['.','!','?']
+    ends = ['.','!','?', ':',';','(',')','"',"'"]
     for t in range(len(text)):
         for symbol in text[t]:
             if symbol not in ends:
