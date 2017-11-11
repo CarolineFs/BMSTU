@@ -135,7 +135,10 @@ al = al.lower().strip('.,!?*()«»\'";:-+=[]{}/ ')
 
 if del_w != '':
     for i in range(len(text)):
-        if del_w in text[i].strip('.,!?*()«»\'";:-+=[]{}/ ').split():
+        m = text[i].split()
+        for j in range(len(m)):
+            m[j] = m[j].strip('.,!?*()«»\'";:-+=[]{}/ ')
+        if del_w in m:
             delete_word(text, del_w)
             break
         if i == len(text)-1:
@@ -144,7 +147,10 @@ else:
     print('\nВНИМАНИЕ, вы попросили удалить пустое слово. ')
 
 if rep_w_obj != '':
-   for i in range(len(text)):
+    for i in range(len(text)):
+        m = text[i].split()
+        for j in range(len(m)):
+            m[j] = m[j].strip('.,!?*()«»\'";:-+=[]{}/ ')
         if rep_w_obj in text[i].strip('.,!?*()«»\'";:-+=[]{}/ ').split():
             replace_word(text, rep_w_obj, rep_w_sbj)
             break
@@ -169,4 +175,3 @@ else:
     text_alignment(text, al)
 
 input()
-
