@@ -1,181 +1,147 @@
 '''
 Назначение:
-Удаление заданного слова во всем тексте.
-Замена слов во всем тексте.
-Выравнивание текста по запросу.
-Нахождение строки с максимальным количеством слов, начинающихся
-на заданную букву.
+Численное интегрирование методом левых прямоугольников
+и методом трапеций.
 
 Овчинникова Анастасия
 
 Переменные:
-text - массив строк
-opt - переменная для выбора опции
-m - массив слов текущей строки
-alphabet - строка, содержащая русский алфавит
-punct - строка, сожержащая знаки препинания
-del_w - слово, которое нужно удалить в тексте, вводится с клавиатуры
-rep_w_obj - слово, которое нужно заменить в тексте, вводится с клавиатуры
-rep_w_sbj - слово, на которое нужно заменить rep_w_obj, вводится с клавиатуры
-copy - копия текущий строки, создается в цикле
-dlt - индекс первого элемента последовательности, которую нужно удалить или заменить
-letter - находит строку с максимальным количеством слов, начинающихся на letter
-al - задает тип выравнивания
-mx - мамаксимальное количеством слов, начинающихся на letter
-ind - индекс строки с максимальным количеством слов, начинающихся на letter
-c_max - количество слов, начинающихся на letter, в текущей строке
-words - массив всех слов текущей строки
-i,j, symbol - служебные
-s - текущее предложение
-smax - предложение с максимальным количеством слов, начинающихся на заданную букву
+a - начальное значение
+b - конечное значение
+N1, N2, n - количество итераций
+x - аргумент подынтегральной функции
+s - интеграл
+h - длина одного шага
+I1, I2, I3, I4 - интегралы, вычисленные разными способами или с разным шагом
+eps - точность
+i - служебная
 '''
+from math import log
 
-def printer(text):
+def f(x):
+    return log(x)
+
+def leftRectangle(f, a, b, N):
+    s = 0
+    h = (b-a)/N
+    for i in range(1, N+1):
+        s += f(a+1*h)
+    s *= h
+    return s
+
+def trapeze(f, a, b, N):
+    s = (f(a)+f(b))/2
+    h = (b-a)/N
+    for i in range(1,N):
+        s += f(a+i*h)
+    s *= h
+    return s
+
+def printer(a, b, N1, N2):
     print()
-    for i in text: print(i)
-        
-def delete_word(text, del_w):
-    for i in range(len(text)):
-        copy = text[i].lower()
-        del_w = del_w.lower().strip('.,!?*()«»\'";:-+=[]{}/ ')
-        dlt = copy.find(del_w)
-        punct = ',.!?:;\'\"()/\[]{}@*& '
-        while dlt != -1:
-            if copy[dlt-1] in punct or dlt == 0:
-                if dlt == len(copy)-len(del_w) or copy[dlt+len(del_w)] in punct:
-                    text[i] = text[i][0:dlt]+text[i][dlt+len(del_w):len(text[i])]
-            dlt = copy.find(del_w, dlt+len(del_w))
-            if dlt == -1: break
-    printer(text)
+    print(18*' '+'\u2502'+'{:^18.4f}'.format(N1)+\
+                 '\u2502'+'{:^18.4f}'.format(N2))
+    line = 2*(18*'\u2500'+'\u253C')+18*'\u2500'
+    print(line)
+    I1 = leftRectangle(f, a, b, N1)
+    I2 = leftRectangle(f, a, b, N2)
+    I3 = trapeze(f, a, b, N1)
+    I4 = trapeze(f, a, b, N2)
+    print('{:^18}'.format('Метод')+'\u2502'+\
+          18*' '+'\u2502')
+    print('{:^18}'.format('правых')+'\u2502'+\
+          '{:^18.5f}'.format(I1)+'\u2502'
+          '{:^18.5f}'.format(I2))
+    print('{:^18}'.format('прямоугольников')+'\u2502'+\
+          18*' '+'\u2502')
+    print(line)
+    print('{:^18}'.format('Метод')+'\u2502'+\
+          '{:^18.5f}'.format(I3)+'\u2502'
+          '{:^18.5f}'.format(I4))
+    print('{:^18}'.format('трапеций')+'\u2502'+\
+          18*' '+'\u2502')
+    print()
+    print()
 
-      
-def replace_word(text, rep_w_obj, rep_w_sbj):
-    for i in range(len(text)):
-        copy = text[i].lower()
-        rep_w_obj = rep_w_obj.lower().strip('.,!?*()«»\'";:-+=[]{}/ ')
-        dlt = copy.find(rep_w_obj)
-        while dlt != -1:
-            punct = ',.!?:;\'\"()/\[]{}@*& '
-            if copy[dlt-1] in punct or dlt == 0:
-                if dlt == len(copy)-len(rep_w_obj) or copy[dlt+len(rep_w_obj)] in punct:
-                    end = text[i][dlt+len(rep_w_obj):len(text[i])]
-                    text[i] = text[i][0:dlt]+rep_w_sbj+end
-            dlt = copy.find(rep_w_obj, dlt+len(rep_w_obj))
-            if dlt == -1: break
-    printer(text)
+#уточние для метода левых прямоугольников
+def refinement(eps):
+    n = 1
+    while True:
+        I1 = leftRectangle(f, a, b, n)
+        I2 = leftRectangle(f, a, b, n*2)
+        if abs(I2 - I1) < eps:
+            for i in range(n, n*2):
+                I3 = leftRectangle(f, a, b, n)
+                I4 = leftRectangle(f, a, b, n+1)
+                if I4 - I3 < eps:
+                    res = n + 1
+                    break
+            print('Чтобы достичь точности '+str(eps)+\
+                  ' необходимо '+str(res)+' итераций. ')
+            break
+        n *= 2
 
-def max_letter(text, letter):
-    mx = ind = - 1
-    s = ''
-    punct = ',.!?:;\'\"()/\[]{}@*& '
-    for t in range(len(text)):
-        for symbol in text[t]:
-            if symbol not in punct: s += symbol
-            else:
-                s += symbol
-                c_max = 0
-                words = s.lower().split()
-                for j in words:
-                    j = j.strip('.,!?*()«»\'";:-+=[]{}/ ')
-                    if j.startswith(letter): c_max += 1
-                if c_max > mx and c_max != 0:
-                    mx = c_max
-                    ind = t
-                    smax = s
-                s = ''
-    if ind == -1: print('\nВ тексте нет слов, начинающихся на букву "'+letter+'".')
-    else: print('\nВ предложении "'+smax+'" больше всего слов, начинающихся на букву "'+letter+'"')
-
-def text_alignment(text, al):
-    print('\n\n')
-    max_len = 0
-    for i in text:
-        if len(i)>max_len: max_len = len(i)
-    if al == 'left':
-        for i in text:
-            print('\n', i)
-    elif al == 'right':
-        for i in text:
-            print('\n'+' '*(max_len - len(i))+i)
-    elif al == 'center':
-        for i in text:
-            print('\n'+i.center(max_len))
-            '''sp = max_len-len(i)
-            if sp % 2 == 0:
-                print(int((sp/2))*' '+i+int((sp/2))*' ')
-            else:
-               print(int((sp//2))*' '+i+int(((sp//2)+1))*' ')'''
-
-def menu() :
-    print('\nВыберите действие и введите соответствующую цифру:\n1 - удалить слово\
-    \n2 - заменить слово\n3 - найти предложение с максимальным колличеством слов,\
-    начинающихся на заданную бувкву\n4 - выравнивание текста\nИли нажмите ENTER, чтобы выйти.')
-    opt = input()
-    if opt == '1': get_del(text)
-    elif opt == '2': get_rep(text)
-    elif opt == '3': get_let(text)
-    elif opt == '4': get_al(text)
-    elif opt != '': print('\nНекорректный ввод, попробуйте снова. ')
-    if opt != '': menu()
-        
-def get_del(text):
-    del_w = input('\nВведите слово, которое нужно удалить в тексте: ')
-    del_w = del_w.lower()
-    if del_w != '':
-        for i in range(len(text)):
-            m = text[i].split()
-            for j in range(len(m)):
-                m[j] = m[j].strip('.,!?*()«»\'";:-+=[]{}/ ')
-                m[j] = m[j].lower()
-            if del_w in m:
-                delete_word(text, del_w)
-                break
-            if i == len(text)-1: print('\nВНИМАНИЕ, слова, которое вы просите удалить, нет в тексте. ')
-    else: print('\nВНИМАНИЕ, вы попросили удалить пустое слово. ')
-
-def get_rep(text):
-    rep_w_obj = input('\nВведите слово, которое нужно заменить: ')
-    rep_w_sbj= input('Введите слово, на которое нужно заменить: ')
-    rep_w_obj = rep_w_obj.lower()
-    if rep_w_obj != '':
-        for i in range(len(text)):
-            m = text[i].split()
-            for j in range(len(m)):
-                m[j] = m[j].strip('.,!?*()«»\'";:-+=[]{}/ ')
-                m[j] = m[j].lower()
-            if rep_w_obj in m:
-                replace_word(text, rep_w_obj, rep_w_sbj)
-                break
-            if i == len(text)-1: print('\nВНИМАНИЕ, слова, которое вы просите заменить, нет в тексте. ') 
-    else: print('\nВВНИМАНИЕ, вы попросили заменить пустое слово. ')
-
-def get_let(text):
-    alphabet = 'абвгдеёжзийклмнопрстуфхцчшщыъьэюя'
-    letter = input('\nВведите букву: ')
-    letter = letter.lower().strip('.,!?*()«»\'";:-+=[]{}/ ')
-    if letter != '' and len(letter) == 1 and letter in alphabet:
-        max_letter(text, letter)
+def CatchIntError(c):
+    if c.isdigit():
+        c = int(c)
     else:
-        if letter not in alphabet: print('Это не буква русского алфавита. ')
-        elif letter == '': print('\nВНИМАНИЕ, вы не ввели букву. ')
-        elif len(letter) > 1: print('\nВНИМАНИЕ, вы ввели не одну букву. ')
+        print('Некорректный ввод')
+    return c
 
-def get_al(text):
-    al = input('\nВведите "left"/"right" или "center", чтобы  задать выравнивание: ')
-    al = al.lower().strip('.,!?*()«»\'";:-+=[]{}/ ')
-    if al =='right' or al == 'left' or al == 'center': text_alignment(text, al)
+def CatchFloatError(c):
+    if c.isdigit():
+        return float(c)
     else:
-        print('\nВВНИМАНИЕ, вы неправильно задали выравнивание. ')
+        n = ''
+        nums = '0123456789-'
+        for i in range(len(c)):
+            if i != 0 and i != len(c) - 1 and c[i] in '0123456789':
+                n += c[i]
+            elif i == 0 and c[i] in nums:
+                n += c[i]
+            elif i == len(c)-1 and i != 0 and (c[i] in nums[0:10] or c[i] == '.'):
+                n += c[i]
+            elif i != 0 and i != len(c)-1 and c[i] == '.':
+                if '.' not in n and 'e' not in n:
+                    n += c[i]
+            elif i != 0 and i != len(c)-1 and c[i] == '-':
+                if c[i-1] == 'e':
+                    n += c[i]
+            elif i != 0 and i != len(c)-1 and c[i] == 'e':
+                if 'e' not in n:
+                    n += c[i]
+            else:   
+                break
+        if len(n) == len(c) and len(n) != 0:
+            n = float(n)
+            return n
+        else:
+            print('Некорректный ввод. ')
 
-text = ['Когда взрывается звезда, массивнее Солнца в 4-8 раз, остается ядро с большой плотностью, ', \
-'продолжающее разрушаться. Гравитация так сильно давит на материал, что заставляет',\
-'протоны и электроны сливаться, чтобы предстать в виде нейтронов. Так и рождается нейтронная',\
-'звезда. Эти массивные объекты способны достигать в диаметре всего 20 км. Чтобы',\
-' вы осознали плотность, всего одна ложечка такого материала будет весить миллиард тонн. Гравитация',\
-' на таком объекте в 2 миллиарда раз сильнее земной, а мощности хватает для гравитационного линзирования, \
-позволяющего ученым рассмотреть заднюю часть ','звезды. Толчок от взрыва оставляет импульс, \
-который заставляет нейтронную звезду вращаться, достигая нескольких оборотов в секунду.']
+N1 = input('Введите N1: ')
+N1 = CatchIntError(N1)
+if type(N1) is int:
+    N2 = input('ведите N2: ')
+    N2 = CatchIntError(N2)
+    if type(N2) is int:
+        a = input('Введите начальное значение: ')
+        a = CatchFloatError(a)
+    if type(a) is float:
+        b = input('Введите конечное значение: ')
+        b = CatchFloatError(b)
+        if type(b) is float:
+            if a >= b:
+                print('Некорректный ввод. ')
+            else:
+                printer(a, b, N1, N2)
+                eps = input('Введите эпсилон: ')
+                eps = CatchFloatError(eps)
+                if type(eps) is float:
+                    refinement(eps)
 
-print('Исходный текст: ')
-printer(text)
-menu()
+'''if type(a) is float and type(b) is float\
+   and type(N1) is int and type(N2) is int and b > a:'''
+    
+
+
+input()
