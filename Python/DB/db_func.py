@@ -58,7 +58,7 @@ def menu():
         print('4 - сортировка')
         print('5 - удаление')
         opt2 = input('Введите 1, 2, 3, 4 или 5: ')
-        if opt2 = '1':
+        if opt2 == '1':
             view()
         elif opt2 == '2':
             add()
@@ -66,7 +66,7 @@ def menu():
             search()
         elif opt2 == '4':
             sorting()
-        elif opt2 -- '5':
+        elif opt2 == '5':
             delete()
     
     
