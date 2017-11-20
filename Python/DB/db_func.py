@@ -13,8 +13,8 @@ import re
 
 def openDB():
     with open('stars.txt', 'r', encoding = 'utf - 8') as f:
-        text = f.readlines()
-    print(text)
+        text = f.read()
+    return text
 
 
 def openNewDB():
@@ -23,11 +23,27 @@ def openNewDB():
 
 
 def view():
-    pass
+    print()
+    print()
+    print(openDB())
+    
 
 
 def add():
-    pass
+    new_inf = []
+    print()
+    print('ведите информацию, которую хотите добавить в файл: ')
+    print()
+    while True:
+        s = input()
+        new_inf.append(s)
+        if s == '':
+            break
+    with open('stars.txt', 'a', encoding = 'utf - 8') as f:
+        for i in new_inf:
+            f.writelines(i+'\n')
+        
+    
 
 
 def search():
@@ -66,9 +82,7 @@ def menu():
             search()
         elif opt2 == '4':
             sorting()
-        elif opt2 == '5':
+        elif opt2 -- '5':
             delete()
-    
-    
-    
 
+menu()
