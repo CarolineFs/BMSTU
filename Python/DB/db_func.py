@@ -31,7 +31,7 @@ def view():
 
 def add():
     new_inf = []
-    print()
+    '''print()
     print('ведите информацию, которую хотите добавить в файл: ')
     print()
     while True:
@@ -41,11 +41,21 @@ def add():
             break
     with open('stars.txt', 'a', encoding = 'utf - 8') as f:
         for i in new_inf:
-            f.writelines(i+'\n')
-        
+            f.writelines(i+'\n')'''
     
-
-
+    form = ['Название звезды: ', 'Тип: ', 'Расстояние: ', 'Созвездие:',\
+               'Масса: ', 'Радиус: ', 'Светимость: ']
+    print()
+    f = open('stars.txt', 'a', encoding = 'utf - 8')
+    f.writelines('\n\n')
+    for i in range(len(form)):
+        s = input(form[i])
+        if i == 0:
+            f.writelines(s+'\n')
+        else:
+            f.writelines('\t'+form[i]+s+'\n')                    
+    
+    
 def search():
     pass
 
@@ -59,6 +69,8 @@ def delete():
 
 
 def menu():
+    print('Работа с базой данных "Звезды и их физические характеристики"')
+    print()
     print('Выберите действие: ')
     print('1 - создать новый файл')
     print('2 - работу с существующим файлом')
@@ -86,3 +98,6 @@ def menu():
             delete()
 
 menu()
+    
+
+
