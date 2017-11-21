@@ -12,7 +12,7 @@ import re
 
 
 def openDB():
-    with open('stars.txt', 'r', encoding = 'utf - 8') as f:
+    with open('stars.bin', 'r', encoding = 'utf - 8') as f:
         text = f.read()
     return text
 
@@ -56,9 +56,42 @@ def add():
             f.writelines('\t'+form[i]+s+'\n')                    
     
     
-def search():
-    pass
-
+def search(s, opt):
+    with open('stars.bin', 'r', encoding = 'utf - 8') as f:
+        text = f.read()
+    #Без RegExp
+    '''strings = text.split('\n')
+    pt = 'Звезды в созвездии '+s+':'
+    if opt == '2':
+        pt = 'Звезды, расстояние до которых равно '+s+' св.л.:'
+        s = 'Расстояние: '+s
+    stars = []
+    st = []
+    for string in strings:
+        if string == '':
+            for elem in st:
+                if s in elem:
+                    stars.append(st[0])
+                    break
+            st = []
+        else:
+            st.append(string)
+    if len(stars) == 0:
+        print()
+        print('Нет элементов, удовлетворяющих условиям поиска. ')
+    else:
+        print()
+        print(pt)
+        for i in stars:
+            print(i)'''
+    #RegExp
+    star_name = '(.+)\n\tТип'
+    constel_name = 'Созвездие: (.+)\n'
+    stars = re.findall(star_name, text)
+    constels = re.findall(constel_name, text)
+    print(stars)
+    print(constels)
+        
 
 def sorting():
     pass
@@ -91,7 +124,17 @@ def menu():
         elif opt2 == '2':
             add()
         elif opt2 == '3':
-            search()
+            print()
+            print('Выберите тип поиска: ')
+            print('1 - поиск звезд по созвездиям')
+            print('2 - поиск звезд по расстоянию от Солнца')
+            opt_search = input('Введите 1 или 2: ')
+            if opt_search == '1':
+                constel = input('Введите навание созвездия: ')
+                search(constel, opt_search)
+            elif opt_search == '2':
+                dist = input('Введите расстояние от Солнца: ')
+                search(dist, opt_search)
         elif opt2 == '4':
             sorting()
         elif opt2 -- '5':
@@ -99,5 +142,3 @@ def menu():
 
 menu()
     
-
-
