@@ -12,10 +12,13 @@ import pickle
 def shower():
     with open('data.bin', 'rb') as file:
         stars = pickle.load(file)
+    print()
     print('Расстояние от Солнца до некоторых звезд (св.л.)')
     print()
-    for key in stars.keys():
-        print(key, stars[key])
+    for star in stars:
+        for key in star.keys():
+            print(key, star[key])
+    menu()
     
 
 def adder():
@@ -27,6 +30,7 @@ def adder():
     stars[key] = value
     with open('data.bin', 'wb') as f:
         pickle.dump(stars, f)
+    menu()
 
 
 def deleter():
@@ -44,6 +48,7 @@ def deleter():
             stars = stars.pop(i)
     with open('data.bin', 'wb') as f:
         pickle.dump(stars, f)
+    menu()
 
 
 def searcher():
@@ -81,7 +86,8 @@ def searcher():
                 print(i)
     else:
         print('Некорректный ввод. ')
-        menu(stars)
+        menu()
+    menu()
     
     
 
@@ -112,7 +118,7 @@ def sorter():
                             print(k, v)
     else:
         print('Некорректный ввод. ')
-        menu()
+    menu()
 
 
 def menu():
@@ -130,13 +136,6 @@ def menu():
         print('4 - поиск')
         print('5 - сортировка')
         opt2 = input('1/2/3/4/5: ')
-    elif opt == '1':
-        pass
-    elif opt == '':
-        pass
-    else:
-        print('Некорректный ввод. ')
-        menu()
         if opt2 == '1':
             shower()
         elif opt2 == '2':
@@ -150,5 +149,12 @@ def menu():
         else:
             print('Некорректный ввод. ')
             menu()
+    elif opt == '1':
+        pass
+    elif opt == '':
+        pass
+    else:
+        print('Некорректный ввод. ')
+        menu()
 
 menu()
