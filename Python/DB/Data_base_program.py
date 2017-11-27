@@ -4,8 +4,11 @@
 
 Овчинникова Анастасия
 
-Переменные
+Переменные:
+
+много всяких
 '''
+
 import pickle
 import os
 
@@ -19,6 +22,36 @@ stars = [{'Электра': '372 6'}, {'Меропа': '440 4'},
 with open('data.bin', 'wb') as f:
     pickle._dump(stars, f)
 
+
+def CatchFloatError(c):
+    if c.isdigit():
+        return float(c)
+    else:
+        n = ''
+        nums = '0123456789-'
+        for i in range(len(c)):
+            if i != 0 and i != len(c) - 1 and c[i] in '0123456789':
+                n += c[i]
+            elif i == 0 and c[i] in nums:
+                n += c[i]
+            elif i == len(c)-1 and i != 0 and (c[i] in nums[0:10] or c[i] == '.'):
+                n += c[i]
+            elif i != 0 and i != len(c)-1 and c[i] == '.':
+                if '.' not in n and 'e' not in n:
+                    n += c[i]
+            elif i != 0 and i != len(c)-1 and c[i] == '-':
+                if c[i-1] == 'e':
+                    n += c[i]
+            elif i != 0 and i != len(c)-1 and c[i] == 'e':
+                if 'e' not in n:
+                    n += c[i]
+            else:   
+                break
+        if len(n) == len(c) and len(n) != 0:
+            n = float(n)
+        return n
+
+
 def shower(FILENAME, flag):
     with open(FILENAME, 'rb') as file:
         f = file.read()
@@ -30,12 +63,34 @@ def shower(FILENAME, flag):
         else:
             with open(FILENAME, 'rb') as file:
                 stars = pickle.load(file)
-            print()
-            print('Название звезды - расстояние от Солнца (св.л.) - солнечных радиусов')
-            print()
+            all_keys = []
             for star in stars:
                 for key in star.keys():
-                    print(key, star[key])
+                    all_keys.append(key)
+            all_dist = []
+            all_rad = []
+            for star in stars:
+                for i in star.values():
+                    i = i.split()
+                    d = i[0]
+                    r = i[1]
+                    all_dist.append(d)
+                    all_rad.append(r)
+            print()
+            print('\u250C'+30*'\u2500'+'\u252C'+30*'\u2500'+'\u252C'+30*'\u2500'+'\u2510')
+            print('\u2502'+'{:^30}'.format('Название звезды')+\
+                  '\u2502'+'{:^30}'.format('расстояние от Солнца (св.л.)')+\
+                  '\u2502'+'{:^30}'.format('солнечных радиусов')+'\u2502')
+            print('\u251C'+30*'\u2500'+'\u253C'+\
+                  30*'\u2500'+'\u253C'+30*'\u2500'+'\u2524')
+            for i in range(len(all_keys)):
+                print('\u2502'+'{:^30}'.format(all_keys[i])+\
+                      '\u2502'+'{:^30}'.format(all_dist[i])+\
+                      '\u2502'+'{:^30}'.format(all_rad[i])+'\u2502')
+            print('\u2514'+30*'\u2500'+'\u2534'+\
+                  30*'\u2500'+'\u2534'+30*'\u2500'+'\u2518')
+
+            print()
             opt_t(flag, FILENAME)
 
 
@@ -49,15 +104,25 @@ def adder(FILENAME, flag):
                 stars = pickle.load(file)
     key = input('Введите название звезды: ').strip()
     value = input('Введите расстояние до звезды: ').strip()
-    value += ' '
-    value += input('Введите радиус звезды (солнечный радиус): ').strip()
+    value = CatchFloatError(value)
+    if type(value) is float and value > 0:
+        value1 = input('Введите радиус звезды (солнечный радиус): ').strip()
+        value1 = CatchFloatError(value1)
+        if type(value1) is float and value1 > 0:
+            value = str(value) + ' ' + str(value1)
+        else:
+            print('Некорректный ввод. ')
+            opt_t(flag, FILENAME) 
+    else:
+        print('Некорректный ввод. ')
+        opt_t(flag, FILENAME)
     print()
     star = {}
     star[key] = value
     stars.append(star)
     with open(FILENAME, 'wb') as f:
         pickle.dump(stars, f)
-    opt_t(flag)
+    opt_t(flag, FILENAME)
 
 
 def deleter(FILENAME, flag):
@@ -67,7 +132,7 @@ def deleter(FILENAME, flag):
             print()
             print('Здесь ничего нет. ')
             print()
-            opt_t(flag)
+            opt_t(flag, FILENAME)
         else:
             with open(FILENAME, 'rb') as file:
                 stars = pickle.load(file)
@@ -80,10 +145,14 @@ def deleter(FILENAME, flag):
                     all_keys.append(key)
             for i in range(len(all_keys)):
                 if all_keys[i].lower() == pattern.lower():
-                    stars.pop(i)
-            with open(FILENAME, 'wb') as f:
-                pickle.dump(stars, f)
-            opt_t(flag)
+                    for i in range(len(all_keys)):
+                        if all_keys[i].lower() == pattern.lower():
+                            stars.pop(i)
+                    with open(FILENAME, 'wb') as f:
+                        pickle.dump(stars, f)
+                if i == len(all_keys) - 1:
+                    print('Такой звезды нет в каталоге. ')
+            opt_t(flag, FILENAME)
 
 
 def searcher(FILENAME, flag):
@@ -93,7 +162,7 @@ def searcher(FILENAME, flag):
             print()
             print('Здесь ничего нет. ')
             print()
-            menu(flag)
+            opt_t(flag, FILENAME)
         else:
             with open(FILENAME, 'rb') as file:
                 stars = pickle.load(file)
@@ -116,8 +185,8 @@ def searcher(FILENAME, flag):
                 for i in range(len(all_keys)):
                     if all_keys[i].lower() == pattern.lower():
                         print()
-                        print('Расстояние до этой звезды: '+all_dist[i]+'св.л.')
-                        print('Радиус этой звезды: '+all_rad[i])
+                        print('Расстояние до этой звезды: '+all_dist[i]+' св.л.')
+                        print('Радиус этой звезды: '+all_rad[i]+' солнечных радиусов')
                         break
                     if i == len(all_keys) - 1:
                         print('Такой звезды нет в каталоге. ')
@@ -167,55 +236,88 @@ def sorter(FILENAME, flag):
             print('2 - сортировка по расстоянию')
             print('3 - сортировка по радиусу')
             opt = input('1/2/3: ')
+            all_keys = []
+            for star in stars:
+                for key in star.keys():
+                    all_keys.append(key)
+            all_dist = []
+            all_rad = []
+            for star in stars:
+                for i in star.values():
+                    i = i.split()
+                    d = i[0]
+                    r = i[1]
+                    all_dist.append(d)
+                    all_rad.append(r)
             if opt == '1':
                 print()
-                print('Расстояние до некоторых звезд и их радиус')
+                print('Название звезды - расстояние от Солнца (св.л.) - солнечных радиусов')
+                print()
                 letters = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюяabcdefghigklmnopqrstuvwxyz0123456789'
+                print()
+                print('\u250C'+30*'\u2500'+'\u252C'+30*'\u2500'+'\u252C'+30*'\u2500'+'\u2510')
+                print('\u2502'+'{:^30}'.format('Название звезды')+\
+                      '\u2502'+'{:^30}'.format('расстояние от Солнца (св.л.)')+\
+                      '\u2502'+'{:^30}'.format('солнечных радиусов')+'\u2502')
+                print('\u251C'+30*'\u2500'+'\u253C'+\
+                      30*'\u2500'+'\u253C'+30*'\u2500'+'\u2524')
                 for i in letters:
-                    for star in stars:
-                        for name in star.keys():
-                            n = name.lower()
-                            if n[0] == i:
-                                print(name, star[name])
+                    for j in range(len(all_keys)):
+                        n = all_keys[j].lower()
+                        if n[0] == i:
+                            print('\u2502'+'{:^30}'.format(all_keys[j])+\
+                                  '\u2502'+'{:^30}'.format(all_dist[j])+\
+                                  '\u2502'+'{:^30}'.format(all_rad[j])+'\u2502')
+                print('\u2514'+30*'\u2500'+'\u2534'+\
+                      30*'\u2500'+'\u2534'+30*'\u2500'+'\u2518')
+                print()
             else:
-                all_dist = []
-                all_rad = []
-                for star in stars:
-                    for i in star.values():
-                        i = i.split()
-                        d = float(i[0])
-                        r = float(i[1])
-                        all_dist.append(d)
-                        all_rad.append(r)
-                print(all_rad, all_dist)
                 if opt == '2':
+                    print('\u250C'+30*'\u2500'+'\u252C'+30*'\u2500'+'\u252C'+30*'\u2500'+'\u2510')
+                    print('\u2502'+'{:^30}'.format('Название звезды')+\
+                          '\u2502'+'{:^30}'.format('расстояние от Солнца (св.л.)')+\
+                          '\u2502'+'{:^30}'.format('солнечных радиусов')+'\u2502')
+                    print('\u251C'+30*'\u2500'+'\u253C'+\
+                          30*'\u2500'+'\u253C'+30*'\u2500'+'\u2524')
+                    copy = list(all_dist)
+                    for i in range(len(all_dist)):
+                        all_dist[i] = float(all_dist[i])
+                    for i in range(len(sorted(all_dist))):
+                        for j in range(len(all_dist)):
+                            if all_dist[j] == sorted(all_dist)[i]:
+                                print('\u2502'+'{:^30}'.format(all_keys[j])+\
+                                  '\u2502'+'{:^30}'.format(copy[j])+\
+                                  '\u2502'+'{:^30}'.format(all_rad[j])+'\u2502')
+                    print('\u2514'+30*'\u2500'+'\u2534'+\
+                          30*'\u2500'+'\u2534'+30*'\u2500'+'\u2518')
                     print()
-                    print('Расстояние до некоторых звезд и их радиус')
-                    print()
-                    for d in sorted(all_dist):
-                        for star in stars:
-                            for v in star.values():
-                                q = v.split()
-                                q = q[0]
-                                if float(q) == d:
-                                    for k in star.keys():
-                                        print(k, v)
+                                
+                        
                 elif opt == '3':
-                    print('Расстояние до некоторых звезд и их радиус')
+                    print('\u250C'+30*'\u2500'+'\u252C'+30*'\u2500'+'\u252C'+30*'\u2500'+'\u2510')
+                    print('\u2502'+'{:^30}'.format('Название звезды')+\
+                          '\u2502'+'{:^30}'.format('расстояние от Солнца (св.л.)')+\
+                          '\u2502'+'{:^30}'.format('солнечных радиусов')+'\u2502')
+                    print('\u251C'+30*'\u2500'+'\u253C'+\
+                          30*'\u2500'+'\u253C'+30*'\u2500'+'\u2524')
+                    copy = list(all_rad)
+                    for i in range(len(all_rad)):
+                        all_rad[i] = float(all_rad[i])
+                    for i in range(len(sorted(all_rad))):
+                        for j in range(len(all_rad)):
+                            if all_rad[j] == sorted(all_rad)[i]:
+                                print('\u2502'+'{:^30}'.format(all_keys[j])+\
+                                  '\u2502'+'{:^30}'.format(all_dist[j])+\
+                                  '\u2502'+'{:^30}'.format(copy[j])+'\u2502')
+                    print('\u2514'+30*'\u2500'+'\u2534'+\
+                          30*'\u2500'+'\u2534'+30*'\u2500'+'\u2518')
                     print()
-                    for r in sorted(all_rad):
-                        for star in stars:
-                            for v in star.values():
-                                q = v.split()
-                                q = q[1]
-                                if float(q) == r:
-                                    for k in star.keys():
-                                        print(k, v)
                 else:
                     print('Некорректный ввод. ')
         opt_t(flag, FILENAME)
 
 def opt_f(flag):
+    print()
     print('Выберите действие (для выхода нажмите ENTER): ')
     print('1 - создать новый файл')
     print('2 - работа с существующим файлом')
@@ -226,6 +328,8 @@ def opt_f(flag):
         print()
         print('Создана пустая база данных. ')
         print()
+        flag = True
+        opt_f(flag)
     elif opt1 == '2':
         opt_s(flag)
     elif opt1 == '':
