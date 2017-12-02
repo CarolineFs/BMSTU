@@ -54,7 +54,7 @@ class Tetris:
                             ['*'],
                             ['*']],
                        'T':[['*', '*', '*'],
-                            ['', '*', '']],}
+                            ['', '*', '']]}
         self.parent.bind('<Down>', self.shift)
         self.parent.bind('<Left>', self.shift)
         self.parent.bind('<Right>', self.shift)
@@ -74,27 +74,48 @@ class Tetris:
         l = len(self.active_piece['shape'])
         w = len(self.active_piece['shape'][0])
         direction = (event and event.keysym) or 'Down'
-        if r + l >= self.board_height:
-            self.settle()
-            return
         if direction == 'Down':
+            if r + l >= self.board_height:
+                self.settle()
+                return
+            rt = r+1#row, temporary
+            ct = c #column, temporary
 
+        elif direction == 'Left':
+            if not c:
+                return
+            rt = r
+            ct = c-1
+        elif direction == 'Right':
+            if c+w >= self.board_width:
+                return
+            rt = r
+            ct = c+1
+        for row, squares in zip(range(rt, rt+l), self.active_piece['shape']):
+            for column, square in zip(range(ct, ct + w), squares):
+                if square and self.board[row][column]:
+                    self.settle()
+                    return
+        if direction == 'Down':
             self.board[r][c:c+w] = ['']*w #blank piece's old top row
             self.active_piece['row'] += 1 #increment piece's row
             r += 1 #increment piece's row
         else:
             if direction == 'Left':
-                offset = c+w
-                self.active_piece['column'] -= 1  # deincrement piece's column
+                column = c+w
+                self.active_piece['column'] -= 1  # dencrement piece's column
                 c -= 1
             elif direction == 'Right':
-                offset = c-1
+                column = c-1
                 self.active_piece['column'] += 1  # increment piece's column
                 c += 1
-            for idx in range(r, r+l): #blank piece's old outer column
-                self.board[idx][offset] = ''
-        for squares, row in zip(self.active_piece['shape'],range(r, r+l)):
-            self.board[row][c:c+w] = squares
+            if 0 <= column < self.board_width:
+                for idx in range(r, r+l): #blank piece's old outer column
+                    self.board[idx][column] = ''
+        for row, squares in zip(range(r, r+l), self.active_piece['shape']):
+            for column, square in zip(range(c, c+w), squares):
+                if square:
+                    self.board[row][column] = square
         for id, coords_idx in zip(self.active_piece['piece'],
                                   range(len(self.active_piece['coords']))):
             #move visual representation of piece's on canvas
@@ -151,11 +172,6 @@ class Tetris:
 
     def clear(self):
         pass
-
-
-
-
-
 
 root = tk.Tk()
 root.title('Tetris')
