@@ -84,25 +84,30 @@ class Tetris:
         direction = event.keysym
         if direction in {'q', 'Q'}:
             direction = 'left'
+            shape = ra(self.active_piece['shape'], -90)
         elif direction in {'e', 'E', '0'}:
             direction = 'right'
-        if direction == 'left':
             shape = ra(self.active_piece['shape'], 90)
-        elif direction == 'right':
-            shape = ra(self.active_piece['shape'], -90)
+
         l = len(shape) #length of new shape
         w = len(shape[0]) #width of new shape
-        rt = y - len(shape//2) #row of new shape
-        ct = x - len(shape[0])//2 #column of new shape
+        rt = y - l//2 #row of new shape
+        ct = x - w//2 #column of new shape
+
+
         #check whether we can rotate piece
         for row, squares in zip(range(rt, rt+l), shape):
             for column, square in zip(range(ct, ct + w), squares):
                 if square and self.board[row][column] == 'x':
                     return
         self.active_piece['shape'] = shape
-        x_start = min(coord for tup in shape for coord in (tup[0], tup[2])) #min x coord
-        y_start = min(coord for tup in shape for coord in (tup[1], tup[3])) #min y coord
-        squares = iter(self.active_piece['piece'])
+        x_start = min(coord
+                      for tup in self.active_piece['coords']
+                      for coord in (tup[0], tup[2])) #min x coord
+        y_start = min(coord
+                      for tup in self.active_piece['coords']
+                      for coord in (tup[1], tup[3])) #min y coord
+        squares = iter(range(4)) #iterarot of 4 indices
         for row_coord, row in zip(range(y_start, y_start+l*self.square_width+1,
                                          self.square_width),
                                          shape):
@@ -110,9 +115,13 @@ class Tetris:
                                              self.square_width),
                                              row):
                 if cell:
-                    self.canvas.coords(next(squares), (col_coord, row_coord,
-                                                       col_coord+self.square_width,
-                                                       row_coord+self.square_width))
+                    square_idx = next(squares)
+                    coord = (col_coord,
+                             row_coord,
+                             col_coord+self.square_width,
+                             row_coord+self.square_width)
+                    self.active_piece['coords'][square_idx] = coord
+                    self.canvas.coords(self.active_piece['piece'][square_idx], coord)
 
         for row in shape:
             print(*(cell or '' for cell in row))
