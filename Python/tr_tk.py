@@ -1,11 +1,6 @@
 import tkinter as tk
 from tkinter.filedialog import *
-from ErrorCatcher import CatchIntError as cie
 from ErrorCatcher import CatchFloatError as cfe
-
-
-
-
 
 
 class graph:
@@ -16,12 +11,18 @@ class graph:
         self.canv_height = 200
         self.width = 600
         self.height = 700
+        self.x1 = 0
+        self.x2 = 400
+        self.y1 = 0
+        self.y2 = 650
+
         self.parent.resizable(width = False, height = False) #запрет на изменение размера
 
         self.canvas = tk.Canvas(root, height = self.height,
                                 width = self.width, bg = 'light grey')
         self.canvas.grid(row = 0, column = 0)
-        self.canvas.create_rectangle(0, 10, 400, 650,
+        self.canvas.create_rectangle(self.x1, self.y1,
+                                     self.x2, self.y2,
                                      fill = 'white',
                                      outline = 'white')
 
@@ -55,10 +56,8 @@ class graph:
 
         self.coords_str = ''
         self.normal_coords = []
-        
 
-    
-    
+
     def getter(self, event):
         self.canvas.create_rectangle(450, 80, 600, 100, fill='light green',
                                      outline='light green')
@@ -85,8 +84,12 @@ class graph:
                 self.canvas.create_text(450, 90, text='Некорректный ввод', anchor='w')
             else:
                 self.coords_str += new_coords + '\n'
+                self.normal_coords.append([x, y])
+                if len(self.normal_coords) >= 3:
+                    self.drawer(self.normal_coords)
         self.add_entry.delete(0, END)
         self.shower(self.coords_str)
+
 
     def shower(self, coords_str):
         self.text.delete('1.0', END)
@@ -95,7 +98,12 @@ class graph:
     
     def clear_all(self, event):
         self.coords_str = ''
+        self.normal_coords = []
         self.shower(self.coords_str)
+
+
+    def drawer(self, normal_coords):
+        pass
 
 
 root = tk.Tk()
