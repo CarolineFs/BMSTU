@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter.filedialog import *
 from ErrorCatcher import CatchFloatError as cfe
+from math import ceil
+from triangle affiliation import main as ta
 
 
 class graph:
@@ -11,18 +13,18 @@ class graph:
         self.canv_height = 200
         self.width = 600
         self.height = 700
-        self.x1 = 0
-        self.x2 = 400
-        self.y1 = 0
-        self.y2 = 650
+        self.x1 = 10
+        self.x2 = 410
+        self.y1 = 10
+        self.y2 = 660
 
         self.parent.resizable(width = False, height = False) #запрет на изменение размера
 
         self.canvas = tk.Canvas(root, height = self.height,
                                 width = self.width, bg = 'light grey')
         self.canvas.grid(row = 0, column = 0)
-        self.canvas.create_rectangle(self.x1, self.y1,
-                                     self.x2, self.y2,
+        self.canvas.create_rectangle(self.x1 - 10, self.y1 - 10,
+                                     self.x2 + 10, self.y2 + 10,
                                      fill = 'white',
                                      outline = 'white')
 
@@ -40,8 +42,9 @@ class graph:
         self.add_entry.place(x=450, y=50)
         # self.add_entry.bind('<Return>', lambda e: self.getter)
 
-        self.show_button = tk.Button(self.canvas, text = 'Show graph').place(x = 450, y = 110)
-
+        self.show_button = tk.Button(self.canvas, text = 'Show graph')
+        self.show_button.bind('<Button-1>', self.point_drawer)
+        self.show_button.place(x = 450, y = 110)
 
         self.clear_button = tk.Button(self.canvas, text = 'Clear all')
         self.clear_button.bind('<Button-1>', self.clear_all)
@@ -85,25 +88,75 @@ class graph:
             else:
                 self.coords_str += new_coords + '\n'
                 self.normal_coords.append([x, y])
-                if len(self.normal_coords) >= 3:
-                    self.drawer(self.normal_coords)
+                '''if len(self.normal_coords) >= 3:
+                    self.drawer(self.coords_str)'''
         self.add_entry.delete(0, END)
-        self.shower(self.coords_str)
+        self.shower(self)
 
 
-    def shower(self, coords_str):
+    def shower(self, event):
         self.text.delete('1.0', END)
         self.text.insert(END, self.coords_str)
-        
-    
+
+
     def clear_all(self, event):
+        self.point_drawer(self.normal_coords)
         self.coords_str = ''
         self.normal_coords = []
         self.shower(self.coords_str)
+        self.canvas.create_rectangle(self.x1 - 10, self.y1 - 10,
+                                     self.x2 + 10, self.y2 + 10,
+                                     fill='white',
+                                     outline='white')
 
 
-    def drawer(self, normal_coords):
+    def point_drawer(self, event):
+        self.canvas.create_rectangle(self.x1 - 10, self.y1 - 10,
+                                     self.x2 + 10, self.y2 + 10,
+                                     fill='white',
+                                     outline='white')
+        x_max = self.normal_coords[0][0]
+        y_max = self.normal_coords[0][1]
+        for i in range(len(self.normal_coords)):
+            if self.normal_coords[i][0] > x_max:
+                x_max = self.normal_coords[i][0]
+            if self.normal_coords[i][1] > y_max:
+                y_max = self.normal_coords[i][1]
+        l_x = self.x2 - self.x1
+        l_y = self.y2 - self.y1
+        kf = max(ceil(x_max/l_x), ceil(y_max/l_y)) -1
+
+        for i in range(len(self.normal_coords)):
+            x = self.normal_coords[i][0]
+            if x > l_x:
+                x = x - kf*l_x
+            else:
+                if kf != 0:
+                    x = ceil(x/kf)
+            x += self.x1 - 1
+            y = self.normal_coords[i][1]
+            if y > l_y:
+                y = y - kf*l_y
+            else:
+                if kf != 0:
+                    y = ceil(y/kf)
+            y += self.y1 - 1
+            self.canvas.create_line(x-5, y,
+                                    x+5, y,
+                                    width =1)
+            self.canvas.create_line(x, y-5,
+                                    x, y+5,
+                                    width=1)
+
+    def triangle_drawer(self, event):
         pass
+
+
+    def choose_points(self, event):
+
+
+
+
 
 
 root = tk.Tk()
