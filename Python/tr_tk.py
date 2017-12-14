@@ -2,7 +2,9 @@ import tkinter as tk
 from tkinter.filedialog import *
 from ErrorCatcher import CatchFloatError as cfe
 from math import ceil
-from triangle affiliation import main as ta
+from triangle_affiliation import main as ta
+from itertools import combinations
+from math import sqrt
 
 
 class graph:
@@ -147,19 +149,59 @@ class graph:
             self.canvas.create_line(x, y-5,
                                     x, y+5,
                                     width=1)
+        if len(self.normal_coords) >= 3:
+            self.choose_points(self)
+
 
     def triangle_drawer(self, event):
-        pass
+        p1 = self.min_coords[0]
+        p2 = self.min_coords[1]
+        p3 = self.min_coords[2]
+        self.canvas.create_line(p1[0]+10, p1[1]+10,
+                                p2[0]+10, p2[1]+10,
+                                width=1)
+        self.canvas.create_line(p2[0] + 10, p2[1] + 10,
+                                p3[0] + 10, p3[1] + 10,
+                                width=1)
+        self.canvas.create_line(p1[0] + 10, p1[1] + 10,
+                                p3[0] + 10, p3[1] + 10,
+                                width=1)
 
 
     def choose_points(self, event):
-
-
-
-
-
+        coords_comb = list(combinations(self.normal_coords, 3))
+        self.min_coords = coords_comb[0]
+        min_dif = -1
+        f = 0
+        fd = 0
+        for set in coords_comb:
+            a = sqrt((set[0][0]-set[1][0])**2+(set[0][1]-set[1][1])**2)
+            b = sqrt((set[1][0]-set[2][0])**2+(set[1][1]-set[2][1])**2)
+            c = sqrt((set[2][0]-set[0][0])**2+(set[2][1]-set[0][1])**2)
+            if a + b > c:
+                if a + c > b:
+                    if b + c > a:
+                        fd = 1
+                        points_in = 0
+                        points_out = 0
+                        for point in self.normal_coords:
+                            flag = ta(point[0], point[1], set)
+                            if flag == 1:
+                                points_in += 1
+                            elif flag == 0:
+                                points_out += 1
+                        if f == 0:
+                            min_dif = abs(points_out - points_in)
+                        elif abs(points_out - points_in) < min_dif and f != 0:
+                            min_dif = abs(points_out - points_in)
+                            self.min_coords = set
+        if fd:
+            self.triangle_drawer(self)
+        else:
+            self.canvas.create_rectangle(450, 80, 600, 100, fill='pink',
+                                         outline='pink')
+            self.canvas.create_text(450, 90, text='Это прямая', anchor='w')
 
 root = tk.Tk()
 graph = graph(root)
-
 root.mainloop()
