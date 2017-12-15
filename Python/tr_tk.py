@@ -38,9 +38,11 @@ class graph:
 
         self.add_button = tk.Button(self.canvas, text = 'Add')
         self.add_button.bind('<Button-1>', self.getter)
+        
         self.add_button.place(x=550, y=50)
 
         self.add_entry = tk.Entry(self.canvas, width=10, bd=3)
+        self.add_entry.bind('<Return>', self.getter)
         self.add_entry.place(x=450, y=50)
         # self.add_entry.bind('<Return>', lambda e: self.getter)
 
@@ -50,7 +52,7 @@ class graph:
 
         self.clear_button = tk.Button(self.canvas, text = 'Clear all')
         self.clear_button.bind('<Button-1>', self.clear_all)
-        self.clear_button.place(x = 450, y = 630)
+        self.clear_button.place(x = 450, y = 640)
 
         self.text = tk.Text(root, width = 15, height = 30)
         self.text.place(x = 450, y = 150)
@@ -117,32 +119,39 @@ class graph:
                                      self.x2 + 10, self.y2 + 10,
                                      fill='white',
                                      outline='white')
-        x_max = self.normal_coords[0][0]
-        y_max = self.normal_coords[0][1]
+        
+        x_max = x_min = abs(self.normal_coords[0][0])
+        y_max = y_min = abs(self.normal_coords[0][1])
         for i in range(len(self.normal_coords)):
-            if self.normal_coords[i][0] > x_max:
-                x_max = self.normal_coords[i][0]
-            if self.normal_coords[i][1] > y_max:
-                y_max = self.normal_coords[i][1]
-        l_x = self.x2 - self.x1
-        l_y = self.y2 - self.y1
-        kf = max(ceil(x_max/l_x), ceil(y_max/l_y)) -1
-
+            if abs(self.normal_coords[i][0]) > x_max:
+                x_max = abs(self.normal_coords[i][0])
+            elif abs(self.normal_coords[i][0]) < x_min:
+                x_min = abs(self.normal_coords[i][0])
+            if abs(self.normal_coords[i][1]) > y_max:
+                y_max = abs(self.normal_coords[i][1])
+            elif abs(self.normal_coords[i][1]) < y_min:
+                y_min = abs(self.normal_coords[i][1])
+        self.l_x = self.x2 - self.x1
+        self.l_y = self.y2 - self.y1
+        if x_max > l_x or y_max > l_y:
+            self.kf = max(ceil(x_max/self.l_x), ceil(y_max/self.l_y))
+        else:
+            self.kf = max(ceil(x_min/self.l_x), ceil(y_min/self.l_y))
         for i in range(len(self.normal_coords)):
             x = self.normal_coords[i][0]
-            if x > l_x:
-                x = x - kf*l_x
+            if x > self.l_x:
+                x = ceil(x/self.kf)
             else:
-                if kf != 0:
-                    x = ceil(x/kf)
-            x += self.x1 - 1
+                if self.kf != 0:
+                    x = ceil(x/self.kf)
+            x += self.x1
             y = self.normal_coords[i][1]
-            if y > l_y:
-                y = y - kf*l_y
+            if y > self.l_y:
+                y = ceil(y/self.kf)
             else:
-                if kf != 0:
-                    y = ceil(y/kf)
-            y += self.y1 - 1
+                if self.kf != 0:
+                    y = ceil(y/self.kf)
+            y += self.y1
             self.canvas.create_line(x-5, y,
                                     x+5, y,
                                     width =1)
@@ -153,18 +162,38 @@ class graph:
             self.choose_points(self)
 
 
+    def coords_ch(self, st):
+        if st[0] > self.l_x:
+            st[0] = ceil(st[0]/self.kf)
+        else:
+            if self.kf != 0:
+                st[0] = ceil(st[0]/self.kf)
+        st[0] += self.x1
+
+        if st[1] > self.l_y:
+            st[1] = ceil(st[1]/self.kf)
+        else:
+            if self.kf != 0:
+                st[1] = ceil(st[1]/self.kf)
+        st[1] += self.y1
+        return st
+            
+                
     def triangle_drawer(self, event):
         p1 = self.min_coords[0]
         p2 = self.min_coords[1]
         p3 = self.min_coords[2]
-        self.canvas.create_line(p1[0]+10, p1[1]+10,
-                                p2[0]+10, p2[1]+10,
+        p1 = self.coords_ch(p1)
+        p2 = self.coords_ch(p2)
+        p3 = self.coords_ch(p3)
+        self.canvas.create_line(p1[0], p1[1],
+                                p2[0], p2[1],
                                 width=1)
-        self.canvas.create_line(p2[0] + 10, p2[1] + 10,
-                                p3[0] + 10, p3[1] + 10,
+        self.canvas.create_line(p2[0], p2[1],
+                                p3[0], p3[1],
                                 width=1)
-        self.canvas.create_line(p1[0] + 10, p1[1] + 10,
-                                p3[0] + 10, p3[1] + 10,
+        self.canvas.create_line(p1[0], p1[1],
+                                p3[0], p3[1],
                                 width=1)
 
 
@@ -201,6 +230,7 @@ class graph:
             self.canvas.create_rectangle(450, 80, 600, 100, fill='pink',
                                          outline='pink')
             self.canvas.create_text(450, 90, text='Это прямая', anchor='w')
+
 
 root = tk.Tk()
 graph = graph(root)
