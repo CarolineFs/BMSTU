@@ -19,6 +19,8 @@ class graph:
         self.x2 = 410
         self.y1 = 10
         self.y2 = 660
+        self.center_x = (self.x2-self.x1)//2+self.x1
+        self.center_y = (self.y2-self.y1)//2+self.y1
 
         self.parent.resizable(width = False, height = False) #запрет на изменение размера
 
@@ -119,7 +121,6 @@ class graph:
                                      self.x2 + 10, self.y2 + 10,
                                      fill='white',
                                      outline='white')
-        
         x_max = x_min = abs(self.normal_coords[0][0])
         y_max = y_min = abs(self.normal_coords[0][1])
         for i in range(len(self.normal_coords)):
@@ -131,9 +132,9 @@ class graph:
                 y_max = abs(self.normal_coords[i][1])
             elif abs(self.normal_coords[i][1]) < y_min:
                 y_min = abs(self.normal_coords[i][1])
-        self.l_x = self.x2 - self.x1
-        self.l_y = self.y2 - self.y1
-        if x_max > l_x or y_max > l_y:
+        self.l_x = self.center_x
+        self.l_y = self.center_y
+        if x_max > self.l_x or y_max > self.l_y:
             self.kf = max(ceil(x_max/self.l_x), ceil(y_max/self.l_y))
         else:
             self.kf = max(ceil(x_min/self.l_x), ceil(y_min/self.l_y))
@@ -144,22 +145,34 @@ class graph:
             else:
                 if self.kf != 0:
                     x = ceil(x/self.kf)
-            x += self.x1
+            #x += self.x1
             y = self.normal_coords[i][1]
             if y > self.l_y:
                 y = ceil(y/self.kf)
             else:
                 if self.kf != 0:
                     y = ceil(y/self.kf)
-            y += self.y1
+            
+            x += self.center_x
+            if y > 0:
+                y = self.center_y - y
+            else:
+                y = self.center_y + abs(y)
+            #y += self.y1
+            
             self.canvas.create_line(x-5, y,
                                     x+5, y,
-                                    width =1)
+                                    width=1)
             self.canvas.create_line(x, y-5,
                                     x, y+5,
                                     width=1)
-        if len(self.normal_coords) >= 3:
-            self.choose_points(self)
+
+        
+
+
+        
+        
+        
 
 
     def coords_ch(self, st):
@@ -180,21 +193,7 @@ class graph:
             
                 
     def triangle_drawer(self, event):
-        p1 = self.min_coords[0]
-        p2 = self.min_coords[1]
-        p3 = self.min_coords[2]
-        p1 = self.coords_ch(p1)
-        p2 = self.coords_ch(p2)
-        p3 = self.coords_ch(p3)
-        self.canvas.create_line(p1[0], p1[1],
-                                p2[0], p2[1],
-                                width=1)
-        self.canvas.create_line(p2[0], p2[1],
-                                p3[0], p3[1],
-                                width=1)
-        self.canvas.create_line(p1[0], p1[1],
-                                p3[0], p3[1],
-                                width=1)
+        pass
 
 
     def choose_points(self, event):
