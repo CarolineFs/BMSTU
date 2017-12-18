@@ -250,11 +250,10 @@ class graph:
                     f = 1
                 else:
                     #print(abs(points_out - points_in), min_dif)
-                    if abs(points_out - points_in) < min_dif:
+                    if abs(points_out - points_in) <= min_dif:
                         min_dif = abs(points_out - points_in)
                         self.min_coords = set
-        print(min_dif)
-            
+        
             
             
 
