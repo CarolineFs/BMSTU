@@ -4,7 +4,8 @@ from ErrorCatcher import CatchFloatError as cfe
 from math import ceil
 from triangle_affiliation import main as ta
 from itertools import combinations
-from math import sqrt
+from math import sqrt, trunc
+import copy
 
 
 class graph:
@@ -106,7 +107,6 @@ class graph:
 
 
     def clear_all(self, event):
-        self.point_drawer(self.normal_coords)
         self.coords_str = ''
         self.normal_coords = []
         self.shower(self.coords_str)
@@ -121,37 +121,43 @@ class graph:
                                      self.x2 + 10, self.y2 + 10,
                                      fill='white',
                                      outline='white')
-        x_max = x_min = abs(self.normal_coords[0][0])
-        y_max = y_min = abs(self.normal_coords[0][1])
+        x_max = abs(self.normal_coords[0][0])
+        y_max = abs(self.normal_coords[0][1])
         for i in range(len(self.normal_coords)):
             if abs(self.normal_coords[i][0]) > x_max:
                 x_max = abs(self.normal_coords[i][0])
-            elif abs(self.normal_coords[i][0]) < x_min:
-                x_min = abs(self.normal_coords[i][0])
             if abs(self.normal_coords[i][1]) > y_max:
                 y_max = abs(self.normal_coords[i][1])
-            elif abs(self.normal_coords[i][1]) < y_min:
-                y_min = abs(self.normal_coords[i][1])
-        self.l_x = self.center_x
-        self.l_y = self.center_y
-        if x_max > self.l_x or y_max > self.l_y:
-            self.kf = max(ceil(x_max/self.l_x), ceil(y_max/self.l_y))
+        self.l_x = self.center_x - self.x1
+        self.l_y = self.center_y - self.y1
+        if x_max >= 1:
+            x_max += 1
         else:
-            self.kf = max(ceil(x_min/self.l_x), ceil(y_min/self.l_y))
+            x_max += 0.1
+        if y_max >= 1:
+            y_max += 1
+        else:
+            y_max += 0.1
+        kf_x = self.l_x/x_max
+        kf_y = self.l_y/y_max
+        self.kf = min(kf_x, kf_y)
+        self.kf = round(self.kf, 6)
         for i in range(len(self.normal_coords)):
             x = self.normal_coords[i][0]
-            if x > self.l_x:
-                x = ceil(x/self.kf)
+            if abs(x) > self.l_x:
+                x = ceil(x*self.kf)
+
             else:
                 if self.kf != 0:
-                    x = ceil(x/self.kf)
+                    x = ceil(x*self.kf)
             #x += self.x1
+
             y = self.normal_coords[i][1]
-            if y > self.l_y:
-                y = ceil(y/self.kf)
+            if abs(y) > self.l_y:
+                y = ceil(y*self.kf)
             else:
                 if self.kf != 0:
-                    y = ceil(y/self.kf)
+                    y = ceil(y*self.kf)
             
             x += self.center_x
             if y > 0:
@@ -159,7 +165,6 @@ class graph:
             else:
                 y = self.center_y + abs(y)
             #y += self.y1
-            
             self.canvas.create_line(x-5, y,
                                     x+5, y,
                                     width=1)
@@ -167,68 +172,100 @@ class graph:
                                     x, y+5,
                                     width=1)
 
+        if len(self.normal_coords) >= 3:
+            self.choose_points(self)
         
-
-
-        
-        
-        
-
 
     def coords_ch(self, st):
         if st[0] > self.l_x:
-            st[0] = ceil(st[0]/self.kf)
+            st[0] = ceil(st[0]*self.kf)
         else:
             if self.kf != 0:
-                st[0] = ceil(st[0]/self.kf)
-        st[0] += self.x1
+                st[0] = ceil(st[0]*self.kf)
+
 
         if st[1] > self.l_y:
-            st[1] = ceil(st[1]/self.kf)
+            st[1] = ceil(st[1]*self.kf)
         else:
             if self.kf != 0:
-                st[1] = ceil(st[1]/self.kf)
-        st[1] += self.y1
+                st[1] = ceil(st[1]*self.kf)
+
+
+        st[0] += self.center_x
+        if st[1] > 0:
+            st[1] = self.center_y - st[1]
+        else:
+            st[1] = self.center_y + abs(st[1])
         return st
             
                 
     def triangle_drawer(self, event):
-        pass
+        p1 = copy.deepcopy(self.min_coords[0])
+        p2 = copy.deepcopy(self.min_coords[1])
+        p3 = copy.deepcopy(self.min_coords[2])
+        p1 = self.coords_ch(p1)
+        p2 = self.coords_ch(p2)
+        p3 = self.coords_ch(p3)
+        self.canvas.create_line(p1[0], p1[1],
+                                p2[0], p2[1],
+                                width = 1)
+        self.canvas.create_line(p1[0], p1[1],
+                                p3[0], p3[1],
+                                width=1)
+        self.canvas.create_line(p2[0], p2[1],
+                                p3[0], p3[1],
+                                width=1)
 
 
     def choose_points(self, event):
+        #ищем комбинацию из трех точек, где разница минимальна
         coords_comb = list(combinations(self.normal_coords, 3))
         self.min_coords = coords_comb[0]
-        min_dif = -1
-        f = 0
-        fd = 0
+        min_dif = -1  #обственно, та самая разница
+        f = 0  #флаг, чтобы не сравнивать первую вычисленную разницу с -1
+        fd = 0 #флаг на ошибку, если точки лежат на одной прямой
+        current_dif = -1 #разница для текущей тройки точек
         for set in coords_comb:
             a = sqrt((set[0][0]-set[1][0])**2+(set[0][1]-set[1][1])**2)
             b = sqrt((set[1][0]-set[2][0])**2+(set[1][1]-set[2][1])**2)
             c = sqrt((set[2][0]-set[0][0])**2+(set[2][1]-set[0][1])**2)
-            if a + b > c:
-                if a + c > b:
-                    if b + c > a:
-                        fd = 1
-                        points_in = 0
-                        points_out = 0
-                        for point in self.normal_coords:
-                            flag = ta(point[0], point[1], set)
-                            if flag == 1:
-                                points_in += 1
-                            elif flag == 0:
-                                points_out += 1
-                        if f == 0:
-                            min_dif = abs(points_out - points_in)
-                        elif abs(points_out - points_in) < min_dif and f != 0:
-                            min_dif = abs(points_out - points_in)
-                            self.min_coords = set
+            if a + b > c and \
+               a + c > b and \
+               b + c > a:
+                fd = 1  #можно построить хотя бы один треугольник при заданнолм наборе точек
+                points_in = 0
+                points_out = 0
+                for point in self.normal_coords:
+                    if point != set[0] and point != set[1] and point != set[2]:
+                        flag = ta(point[0], point[1], set)
+                        if flag == 1:
+                            points_in += 1
+                        elif flag == 0:
+                            points_out += 1
+
+                
+                if f == 0:
+                    min_dif = abs(points_out - points_in)
+                    #current_dif = abs(points_out - points_in)
+                    f = 1
+                else:
+                    #print(abs(points_out - points_in), min_dif)
+                    if abs(points_out - points_in) < min_dif:
+                        min_dif = abs(points_out - points_in)
+                        self.min_coords = set
+        print(min_dif)
+            
+            
+            
+
+
         if fd:
             self.triangle_drawer(self)
         else:
             self.canvas.create_rectangle(450, 80, 600, 100, fill='pink',
                                          outline='pink')
             self.canvas.create_text(450, 90, text='Это прямая', anchor='w')
+        
 
 
 root = tk.Tk()
