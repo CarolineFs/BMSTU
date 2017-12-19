@@ -1,10 +1,9 @@
 import tkinter as tk
-from tkinter.filedialog import *
 from ErrorCatcher import CatchFloatError as cfe
-from math import ceil
-from triangle_affiliation import main as ta
+from math import sqrt, ceil
+from tkinter.filedialog import *
+import copy
 from itertools import combinations
-from math import sqrt, trunc
 
 
 class graph:
@@ -65,6 +64,7 @@ class graph:
 
         self.coords_str = ''
         self.normal_coords = []
+        self.min_coords = []
 
 
     def getter(self, event):
@@ -113,6 +113,7 @@ class graph:
                                      self.x2 + 10, self.y2 + 10,
                                      fill='white',
                                      outline='white')
+        self.min_coords = []
 
 
     def point_drawer(self, event):
@@ -199,63 +200,88 @@ class graph:
             
                 
     def triangle_drawer(self, event):
-        p1 = self.min_coords[0]
-        p2 = self.min_coords[1]
-        p3 = self.min_coords[2]
-        p1 = self.coords_ch(p1)
-        p2 = self.coords_ch(p2)
-        p3 = self.coords_ch(p3)
-        self.canvas.create_line(p1[0], p1[1],
-                                p2[0], p2[1],
-                                width = 1)
-        self.canvas.create_line(p1[0], p1[1],
-                                p3[0], p3[1],
-                                width=1)
-        self.canvas.create_line(p2[0], p2[1],
-                                p3[0], p3[1],
-                                width=1)
+        if len(self.min_coords) != 0:
+            p1 = copy.deepcopy(self.min_coords[0])
+            p2 = copy.deepcopy(self.min_coords[1])
+            p3 = copy.deepcopy(self.min_coords[2])
+            p1 = self.coords_ch(p1)
+            p2 = self.coords_ch(p2)
+            p3 = self.coords_ch(p3)
+            self.canvas.create_line(p1[0], p1[1],
+                                    p2[0], p2[1],
+                                    width = 1)
+            self.canvas.create_line(p1[0], p1[1],
+                                    p3[0], p3[1],
+                                    width=1)
+            self.canvas.create_line(p2[0], p2[1],
+                                    p3[0], p3[1],
+                                    width=1)
+        else:
+            self.canvas.create_rectangle(450, 80, 600, 100, fill='pink',
+                                         outline='pink')
+            self.canvas.create_text(450, 90, text='Теругольника нет', anchor='w')
 
 
     def choose_points(self, event):
         #ищем комбинацию из трех точек, где разница минимальна
-        coords_comb = list(combinations(self.normal_coords, 3))
-        self.min_coords = coords_comb[0]
-        min_dif = -1  #обственно, та самая разница
-        f = 0  #флаг, чтобы не сравнивать первую вычисленную разницу с -1
-        fd = 0 #флаг на ошибку, если точки лежат на одной прямой
-        for set in coords_comb:
-            a = sqrt((set[0][0]-set[1][0])**2+(set[0][1]-set[1][1])**2)
-            b = sqrt((set[1][0]-set[2][0])**2+(set[1][1]-set[2][1])**2)
-            c = sqrt((set[2][0]-set[0][0])**2+(set[2][1]-set[0][1])**2)
-            if a + b > c:
-                if a + c > b:
-                    if b + c > a:
-                        fd = 1  #можно построить хотя бы один треугольник при заданнолм наборе точек
-                        points_in = 0
-                        points_out = 0
-                        for point in self.normal_coords:
-                            if point != set[0] and point != set[1] and point != set[2]:
-                                flag = ta(point[0], point[1], set)
-                                if flag == 1:
-                                    points_in += 1
-                                elif flag == 0:
-                                    points_out += 1
-                        if f == 0:
-                            min_dif = abs(points_out - points_in)
-                            f = 1
-                        else:
-                            #print(abs(points_out - points_in), min_dif)
-                            if abs(points_out - points_in) < min_dif:
-                                min_dif = abs(points_out - points_in)
-                                self.min_coords = set
-                                print(set)
-        '''if fd:
-            self.triangle_drawer(self)
-        else:
-            self.canvas.create_rectangle(450, 80, 600, 100, fill='pink',
-                                         outline='pink')
-            self.canvas.create_text(450, 90, text='Это прямая', anchor='w')'''
+        min_dif = 1
+        flag_min_dif = 0
+        combs = list(combinations(self.normal_coords, 3))
+        for i in range(len(combs)):
+            point1 = combs[i][0]
+            point2 = combs[i][1]
+            point3 = combs[i][2]
+            a = round(sqrt(((point2[0] - point1[0]) ** 2) + ((point2[1] - point1[1]) ** 2)), 7)
+            b = round(sqrt(((point3[0] - point1[0]) ** 2) + ((point3[1] - point1[1]) ** 2)), 7)
+            c = round(sqrt(((point3[0] - point2[0]) ** 2) + ((point3[1] - point2[1]) ** 2)), 7)
+            if a + b > c and a + c > b and b + c > a:
+                for t in range(len(self.normal_coords)):
+                    points_out = points_in = 0
+                    cur_point = self.normal_coords[t]
+                    x = cur_point[0]
+                    y = cur_point[1]
+                    xa = point1[0]
+                    ya = point1[1]
+                    xb = point2[0]
+                    yb = point2[1]
+                    xc = point3[0]
+                    yc = point3[1]
+                    if (((x-xa)*(ya-yb) - (y-ya)*(xa-xb) > 0) and \
+                        ((x-xb)*(yb-yc) - (y-yb)*(xb-xc) > 0) and \
+                        ((x-xc)*(yc-ya) - (y-ya)*(xc-xa) > 0)):
+                        points_in += 1
+                    elif (((x-xa)*(ya-yb) - (y-ya)*(xa-xb) < 0) and \
+                         ((x-xb)*(yb-yc) - (y-yb)*(xb-xc) < 0) and \
+                         ((x-xc)*(yc-ya) - (y-ya)*(xc-xa) < 0)):
+                        points_in += 1
+                    elif (((x-xa)*(ya-yb) - (y-ya)*(xa-xb) == 0) or \
+                         ((x-xb)*(yb-yc) - (y-yb)*(xb-xc) == 0) or \
+                         ((x-xc)*(yc-ya) - (y-ya)*(xc-xa) == 0)):
+                        pass
+                    else:
+                        points_out += 1
+                    cur_dif = abs(points_out - points_in)
+                    if not flag_min_dif:
+                        min_dif = cur_dif
+                        flag_min_dif = 1
+                        self.min_coords = []
+                        self.min_coords.append(point1)                           
+                        self.min_coords.append(point2)
+                        self.min_coords.append(point3)
+                    else:
+                        if cur_dif < min_dif:
+                            min_dif = cur_dif
+                            self.min_coords = []
+                            self.min_coords.append(point1)
+                            self.min_coords.append(point2)
+                            self.min_coords.append(point3)
+        self.triangle_drawer(self)
 
+
+
+ #(x1 - x0) * (y2 - y1) - (x2 - x1) * (y1 - y0)
+ #(x2 - x0) * (y3 - y2) - (x3 - x2) * (y2 - y0)
+ #(x3 - x0) * (y1 - y3) - (x1 - x3) * (y3 - y0)
 
 root = tk.Tk()
 graph = graph(root)
