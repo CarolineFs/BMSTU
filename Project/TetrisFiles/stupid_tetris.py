@@ -1,6 +1,7 @@
 import tkinter as tk
 import random
 from matrix_rotation import rotate_array as ra
+import itertools
 #import pygame as pg
 
 
@@ -59,6 +60,9 @@ class Tetris:
         self.parent.bind('<Down>', self.shift)
         self.parent.bind('<Left>', self.shift)
         self.parent.bind('<Right>', self.shift)
+        self.parent.bind('<Up>', self.shift)
+        self.parent.bind('w', self.shift)
+        self.parent.bind('W', self.shift)
         self.parent.bind('a', self.shift)
         self.parent.bind('A', self.shift)
         self.parent.bind('s', self.shift)
@@ -78,14 +82,14 @@ class Tetris:
         c = self.active_piece['column']
         l = len(self.active_piece['shape'])
         w = len(self.active_piece['shape'][0])
-        x = c + l//2 #center column for old shape
-        y = r + w//2 #center row for new shape
+        x = c + w//2 #center column for old shape
+        y = r + l//2 #center row for new shape
 
         direction = event.keysym
         if direction in {'q', 'Q'}:
             direction = 'left'
             shape = ra(self.active_piece['shape'], -90)
-        elif direction in {'e', 'E', '0'}:
+        elif direction in {'e', 'E', '0', 'Up', 'w', 'W'}:
             direction = 'right'
             shape = ra(self.active_piece['shape'], 90)
 
@@ -232,6 +236,16 @@ class Tetris:
                                                        self.square_width * (y + 1)))
                     self.active_piece['piece'].append(
                         self.canvas.create_rectangle(self.active_piece['coords'][-1]))
+
+        if len(shape) == len(shape[0]): #square
+            self.active_piece['rotation'] = itertools.cycle([(0,0)])
+        else: #tall or wide shape
+            self.active_piece['rotation'] = itertools.cycle([(0,0),
+                                                             ()])
+            if len(shape) > len(shape[0]): #tall shape
+                next(self.active_piece['rotation'])
+
+            else: #wide shape
 
         for row in self.board:
             print(row)
