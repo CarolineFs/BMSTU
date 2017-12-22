@@ -72,6 +72,7 @@ class graph:
         new_coords = self.add_entry.get()
         f = 0
         new_coords = new_coords.strip()
+
         for i in range(len(new_coords)):
             if new_coords[i] == ' ':
                 if f != 0:
@@ -91,10 +92,18 @@ class graph:
                                              outline='pink')
                 self.canvas.create_text(450, 90, text='Некорректный ввод', anchor='w')
             else:
-                self.coords_str += new_coords + '\n'
-                self.normal_coords.append([x, y])
-                '''if len(self.normal_coords) >= 3:
-                    self.drawer(self.coords_str)'''
+                new_coords_arr = []
+                new_coords_arr.append(x)
+                new_coords_arr.append(y)
+                if new_coords_arr in self.normal_coords:
+                    self.canvas.create_rectangle(450, 80, 600, 100, fill='pink',
+                                                 outline='pink')
+                    self.canvas.create_text(450, 90, text='Эта точка уже есть', anchor='w')
+                else:
+                    self.coords_str += new_coords + '\n'
+                    self.normal_coords.append([x, y])
+
+
         self.add_entry.delete(0, END)
         self.shower(self)
 
@@ -221,14 +230,12 @@ class graph:
         fd = 0  # флаг на ошибку, если точки лежат на одной прямой
         combs = list(combinations(self.normal_coords, 3))
         for i in range(len(combs)):
-            print(combs[i])
             point1 = combs[i][0]
             point2 = combs[i][1]
             point3 = combs[i][2]
             points_out = 0
             points_in = 0
             if not flag_min_dif:
-                self.min_coords = []
                 self.min_coords.append(point1)
                 self.min_coords.append(point2)
                 self.min_coords.append(point3)
@@ -273,7 +280,8 @@ class graph:
 
                         else:
                             points_out += 1
-
+                print(combs[i])
+                print(points_in, points_out)
                 cur_dif = abs(points_out - points_in)
                 if not flag_min_dif:
                     min_dif = cur_dif
@@ -290,8 +298,10 @@ class graph:
                         self.min_coords.append(point1)
                         self.min_coords.append(point2)
                         self.min_coords.append(point3)
-                        if min_dif == 0:
-                            break
+                        print(min_dif)
+                        print(self.min_coords)
+                        '''if min_dif == 0:
+                            break'''
 
         if fd:
             self.triangle_drawer(self)
@@ -302,9 +312,6 @@ class graph:
 
 
 
-        # (x1 - x0) * (y2 - y1) - (x2 - x1) * (y1 - y0)
-        # (x2 - x0) * (y3 - y2) - (x3 - x2) * (y2 - y0)
-        # (x3 - x0) * (y1 - y3) - (x1 - x3) * (y3 - y0)
 
 
 root = tk.Tk()
