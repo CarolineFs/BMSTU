@@ -1,8 +1,6 @@
 def CatchIntError(c):
     if c.isdigit():
         c = int(c)
-    else:
-        print('Некорректный ввод')
     return c
 
 def CatchFloatError(c):
@@ -15,7 +13,10 @@ def CatchFloatError(c):
             if i != 0 and i != len(c) - 1 and c[i] in '0123456789':
                 n += c[i]
             elif i == 0 and c[i] in nums:
-                n += c[i]
+                if c[i] == '-' and len(c) != 1:
+                    n += c[i]
+                else:
+                    break
             elif i == len(c)-1 and i != 0 and (c[i] in nums[0:10] or c[i] == '.'):
                 n += c[i]
             elif i != 0 and i != len(c)-1 and c[i] == '.':
@@ -27,10 +28,8 @@ def CatchFloatError(c):
             elif i != 0 and i != len(c)-1 and c[i] == 'e':
                 if 'e' not in n:
                     n += c[i]
-            else:   
+            else:
                 break
         if len(n) == len(c) and len(n) != 0:
             n = float(n)
-            return n
-        else:
-print('Некорректный ввод. ')
+        return n
