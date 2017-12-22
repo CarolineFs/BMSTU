@@ -122,63 +122,68 @@ class graph:
         self.min_coords = []
 
     def point_drawer(self, event):
-        self.canvas.create_rectangle(self.x1 - 10, self.y1 - 10,
-                                     self.x2 + 10, self.y2 + 10,
-                                     fill='white',
-                                     outline='white')
-        x_max = abs(self.normal_coords[0][0])
-        y_max = abs(self.normal_coords[0][1])
-        for i in range(len(self.normal_coords)):
-            if abs(self.normal_coords[i][0]) > x_max:
-                x_max = abs(self.normal_coords[i][0])
-            if abs(self.normal_coords[i][1]) > y_max:
-                y_max = abs(self.normal_coords[i][1])
-        self.l_x = self.center_x - self.x1
-        self.l_y = self.center_y - self.y1
-        if x_max >= 1:
-            x_max += 1
-        else:
-            x_max += 0.1
-        if y_max >= 1:
-            y_max += 1
-        else:
-            y_max += 0.1
-        kf_x = self.l_x / x_max
-        kf_y = self.l_y / y_max
-        self.kf = min(kf_x, kf_y)
-        self.kf = round(self.kf, 6)
-        for i in range(len(self.normal_coords)):
-            x = self.normal_coords[i][0]
-            if abs(x) > self.l_x:
-                x = ceil(x * self.kf)
-
+        if len(self.normal_coords) != 0:
+            self.canvas.create_rectangle(self.x1 - 10, self.y1 - 10,
+                                         self.x2 + 10, self.y2 + 10,
+                                         fill='white',
+                                         outline='white')
+            x_max = abs(self.normal_coords[0][0])
+            y_max = abs(self.normal_coords[0][1])
+            for i in range(len(self.normal_coords)):
+                if abs(self.normal_coords[i][0]) > x_max:
+                    x_max = abs(self.normal_coords[i][0])
+                if abs(self.normal_coords[i][1]) > y_max:
+                    y_max = abs(self.normal_coords[i][1])
+            self.l_x = self.center_x - self.x1
+            self.l_y = self.center_y - self.y1
+            if x_max >= 1:
+                x_max += 1
             else:
-                if self.kf != 0:
+                x_max += 0.1
+            if y_max >= 1:
+                y_max += 1
+            else:
+                y_max += 0.1
+            kf_x = self.l_x / x_max
+            kf_y = self.l_y / y_max
+            self.kf = min(kf_x, kf_y)
+            self.kf = round(self.kf, 6)
+            for i in range(len(self.normal_coords)):
+                x = self.normal_coords[i][0]
+                if abs(x) > self.l_x:
                     x = ceil(x * self.kf)
-            # x += self.x1
 
-            y = self.normal_coords[i][1]
-            if abs(y) > self.l_y:
-                y = ceil(y * self.kf)
-            else:
-                if self.kf != 0:
+                else:
+                    if self.kf != 0:
+                        x = ceil(x * self.kf)
+                # x += self.x1
+
+                y = self.normal_coords[i][1]
+                if abs(y) > self.l_y:
                     y = ceil(y * self.kf)
+                else:
+                    if self.kf != 0:
+                        y = ceil(y * self.kf)
 
-            x += self.center_x
-            if y > 0:
-                y = self.center_y - y
-            else:
-                y = self.center_y + abs(y)
-            # y += self.y1
-            self.canvas.create_line(x - 5, y,
-                                    x + 5, y,
-                                    width=1)
-            self.canvas.create_line(x, y - 5,
-                                    x, y + 5,
-                                    width=1)
+                x += self.center_x
+                if y > 0:
+                    y = self.center_y - y
+                else:
+                    y = self.center_y + abs(y)
+                # y += self.y1
+                self.canvas.create_line(x - 5, y,
+                                        x + 5, y,
+                                        width=1)
+                self.canvas.create_line(x, y - 5,
+                                        x, y + 5,
+                                        width=1)
 
-        if len(self.normal_coords) >= 3:
-            self.choose_points(self)
+            if len(self.normal_coords) >= 3:
+                self.choose_points(self)
+        else:
+            self.canvas.create_rectangle(450, 80, 600, 100, fill='pink',
+                                         outline='pink')
+            self.canvas.create_text(450, 90, text='Вы не ввели точки', anchor='w')
 
     def coords_ch(self, st):
         if st[0] > self.l_x:
@@ -239,9 +244,9 @@ class graph:
                 self.min_coords.append(point1)
                 self.min_coords.append(point2)
                 self.min_coords.append(point3)
-            a = round(sqrt(((point2[0] - point1[0]) ** 2) + ((point2[1] - point1[1]) ** 2)), 7)
-            b = round(sqrt(((point3[0] - point1[0]) ** 2) + ((point3[1] - point1[1]) ** 2)), 7)
-            c = round(sqrt(((point3[0] - point2[0]) ** 2) + ((point3[1] - point2[1]) ** 2)), 7)
+            a = round(sqrt(((point2[0] - point1[0]) ** 2) + ((point2[1] - point1[1]) ** 2)), 0)
+            b = round(sqrt(((point3[0] - point1[0]) ** 2) + ((point3[1] - point1[1]) ** 2)), 0)
+            c = round(sqrt(((point3[0] - point2[0]) ** 2) + ((point3[1] - point2[1]) ** 2)), 0)
             if a + b > c and a + c > b and b + c > a:
                 fd = 1
                 for t in range(len(self.normal_coords)):
@@ -257,31 +262,21 @@ class graph:
                         yb = point2[1]
                         xc = point3[0]
                         yc = point3[1]
-
-                        if (((x - xa) * (ya - yb) - (y - ya) * (xa - xb) > 0) and \
-                                    ((x - xb) * (yb - yc) - (y - yb) * (xb - xc) > 0) and \
-                                    ((x - xc) * (yc - ya) - (y - ya) * (xc - xa) > 0)):
-                            points_in += 1
-                        elif (((x - xa) * (ya - yb) - (y - ya) * (xa - xb) < 0) and \
-                                      ((x - xb) * (yb - yc) - (y - yb) * (xb - xc) < 0) and \
-                                      ((x - xc) * (yc - ya) - (y - ya) * (xc - xa) < 0)):
-                            points_in += 1
-                        elif (((x - xa) * (ya - yb) - (y - ya) * (xa - xb) == 0) or \
-                                      ((x - xb) * (yb - yc) - (y - yb) * (xb - xc) == 0) or \
-                                      ((x - xc) * (yc - ya) - (y - ya) * (xc - xa) == 0)):
-                                S = abs((xa - xc) * (yb - yc) - (xb - xc) * (ya - yc)) / 2
-                                S1 = abs((xa - x) * (yb - y) - (xb - x) * (ya - y)) / 2
-                                S2 = abs((xa - x) * (yc - y) - (xc - x) * (ya - y)) / 2
-                                S3 = abs((xb - x) * (yc - y) - (xc - x) * (yb - y)) / 2
-                                if S1 + S2 + S3 == S:
-                                    pass
-                                else:
-                                    points_out += 1
+                        S = round(abs((xa - xc) * (yb - yc) - (xb - xc) * (ya - yc)) / 2, 7)
+                        S1 = round(abs((xa - x) * (yb - y) - (xb - x) * (ya - y)) / 2, 7)
+                        S2 = round(abs((xa - x) * (yc - y) - (xc - x) * (ya - y)) / 2, 7)
+                        S3 = round(abs((xb - x) * (yc - y) - (xc - x) * (yb - y)) / 2, 7)
+                        if S1 + S2 + S3 == S:
+                            if (((x - xa) * (ya - yb) - (y - ya) * (xa - xb) == 0) or \
+                                ((x - xb) * (yb - yc) - (y - yb) * (xb - xc) == 0) or \
+                                ((x - xc) * (yc - ya) - (y - ya) * (xc - xa) == 0)):
+                                pass
+                                
+                            else:
+                                points_in += 1
 
                         else:
                             points_out += 1
-                print(combs[i])
-                print(points_in, points_out)
                 cur_dif = abs(points_out - points_in)
                 if not flag_min_dif:
                     min_dif = cur_dif
@@ -298,10 +293,8 @@ class graph:
                         self.min_coords.append(point1)
                         self.min_coords.append(point2)
                         self.min_coords.append(point3)
-                        print(min_dif)
-                        print(self.min_coords)
-                        '''if min_dif == 0:
-                            break'''
+                        if min_dif == 0:
+                            break
 
         if fd:
             self.triangle_drawer(self)
@@ -309,10 +302,6 @@ class graph:
             self.canvas.create_rectangle(450, 80, 600, 100, fill='pink',
                                          outline='pink')
             self.canvas.create_text(450, 90, text='Это прямая', anchor='w')
-
-
-
-
 
 root = tk.Tk()
 graph = graph(root)
