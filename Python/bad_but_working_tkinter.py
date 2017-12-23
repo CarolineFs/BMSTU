@@ -276,6 +276,7 @@ class Graph:
             c = round(sqrt(((point3[0] - point2[0]) ** 2) + ((point3[1] - point2[1]) ** 2)), 4)
             if a + b > c and a + c > b and b + c > a:
                 fd = 1
+                #print(combs[i])
                 for t in range(len(self.normal_coords)):
                     cur_point = self.normal_coords[t]
                     if cur_point != point1 and \
@@ -289,21 +290,29 @@ class Graph:
                         yb = point2[1]
                         xc = point3[0]
                         yc = point3[1]
-                        S = round(abs((xa - xc) * (yb - yc) - (xb - xc) * (ya - yc)) / 2, 7)
-                        S1 = round(abs((xa - x) * (yb - y) - (xb - x) * (ya - y)) / 2, 7)
-                        S2 = round(abs((xa - x) * (yc - y) - (xc - x) * (ya - y)) / 2, 7)
-                        S3 = round(abs((xb - x) * (yc - y) - (xc - x) * (yb - y)) / 2, 7)
+                        S = round(abs((xa - xc) * (yb - yc) - (xb - xc) * (ya - yc)) / 2, 2)
+                        S1 = round(abs((xa - x) * (yb - y) - (xb - x) * (ya - y)) / 2, 2)
+                        S2 = round(abs((xa - x) * (yc - y) - (xc - x) * (ya - y)) / 2, 2)
+                        S3 = round(abs((xb - x) * (yc - y) - (xc - x) * (yb - y)) / 2, 2)
                         if S1 + S2 + S3 == S:
-                            if (((x - xa) * (ya - yb) - (y - ya) * (xa - xb) == 0) or 
-                                        ((x - xb) * (yb - yc) - (y - yb) * (xb - xc) == 0) or 
-                                        ((x - xc) * (yc - ya) - (y - ya) * (xc - xa) == 0)):
+                            h1 = (x - xa) * (ya - yb) - (y - ya) * (xa - xb) == 0
+                            h2 = (x - xb) * (yb - yc) - (y - yb) * (xb - xc) == 0
+                            h3 = (x - xc) * (yc - ya) - (y - ya) * (xc - xa) == 0
+
+                            if (h1 > 0 and h2 >0 and h3 > 0) or \
+                               (h1 < 0 and h2 < 0 and h3 < 0):
+                                points_in += 1
+                                #print(self.normal_coords[t], 'IN')
+                            else:
+                                #print(self.normal_coords[t], 'ON')
                                 pass
 
-                            else:
-                                points_in += 1
+                                
 
                         else:
                             points_out += 1
+                            #print(self.normal_coords[t], 'OUT')
+                #print(points_in, points_out)
                 cur_dif = abs(points_out - points_in)
                 if not flag_min_dif:
                     # если считаем разность первый раз и сравнивать не с чем
