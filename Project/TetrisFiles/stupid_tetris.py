@@ -1,7 +1,6 @@
 import tkinter as tk
 import random
 from matrix_rotation import rotate_array as ra
-import itertools
 #import pygame as pg
 
 
@@ -104,15 +103,19 @@ class Tetris:
         ct += x_correction
 
 
-
-        #check whether we can rotate piece
+         #check whether we can rotate piece
         for row, squares in zip(range(rt, rt+l), shape):
             for column, square in zip(range(ct, ct + w), squares):
                 if square and self.board[row][column] == 'x':
                     return
 
-        self.active_piece['shape'] = shape
+        # put shape onto board
+        for row, squares in zip(range(rt, rt+l),shape):
+            for column, square in zip(range(ct, ct+w), squares):
+                if square:
+                    self.board[row][column] = square
 
+        self.active_piece['shape'] = shape
         self.active_piece['rotation_index'] = (
                                                (self.active_piece[
                                                 'rotation_index']
@@ -124,10 +127,12 @@ class Tetris:
 
         x_start = min(coord
                       for tup in self.active_piece['coords']
-                        for coord in (tup[0], tup[2])) #min x coord
+                        for coord in (tup[0]+x_correction*self.square_width,
+                                      tup[2]+x_correction*self.square_width)) #min x coord
         y_start = min(coord
                       for tup in self.active_piece['coords']
-                        for coord in (tup[1], tup[3])) #min y coord
+                        for coord in (tup[1]+y_correction*self.square_width,
+                                      tup[3]+y_correction*self.square_width)) #min y coord
         squares = iter(range(4)) #iterarot of 4 indices
         for row_coord, row in zip(range(y_start, y_start+l*self.square_width+1,
                                          self.square_width),
@@ -143,6 +148,8 @@ class Tetris:
                              row_coord+self.square_width)
                     self.active_piece['coords'][square_idx] = coord
                     self.canvas.coords(self.active_piece['piece'][square_idx], coord)
+
+
 
         #for row in shape:
         #   print(*(cell or '' for cell in row))
@@ -189,12 +196,12 @@ class Tetris:
                     if direction == down:
                         self.settle()
                     return
-        #remove shape from board
+        # remove shape from board
         for row in self.board:
             row[:] = ['' if cell == '*' else cell for cell in row]
         if direction in down:
-            self.active_piece['row'] += 1 #increment piece's row
-            r += 1 #increment piece's row
+            self.active_piece['row'] += 1  # increment piece's row
+            r += 1  # increment piece's row
         elif direction in left:
             self.active_piece['column'] -= 1  # dencrement piece's column
             c -= 1
@@ -206,7 +213,7 @@ class Tetris:
             for column, square in zip(range(c, c+w), squares):
                 if square:
                     self.board[row][column] = square
-        #move piece on canvas
+        # move piece on canvas
         for id, coords_idx in zip(self.active_piece['piece'],
                                   range(len(self.active_piece['coords']))):
             x1, y1, x2, y2 = self.active_piece['coords'][coords_idx]
@@ -255,7 +262,8 @@ class Tetris:
                         self.canvas.create_rectangle(self.active_piece['coords'][-1]))
 
         self.active_piece['rotation_index'] = 0
-        if len(shape) == len(shape[0]): # square
+        if len(shape) == len(shape[0]) or len(shape) == 2 or \
+            len(shape[0]) == 2: # square or I
             self.active_piece['rotation'] = [(0,0)]
         else: # tall or wide shape
             self.active_piece['rotation'] = [(0, 0),
