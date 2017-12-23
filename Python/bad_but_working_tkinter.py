@@ -6,7 +6,7 @@ import copy
 from itertools import combinations
 
 
-class graph:
+class Graph:
     def __init__(self, parent):
         self.parent = parent
         parent.title('Triangle')
@@ -294,8 +294,8 @@ class graph:
                         S2 = round(abs((xa - x) * (yc - y) - (xc - x) * (ya - y)) / 2, 7)
                         S3 = round(abs((xb - x) * (yc - y) - (xc - x) * (yb - y)) / 2, 7)
                         if S1 + S2 + S3 == S:
-                            if (((x - xa) * (ya - yb) - (y - ya) * (xa - xb) == 0) or \
-                                        ((x - xb) * (yb - yc) - (y - yb) * (xb - xc) == 0) or \
+                            if (((x - xa) * (ya - yb) - (y - ya) * (xa - xb) == 0) or 
+                                        ((x - xb) * (yb - yc) - (y - yb) * (xb - xc) == 0) or 
                                         ((x - xc) * (yc - ya) - (y - ya) * (xc - xa) == 0)):
                                 pass
 
@@ -321,7 +321,7 @@ class graph:
                         self.min_coords.append(point1)
                         self.min_coords.append(point2)
                         self.min_coords.append(point3)
-                        if min_dif == 0: # если разность 0, то дальше искать нет смысла 
+                        if min_dif == 0: # если разность 0, то дальше искать нет смысла
                             break
         if fd:
             self.triangle_drawer(self)
@@ -332,5 +332,5 @@ class graph:
 
 
 root = tk.Tk()
-graph = graph(root)
+graph = Graph(root)
 root.mainloop()
