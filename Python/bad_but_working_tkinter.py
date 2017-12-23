@@ -33,13 +33,9 @@ class graph:
 
         self.canvas.create_text(450, 25, text='Введите координаты \n через пробел:',
                                 anchor='w')
-        # self.canvas.create_rectangle(450, 150, 590, 600,
-        # fill = 'white',
-        # outline = 'white')
 
         self.add_button = tk.Button(self.canvas, text='Add')
         self.add_button.bind('<Button-1>', self.getter)
-
         self.add_button.place(x=550, y=50)
 
         self.add_entry = tk.Entry(self.canvas, width=10, bd=3)
@@ -66,35 +62,41 @@ class graph:
         self.normal_coords = []
         self.min_coords = []
 
+
     def getter(self, event):
         self.canvas.create_rectangle(450, 80, 600, 100, fill='light green',
                                      outline='light green')
-        new_coords = self.add_entry.get()
-        f = 0
-        new_coords = new_coords.strip()
+        # Каждый раз при нажатии на кнопку Add рисуется зеленый индикатор
+        # Если ввод некорректный, рисуется красный индикатор
 
-        for i in range(len(new_coords)):
+        new_coords = self.add_entry.get() # Строка с введенными пользоавтелем данными
+
+        f = 0 # флаг для попытки преобразовать введенные данные в координаты типа float
+        new_coords = new_coords.strip() # удаляем лишние знаки по краям строки
+
+        for i in range(len(new_coords)): # пытаемся сделать сплит по пробелу
             if new_coords[i] == ' ':
                 if f != 0:
                     f = 1
                 else:
                     f = 2
-        if f != 2:
+        if f != 2: # сплит по пробелу не получился
             self.canvas.create_rectangle(450, 80, 600, 100, fill='pink',
                                          outline='pink')
             self.canvas.create_text(450, 90, text='Некорректный ввод', anchor='w')
-        else:
+        else:  # сплит по пробелу получился
             x, y = new_coords.split()
             x = cfe(x)
-            y = cfe(y)
+            y = cfe(y) # пытаемся преобразовать координаты в тип float с помощью ErrorCatcher
             if type(x) != float or type(y) != float:
                 self.canvas.create_rectangle(450, 80, 600, 100, fill='pink',
                                              outline='pink')
                 self.canvas.create_text(450, 90, text='Некорректный ввод', anchor='w')
-            else:
-                new_coords_arr = []
+            else: # удалось преобразовать координаты в тип float
+                new_coords_arr = [] # создаем массив, записываем туда новые координаты
                 new_coords_arr.append(x)
                 new_coords_arr.append(y)
+                # смотрим, не ввел ли пользователь одну и ту же точку несколько разd(y)
                 if new_coords_arr in self.normal_coords:
                     self.canvas.create_rectangle(450, 80, 600, 100, fill='pink',
                                                  outline='pink')
@@ -103,15 +105,19 @@ class graph:
                     self.coords_str += new_coords + '\n'
                     self.normal_coords.append([x, y])
 
+        self.add_entry.delete(0, END) # удаляем символы из поля ввода
+        self.shower(self) # переносим все координаты в поле вывода
+        # если новые коориднаты были введены без ошибки, их тоже выводим
+        # если с ошибкой - выводим список старых координат
 
-        self.add_entry.delete(0, END)
-        self.shower(self)
 
     def shower(self, event):
         self.text.delete('1.0', END)
         self.text.insert(END, self.coords_str)
 
+
     def clear_all(self, event):
+        #отчищает все поля
         self.coords_str = ''
         self.normal_coords = []
         self.shower(self.coords_str)
@@ -122,11 +128,18 @@ class graph:
         self.min_coords = []
 
     def point_drawer(self, event):
-        if len(self.normal_coords) != 0:
+        # рисует все точки, введенные пользователем
+        # если точек больше трех и они не лежат на одной прямой,
+        # вызывает функцию, которая выбирает точки для треугольника
+        if len(self.normal_coords) != 0: # если пользователь ввел хотя бы  одну точку, а не просто тыкнул на кнопку
             self.canvas.create_rectangle(self.x1 - 10, self.y1 - 10,
                                          self.x2 + 10, self.y2 + 10,
                                          fill='white',
                                          outline='white')
+
+            # считаем коэффицент для масштабирования
+            # отдельно для x, отдельно для y
+            # из этих двух коэффицентов выбирается минимальный
             x_max = abs(self.normal_coords[0][0])
             y_max = abs(self.normal_coords[0][1])
             for i in range(len(self.normal_coords)):
@@ -148,6 +161,8 @@ class graph:
             kf_y = self.l_y / y_max
             self.kf = min(kf_x, kf_y)
             self.kf = round(self.kf, 6)
+
+            # пересчитываем координаты из ДСК в координатную систему холста
             for i in range(len(self.normal_coords)):
                 x = self.normal_coords[i][0]
                 if abs(x) > self.l_x:
@@ -156,7 +171,6 @@ class graph:
                 else:
                     if self.kf != 0:
                         x = ceil(x * self.kf)
-                # x += self.x1
 
                 y = self.normal_coords[i][1]
                 if abs(y) > self.l_y:
@@ -170,14 +184,15 @@ class graph:
                     y = self.center_y - y
                 else:
                     y = self.center_y + abs(y)
-                # y += self.y1
+
+                # рисуем точки в форме плюсиков
                 self.canvas.create_line(x - 5, y,
                                         x + 5, y,
                                         width=1)
                 self.canvas.create_line(x, y - 5,
                                         x, y + 5,
                                         width=1)
-
+            # если точек больше трех, вызываем функцию, которая будет пытаться выбрать три точки для треугольника
             if len(self.normal_coords) >= 3:
                 self.choose_points(self)
         else:
@@ -185,7 +200,10 @@ class graph:
                                          outline='pink')
             self.canvas.create_text(450, 90, text='Вы не ввели точки', anchor='w')
 
+
     def coords_ch(self, st):
+        # функция преобразует координаты из ДКС в координаты холста
+        # надо бы ее еще в point_drawer применить, но мне лень
         if st[0] > self.l_x:
             st[0] = ceil(st[0] * self.kf)
         else:
@@ -206,7 +224,9 @@ class graph:
 
         return st
 
+
     def triangle_drawer(self, event):
+        # рисует треугольник
         if len(self.min_coords) != 0:
             p1 = copy.deepcopy(self.min_coords[0])
             p2 = copy.deepcopy(self.min_coords[1])
@@ -228,12 +248,19 @@ class graph:
                                          outline='pink')
             self.canvas.create_text(450, 90, text='Теругольника нет', anchor='w')
 
+
     def choose_points(self, event):
         # ищем комбинацию из трех точек, где разница минимальна
-        min_dif = 1
-        flag_min_dif = 0
+        # проверяем, не лежат ли все введенные точки на одной прямой
+        min_dif = 1 # минимальная разность
+        flag_min_dif = 0 # флаг для того, чтобы при первом вычислении текущей разности не сравниавть ее с минимальной
         fd = 0  # флаг на ошибку, если точки лежат на одной прямой
-        combs = list(combinations(self.normal_coords, 3))
+        combs = list(combinations(self.normal_coords, 3)) # массив массивов массивов;
+        # все возможные комбинации введеных точек с длиной 3
+        # они еще и повторяются по три раза каждая
+        # дальше какая-то дичь сам не понял лучше не смотрите
+        # но оно работает
+        # почти всегда
         for i in range(len(combs)):
             point1 = combs[i][0]
             point2 = combs[i][1]
@@ -244,16 +271,16 @@ class graph:
                 self.min_coords.append(point1)
                 self.min_coords.append(point2)
                 self.min_coords.append(point3)
-            a = round(sqrt(((point2[0] - point1[0]) ** 2) + ((point2[1] - point1[1]) ** 2)), 0)
-            b = round(sqrt(((point3[0] - point1[0]) ** 2) + ((point3[1] - point1[1]) ** 2)), 0)
-            c = round(sqrt(((point3[0] - point2[0]) ** 2) + ((point3[1] - point2[1]) ** 2)), 0)
+            a = round(sqrt(((point2[0] - point1[0]) ** 2) + ((point2[1] - point1[1]) ** 2)), 4)
+            b = round(sqrt(((point3[0] - point1[0]) ** 2) + ((point3[1] - point1[1]) ** 2)), 4)
+            c = round(sqrt(((point3[0] - point2[0]) ** 2) + ((point3[1] - point2[1]) ** 2)), 4)
             if a + b > c and a + c > b and b + c > a:
                 fd = 1
                 for t in range(len(self.normal_coords)):
                     cur_point = self.normal_coords[t]
                     if cur_point != point1 and \
-                        cur_point != point2 and \
-                        cur_point != point3:
+                                    cur_point != point2 and \
+                                    cur_point != point3:
                         x = cur_point[0]
                         y = cur_point[1]
                         xa = point1[0]
@@ -268,10 +295,10 @@ class graph:
                         S3 = round(abs((xb - x) * (yc - y) - (xc - x) * (yb - y)) / 2, 7)
                         if S1 + S2 + S3 == S:
                             if (((x - xa) * (ya - yb) - (y - ya) * (xa - xb) == 0) or \
-                                ((x - xb) * (yb - yc) - (y - yb) * (xb - xc) == 0) or \
-                                ((x - xc) * (yc - ya) - (y - ya) * (xc - xa) == 0)):
+                                        ((x - xb) * (yb - yc) - (y - yb) * (xb - xc) == 0) or \
+                                        ((x - xc) * (yc - ya) - (y - ya) * (xc - xa) == 0)):
                                 pass
-                                
+
                             else:
                                 points_in += 1
 
@@ -279,6 +306,7 @@ class graph:
                             points_out += 1
                 cur_dif = abs(points_out - points_in)
                 if not flag_min_dif:
+                    # если считаем разность первый раз и сравнивать не с чем
                     min_dif = cur_dif
                     flag_min_dif = 1
                     self.min_coords = []
@@ -302,6 +330,7 @@ class graph:
             self.canvas.create_rectangle(450, 80, 600, 100, fill='pink',
                                          outline='pink')
             self.canvas.create_text(450, 90, text='Это прямая', anchor='w')
+
 
 root = tk.Tk()
 graph = graph(root)
