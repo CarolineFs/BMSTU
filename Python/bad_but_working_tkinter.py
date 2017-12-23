@@ -321,9 +321,8 @@ class graph:
                         self.min_coords.append(point1)
                         self.min_coords.append(point2)
                         self.min_coords.append(point3)
-                        if min_dif == 0:
+                        if min_dif == 0: # если разность 0, то дальше искать нет смысла 
                             break
-
         if fd:
             self.triangle_drawer(self)
         else:
