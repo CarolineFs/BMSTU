@@ -2,8 +2,6 @@ import tkinter as tk
 import random
 from matrix_rotation import rotate_array as ra
 import sys
-#import pygame as pg
-
 
 class Shape:
     def __init__(self, shape, key, piece, row, column, coords):
