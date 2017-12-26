@@ -22,6 +22,7 @@ class Tetris:
         self.board_width = 10
         self.board_height = 24
         self.high_score = 0
+        self.high_score_lines = 0
         self.width = 300
         self.height = 720
         self.square_width = self.width//10
@@ -72,7 +73,7 @@ class Tetris:
         self.guide_fill = ''
         self.score_var = tk.StringVar()
         self.high_score_var = tk.StringVar()
-        self.high_score_var.set('High score:\n0')
+        self.high_score_var.set('High score:\n0 (0)')
         self.preview_label = tk.Label(root,
                                       text='Next piece:',
                                       width=15,
@@ -91,6 +92,7 @@ class Tetris:
                                          font=('Arial Black', 12))
         self.high_score_label.grid(row=3, column=1, sticky='N')
         self.draw_board()
+        self.parent.resizable(width=False, height=False)
 
     def draw_board(self, event=None):
         if self.ticking:
@@ -124,6 +126,7 @@ class Tetris:
         self.preview_canvas.grid(row=1, column=1)
         self.tickrate = 1000
         self.score = 0
+        self.score_lines = 0
         self.piece_is_active = False
         self.paused = False
         self.bag = []
@@ -282,19 +285,22 @@ class Tetris:
         indices = [idx for idx, row in enumerate(self.board) if all(row)]
         if indices:  # clear rows, score, logic etc.
             self.score += (1, 2, 5, 10)[len(indices)-1]
+            self.score_lines += len(indices)
             self.clear(indices)
             if all(not cell for row in self.board for cell in row):
                 self.score += 10
             self.high_score = max(self.score, self.high_score)
-            self.score_var.set('Score:\n{}'.format(self.score))
-            self.high_score_var.set('High score:\n{}'.format(self.high_score))
+            self.high_score_lines = max(self.score_lines, self.high_score_lines)
+            self.score_var.set('Score:\n{} ({})'.format(self.score, self.score_lines))
+            self.high_score_var.set('High score:\n{} ({})'.format(self.high_score, self.high_score_lines))
             # speed
             if self.score <= self.max_speed_score:
                 self.tickrate = 1000//(self.score//self.speed_factor + 1)
         if any(any(row) for row in self.board[:4]):
             self.lose()
             return
-        self.spawning = self.parent.after(self.tickrate, self.spawn)
+        self.spawning = self.parent.after(500 if indices and self.tickrate < 500
+                                              else self.tickrate, self.spawn)
 
     def preview(self):
         self.preview_canvas.delete(tk.ALL)
