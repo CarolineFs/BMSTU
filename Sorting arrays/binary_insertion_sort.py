@@ -6,7 +6,7 @@ def binary_insertion_sort(array):
         if array[i-1] > array[i]:
             x = array[i]
             left = 1
-            right = len(array) - 1
+            right = i - 1
             while True:
                 middle = (left + right)//2
                 if array[middle] < x:
