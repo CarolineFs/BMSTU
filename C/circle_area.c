@@ -9,6 +9,6 @@ int main(void)
 	scanf("%d", &r);
 	
 	s = pi*r*r;
-	printf("%f", s);
+	printf("Площадь = %f", s);
 	return 0;
 }
