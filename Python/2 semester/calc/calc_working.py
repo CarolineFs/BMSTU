@@ -9,9 +9,9 @@ def get_result(event):
     print('GET')
 
 
-def insert(event, entry, string):
-    entry.insert(0, string)
-
+def insert(event, root):
+    f = root.focus_get()
+    print(f)
 
 def draw_canvas(root):
     '''
@@ -32,7 +32,7 @@ def draw_canvas(root):
                        font='Verdana 12', fill='white',
                        anchor='n')
 
-    entry_b = tk.Entry(canvas, width=4, bg='SkyBlue1')
+    entry_b = tk.Entry(canvas, width=4, bg='SkyBlue1',)
     entry_b.place(x=105, y=10)
 
     canvas.create_text(150, 10, text='x+',
@@ -72,8 +72,8 @@ def draw_canvas(root):
                         activebackground='dodger blue',
                         activeforeground='white')
 
-    def handler(event, string='7', entry=entry_a):
-        return insert(event,entry,  string)
+    def handler(event, root=root):
+        return insert(event, root)
 
     button7.bind('<Button-1>', handler)
     button7.place(x=0, y=160)
