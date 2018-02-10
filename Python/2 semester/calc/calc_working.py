@@ -9,9 +9,12 @@ def get_result(event):
     print('GET')
 
 
-def insert(event, root):
-    f = root.focus_get()
-    print(f)
+def insert(event, root, entry_a, entry_b, entry_c, button):
+    print(button)
+    entry = str(root.focus_displayof())
+    if entry.endswith('entry'):
+        entry_a.insert(0, '7')
+
 
 def draw_canvas(root):
     '''
@@ -72,8 +75,10 @@ def draw_canvas(root):
                         activebackground='dodger blue',
                         activeforeground='white')
 
-    def handler(event, root=root):
-        return insert(event, root)
+    def handler(event, root=root, entry_a=entry_a,
+                entry_b=entry_b, entry_c=entry_c, ):
+        button = event.keysym_num
+        return insert(event, root, entry_a, entry_b, entry_c, button)
 
     button7.bind('<Button-1>', handler)
     button7.place(x=0, y=160)
@@ -82,7 +87,8 @@ def draw_canvas(root):
                         font='Verdana 12', width=6, height=3,
                         activebackground='dodger blue',
                         activeforeground='white')
-    button8.bind('<Button-1>')
+    button8.bind('<Button-1>', handler)
+
     button8.place(x=75, y=160)
 
     button9 = tk.Button(canvas, text='9', fg='white', bg='Deep sky blue',
