@@ -9,6 +9,8 @@ canvas.grid(row=0, column=0)
 
 entry_c = tk.Entry(canvas, width=4, bg='SkyBlue1')
 entry_c.place(x=163, y=10)
-state = entry_c.st
-print(state)
+entry_c.focus_get()
+
+
+
 root.mainloop()
