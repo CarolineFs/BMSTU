@@ -1,44 +1,15 @@
 import tkinter as tk
 
 #CONST
-CANVAS_WIDTH = 300
+CANVAS_WIDTH = 225
 CANVAS_HEIGHT = 480
 
 
-def main():
-    root = tk.Tk()
-    root.title('Calculator')
-    canvas = tk.Canvas(root, height=CANVAS_HEIGHT,
-                            width=CANVAS_WIDTH,
-                            bg='black')  # bg='blue4')
-    canvas.grid(row=0, column=0)
-    root.resizable(width=False, height=False)
-
-    drop_menu = tk.Menu(root)
-    root.configure(menu=drop_menu)
-    first_item = tk.Menu(drop_menu)
-    drop_menu.add_cascade(label='Clear', menu=first_item)
-    first_item.add_command(label='Clear all')
-    first_item.add_command(label='Clear result')
-
-    entry_a = tk.Entry(canvas, width=4, bg='SkyBlue1')
-    entry_a.place(x=60, y=30)
-
-    canvas.create_text(115, 30, text='x^2+',
-                       font='Verdana 12', fill='white',
-                       anchor='n')
-
-    entry_b = tk.Entry(canvas, width=4, bg='SkyBlue1')
-    entry_b.place(x=140, y=30)
-
-    canvas.create_text(185, 30, text='x+',
-                       font='Verdana 12', fill='white',
-                       anchor='n')
-
-    entry_c = tk.Entry(canvas, width=4, bg='SkyBlue1')
-    entry_c.place(x=200, y=30)
-
-    # buttons
+def create_buttons(canvas):
+    '''
+    Creates buttons
+    :return: Nothing
+    '''
     button_sign = tk.Button(canvas, text='+/-', fg='white', bg='blue4',
                             font='Verdana 12', width=6, height=3,
                             activebackground='midnight blue',
@@ -46,19 +17,19 @@ def main():
     button_sign.bind('<Button-1>')
     button_sign.place(x=0, y=80)
 
-    button_divide = tk.Button(canvas, text='÷', fg='white', bg='blue4',
-                              font='Verdana 12', width=6, height=3,
-                              activebackground='midnight blue',
-                              activeforeground='white')
-    button_divide.bind('<Button-1>')
-    button_divide.place(x=75, y=80)
-
     button_ac = tk.Button(canvas, text='AC', fg='white', bg='turquoise2',
-                                font='Verdana 12', width=13, height=3,
-                                activebackground='turquoise3',
-                                activeforeground='white')
+                          font='Verdana 12', width=6, height=3,
+                          activebackground='turquoise3',
+                          activeforeground='white')
     button_ac.bind('<Button-1>')
-    button_ac.place(x=150, y=80)
+    button_ac.place(x=75, y=80)
+
+    button_c = tk.Button(canvas, text='C', fg='white', bg='turquoise2',
+                         font='Verdana 12', width=6, height=3,
+                         activebackground='turquoise3',
+                         activeforeground='white')
+    button_c.bind('<Button-1>')
+    button_c.place(x=150, y=80)
 
     button7 = tk.Button(canvas, text='7', fg='white', bg='Deep sky blue',
                         font='Verdana 12', width=6, height=3,
@@ -81,13 +52,6 @@ def main():
     button9.bind('<Button-1>')
     button9.place(x=150, y=160)
 
-    button_multiply = tk.Button(canvas, text='×', fg='white', bg='blue4',
-                                font='Verdana 12', width=6, height=3,
-                                activebackground='midnight blue',
-                                activeforeground='white')
-    button_multiply.bind('<Button-1>')
-    button_multiply.place(x=225, y=160)
-
     button4 = tk.Button(canvas, text='4', fg='white', bg='Deep sky blue',
                         font='Verdana 12', width=6, height=3,
                         activebackground='dodger blue',
@@ -108,13 +72,6 @@ def main():
                         activeforeground='white')
     button6.bind('<Button-1>')
     button6.place(x=150, y=240)
-
-    button_minus = tk.Button(canvas, text='-', fg='white', bg='blue4',
-                             font='Verdana 12', width=6, height=3,
-                             activebackground='midnight blue',
-                             activeforeground='white')
-    button_minus.bind('<Button-1>')
-    button_minus.place(x=225, y=240)
 
     button1 = tk.Button(canvas, text='1', fg='white', bg='Deep sky blue',
                         font='Verdana 12', width=6, height=3,
@@ -137,13 +94,6 @@ def main():
     button3.bind('<Button-1>')
     button3.place(x=150, y=320)
 
-    button_plus = tk.Button(canvas, text='+', fg='white', bg='blue4',
-                            font='Verdana 12', width=6, height=3,
-                            activebackground='midnight blue',
-                            activeforeground='white')
-    button_plus.bind('<Button-1>')
-    button_plus.place(x=225, y=320)
-
     button0 = tk.Button(canvas, text='0', fg='white', bg='Deep sky blue',
                         font='Verdana 12', width=6, height=3,
                         activebackground='dodger blue',
@@ -159,13 +109,70 @@ def main():
     button_point.place(x=75, y=400)
 
     button_equasion = tk.Button(canvas, text='=', fg='white', bg='turquoise2',
-                                font='Verdana 12', width=13, height=3,
+                                font='Verdana 12', width=6, height=3,
                                 activebackground='turquoise3',
                                 activeforeground='white')
     button_equasion.bind('<Button-1>')
     button_equasion.place(x=150, y=400)
 
 
+def create_entries(canvas):
+    '''
+    Creates entries
+    :return: Nothing
+    '''
+    entry_a = tk.Entry(canvas, width=4, bg='SkyBlue1')
+    entry_a.place(x=25, y=10)
+
+    canvas.create_text(80, 10, text='x^2+',
+                       font='Verdana 12', fill='white',
+                       anchor='n')
+
+    entry_b = tk.Entry(canvas, width=4, bg='SkyBlue1')
+    entry_b.place(x=105, y=10)
+
+    canvas.create_text(150, 10, text='x+',
+                       font='Verdana 12', fill='white',
+                       anchor='n')
+
+    entry_c = tk.Entry(canvas, width=4, bg='SkyBlue1')
+    entry_c.place(x=163, y=10)
+
+    entry_result = tk.Entry(canvas, width=27, bg='SkyBlue1')
+    entry_result.place(x=25, y=35)
+
+
+def create_drop_menu(root):
+    '''
+    :return: Nothing
+    Creates drop menu
+    '''
+    drop_menu = tk.Menu(root)
+    root.configure(menu=drop_menu)
+    first_item = tk.Menu(drop_menu)
+    drop_menu.add_cascade(label='Clear', menu=first_item)
+    first_item.add_command(label='Clear all')
+    first_item.add_command(label='Clear result')
+
+
+def getter():
+
+
+
+def main():
+    root = tk.Tk()
+    root.title('Calculator')
+    canvas = tk.Canvas(root, height=CANVAS_HEIGHT,
+                            width=CANVAS_WIDTH,
+                            bg='black')
+    canvas.grid(row=0, column=0)
+    root.resizable(width=False, height=False)
+
+    create_drop_menu(root)
+    create_entries(canvas)
+    create_buttons(canvas)
+
     root.mainloop()
+
 
 main()
