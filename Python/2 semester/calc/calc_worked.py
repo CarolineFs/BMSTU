@@ -271,10 +271,20 @@ def create_drop_menu(root):
     '''
     drop_menu = tk.Menu(root)
     root.configure(menu=drop_menu)
-    first_item = tk.Menu(drop_menu)
-    drop_menu.add_cascade(label='Clear', menu=first_item)
-    first_item.add_command(label='Clear all')
-    first_item.add_command(label='Clear result')
+
+    clear_item = tk.Menu(drop_menu)
+    drop_menu.add_cascade(label='Clear', menu=clear_item)
+    clear_item.add_command(label='Clear all')
+    clear_item.add_command(label='Clear result')
+
+    repeat_item = tk.Menu(drop_menu)
+    drop_menu.add_cascade(label='Repeat', menu=repeat_item)
+    repeat_item.add_command(label='Show result')
+
+    info_item = tk.Menu(drop_menu)
+    drop_menu.add_cascade(label='Info', menu=info_item)
+    info_item.add_command(label='Program')
+    info_item.add_command(label='Authors')
 
 
 def main():
