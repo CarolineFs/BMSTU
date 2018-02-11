@@ -7,6 +7,34 @@ CANVAS_WIDTH = 225
 CANVAS_HEIGHT = 480
 
 
+def info_program(root):
+    info_win = tk.Toplevel(root, bg='SkyBlue1')
+    text = 'Дата создания программы: 11.02.2018\n' +\
+            'Создатель: Овчинникова Анастасия\n' +\
+            'Язык программирования: Python\n' +\
+            'Это не программа, это костыль'
+    info_label = tk.Label(info_win,
+                          text=text,
+                          bg='SkyBlue1',
+                          width=30, height=10,
+                          justify='left')
+    info_label.grid(row=0, column=0)
+
+
+def info_authors(root):
+    info_win = tk.Toplevel(root, bg='SkyBlue1')
+    text = 'Создатель: Овчинникова Анастасия\n' + \
+           'Курс: 1\n' + \
+           'Группа: ИУ7-25\n' + \
+           'ВУЗ: МГТУ им Баумана'
+    info_label = tk.Label(info_win,
+                          text=text,
+                          bg='SkyBlue1',
+                          width=30, height=10,
+                          justify='left')
+    info_label.grid(row=0, column=0)
+
+
 def show_result(x1, x2, entry_result):
     print(x1, x2)
     if x2 is not None:
@@ -323,11 +351,14 @@ def draw_canvas(root):
 
     info_item = tk.Menu(drop_menu)
     drop_menu.add_cascade(label='Info', menu=info_item)
-    info_item.add_command(label='Program')
-    info_item.add_command(label='Authors')
 
+    def handler_info_program(root=root):
+        return info_program(root)
+    info_item.add_command(label='Program', command=handler_info_program)
 
-
+    def handler_info_authors(root=root):
+        return info_authors(root)
+    info_item.add_command(label='Authors', command=handler_info_authors)
 
 
 def main():
