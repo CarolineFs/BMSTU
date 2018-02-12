@@ -1,5 +1,4 @@
 import tkinter as tk
-from ErrorCatcher import catch_float_error
 from quadric_equasion import solve_quadric_equasion
 
 # CONST
@@ -36,7 +35,6 @@ def info_authors(root):
 
 
 def show_result(x1, x2, entry_result):
-    print(x1, x2)
     if x2 is not None:
         res = 'x1='+str(x1)+', x2='+str(x2)
         entry_result.delete(0, len(entry_result.get()))
@@ -57,9 +55,12 @@ def getter(event, entry_a, entry_b, entry_c, entry_result):
     a = entry_a.get()
     b = entry_b.get()
     c = entry_c.get()
-    a = catch_float_error(a)
-    b = catch_float_error(b)
-    c = catch_float_error(c)
+    try:
+        a = float(a)
+        b = float(b)
+        c = float(c)
+    except ValueError:
+        pass
     if (type(a) is float) and \
         (type(b) is float) and \
         (type(c) is float):
@@ -80,9 +81,12 @@ def getter_menu(entry_a, entry_b, entry_c, entry_result):
     a = entry_a.get()
     b = entry_b.get()
     c = entry_c.get()
-    a = catch_float_error(a)
-    b = catch_float_error(b)
-    c = catch_float_error(c)
+    try:
+        a = float(a)
+        b = float(b)
+        c = float(c)
+    except ValueError:
+        pass
     if (type(a) is float) and \
         (type(b) is float) and \
         (type(c) is float):
@@ -140,6 +144,15 @@ def insert(event, root, entry_a, entry_b, entry_c, string):
         entry_c.insert(len(entry_c.get()), string)
 
 
+def create_button(canvas, text, bg, activebackground, width=6, height=3,
+                  fg='white', font='Verdana 12', activeforeground='white'):
+    button = tk.Button(canvas, text=text, fg=fg, bg=bg,
+                       font=font, width=width, height=height,
+                       activebackground=activebackground,
+                       activeforeground=activeforeground)
+    return button
+
+
 def draw_canvas(root):
     '''
     Creates canvas, entries, buttons, drop menu
@@ -176,10 +189,7 @@ def draw_canvas(root):
     def handler_sign(event, root=root, entry_a=entry_a,
                 entry_b=entry_b, entry_c=entry_c, string='-'):
         return insert(event, root, entry_a, entry_b, entry_c, string)
-    button_sign = tk.Button(canvas, text='+/-', fg='white', bg='blue4',
-                            font='Verdana 12', width=6, height=3,
-                            activebackground='midnight blue',
-                            activeforeground='white')
+    button_sign = create_button(canvas, '+/-', 'blue4', 'midnight blue')
     button_sign.bind('<Button-1>', handler_sign)
     button_sign.place(x=0, y=80)
 
@@ -187,141 +197,98 @@ def draw_canvas(root):
                           entry_b=entry_b, entry_c=entry_c,
                           entry_result=entry_result):
         return clear_all(event, entry_a, entry_b, entry_c, entry_result)
-    button_ac = tk.Button(canvas, text='AC', fg='white', bg='turquoise2',
-                          font='Verdana 12', width=6, height=3,
-                          activebackground='turquoise3',
-                          activeforeground='white')
+    button_ac = create_button(canvas, 'AC', 'turquoise2', 'turquoise3')
     button_ac.bind('<Button-1>', handler_clear_all)
     button_ac.place(x=75, y=80)
 
     def handler_clear_active_entry(event, root=root, entry_a=entry_a,
                                    entry_b=entry_b, entry_c=entry_c, entry_result=entry_result):
         return clear_active_entry(event, root, entry_a, entry_b, entry_c, entry_result)
-    button_c = tk.Button(canvas, text='C', fg='white', bg='turquoise2',
-                         font='Verdana 12', width=6, height=3,
-                         activebackground='turquoise3',
-                         activeforeground='white')
+    button_c = create_button(canvas, 'C', 'turquoise2', 'turquoise3')
     button_c.bind('<Button-1>', handler_clear_active_entry)
     button_c.place(x=150, y=80)
 
     def handler7(event, root=root, entry_a=entry_a,
                 entry_b=entry_b, entry_c=entry_c, string='7'):
         return insert(event, root, entry_a, entry_b, entry_c, string)
-    button7 = tk.Button(canvas, text='7', fg='white', bg='Deep sky blue',
-                        font='Verdana 12', width=6, height=3,
-                        activebackground='dodger blue',
-                        activeforeground='white')
+    button7 = create_button(canvas, '7', 'Deep sky blue', 'dodger blue')
     button7.bind('<Button-1>', handler7)
     button7.place(x=0, y=160)
 
     def handler8(event, root=root, entry_a=entry_a,
                 entry_b=entry_b, entry_c=entry_c, string='8'):
         return insert(event, root, entry_a, entry_b, entry_c, string)
-    button8 = tk.Button(canvas, text='8', fg='white', bg='Deep sky blue',
-                        font='Verdana 12', width=6, height=3,
-                        activebackground='dodger blue',
-                        activeforeground='white')
+    button8 = create_button(canvas, '8', 'Deep sky blue', 'dodger blue')
     button8.bind('<Button-1>', handler8)
-
     button8.place(x=75, y=160)
 
     def handler9(event, root=root, entry_a=entry_a,
                 entry_b=entry_b, entry_c=entry_c, string='9'):
         return insert(event, root, entry_a, entry_b, entry_c, string)
-    button9 = tk.Button(canvas, text='9', fg='white', bg='Deep sky blue',
-                        font='Verdana 12', width=6, height=3,
-                        activebackground='dodger blue',
-                        activeforeground='white')
+    button9 = create_button(canvas, '9', 'Deep sky blue', 'dodger blue')
     button9.bind('<Button-1>', handler9)
     button9.place(x=150, y=160)
 
     def handler4(event, root=root, entry_a=entry_a,
                 entry_b=entry_b, entry_c=entry_c, string='4'):
         return insert(event, root, entry_a, entry_b, entry_c, string)
-    button4 = tk.Button(canvas, text='4', fg='white', bg='Deep sky blue',
-                        font='Verdana 12', width=6, height=3,
-                        activebackground='dodger blue',
-                        activeforeground='white')
+    button4 = create_button(canvas, '4', 'Deep sky blue', 'dodger blue')
     button4.bind('<Button-1>', handler4)
     button4.place(x=0, y=240)
 
     def handler5(event, root=root, entry_a=entry_a,
                 entry_b=entry_b, entry_c=entry_c, string='5'):
         return insert(event, root, entry_a, entry_b, entry_c, string)
-    button5 = tk.Button(canvas, text='5', fg='white', bg='Deep sky blue',
-                        font='Verdana 12', width=6, height=3,
-                        activebackground='dodger blue',
-                        activeforeground='white')
+    button5 = create_button(canvas, '5', 'Deep sky blue', 'dodger blue')
     button5.bind('<Button-1>', handler5)
     button5.place(x=75, y=240)
 
     def handler6(event, root=root, entry_a=entry_a,
                 entry_b=entry_b, entry_c=entry_c, string='6'):
         return insert(event, root, entry_a, entry_b, entry_c, string)
-    button6 = tk.Button(canvas, text='6', fg='white', bg='Deep sky blue',
-                        font='Verdana 12', width=6, height=3,
-                        activebackground='dodger blue',
-                        activeforeground='white')
+    button6 = create_button(canvas, '6', 'Deep sky blue', 'dodger blue')
     button6.bind('<Button-1>', handler6)
     button6.place(x=150, y=240)
 
     def handler1(event, root=root, entry_a=entry_a,
                 entry_b=entry_b, entry_c=entry_c, string='1'):
         return insert(event, root, entry_a, entry_b, entry_c, string)
-    button1 = tk.Button(canvas, text='1', fg='white', bg='Deep sky blue',
-                        font='Verdana 12', width=6, height=3,
-                        activebackground='dodger blue',
-                        activeforeground='white')
+    button1 = create_button(canvas, '1', 'Deep sky blue', 'dodger blue')
     button1.bind('<Button-1>', handler1)
     button1.place(x=0, y=320)
 
     def handler2(event, root=root, entry_a=entry_a,
                 entry_b=entry_b, entry_c=entry_c, string='2'):
         return insert(event, root, entry_a, entry_b, entry_c, string)
-    button2 = tk.Button(canvas, text='2', fg='white', bg='Deep sky blue',
-                        font='Verdana 12', width=6, height=3,
-                        activebackground='dodger blue',
-                        activeforeground='white')
+    button2 = create_button(canvas, '2', 'Deep sky blue', 'dodger blue')
     button2.bind('<Button-1>', handler2)
     button2.place(x=75, y=320)
 
     def handler3(event, root=root, entry_a=entry_a,
                 entry_b=entry_b, entry_c=entry_c, string='3'):
         return insert(event, root, entry_a, entry_b, entry_c, string)
-    button3 = tk.Button(canvas, text='3', fg='white', bg='Deep sky blue',
-                        font='Verdana 12', width=6, height=3,
-                        activebackground='dodger blue',
-                        activeforeground='white')
+    button3 = create_button(canvas, '3', 'Deep sky blue', 'dodger blue')
     button3.bind('<Button-1>', handler3)
     button3.place(x=150, y=320)
 
     def handler0(event, root=root, entry_a=entry_a,
                 entry_b=entry_b, entry_c=entry_c, string='0'):
         return insert(event, root, entry_a, entry_b, entry_c, string)
-    button0 = tk.Button(canvas, text='0', fg='white', bg='Deep sky blue',
-                        font='Verdana 12', width=6, height=3,
-                        activebackground='dodger blue',
-                        activeforeground='white')
+    button0 = create_button(canvas, '0', 'Deep sky blue', 'dodger blue')
     button0.bind('<Button-1>', handler0)
     button0.place(x=0, y=400)
 
     def handler_point(event, root=root, entry_a=entry_a,
                 entry_b=entry_b, entry_c=entry_c, string='.'):
         return insert(event, root, entry_a, entry_b, entry_c, string)
-    button_point = tk.Button(canvas, text='.', fg='white', bg='blue4',
-                             font='Verdana 12', width=6, height=3,
-                             activebackground='midnight blue',
-                             activeforeground='white')
+    button_point = create_button(canvas, '.', 'blue4', 'midnight blue')
     button_point.bind('<Button-1>', handler_point)
     button_point.place(x=75, y=400)
 
     def handler_getter(event, entry_a=entry_a, entry_b=entry_b,
                        entry_c=entry_c, entry_result=entry_result):
         return getter(event, entry_a, entry_b, entry_c, entry_result)
-    button_equasion = tk.Button(canvas, text='=', fg='white', bg='turquoise2',
-                                font='Verdana 12', width=6, height=3,
-                                activebackground='turquoise3',
-                                activeforeground='white')
+    button_equasion = create_button(canvas, '=', 'turquoise2', 'turquoise3')
     button_equasion.bind('<Button-1>', handler_getter)
     button_equasion.place(x=150, y=400)
 
