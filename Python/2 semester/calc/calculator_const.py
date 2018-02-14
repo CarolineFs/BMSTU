@@ -18,6 +18,7 @@ RESULTS_ACTIVE_COLORS = 'turquoise3'
 BUTTONS_FG_COLOR = 'white'
 BUTTONS_FONT = 'Verdana 12'
 
+# Цвет фона главного окна
 CANVAS_BG = 'black'
 
 
@@ -63,13 +64,16 @@ def show_result(x1, x2, entry_result):
     Выводит на экран конри уравнения
     '''
     if x2 is not None:
-        res = 'x1='+str(x1)+', x2='+str(x2)
+        x1 = '{:0.4f}'.format(x1)
+        x2 = '{:0.4f}'.format(x2)
+        res = 'x1='+x1+', x2='+x2
         entry_result.delete(0, len(entry_result.get()))
         entry_result.insert(0, res)
     else:
         if x1 is not None:
             if x1 != 'Нет действительных корней':
-                res = 'x=' + str(x1)
+                x1 = '{:0.4f}'.format(x1)
+                res = 'x=' + x1
             else:
                 res = 'Нет действительных корней'
         else:
