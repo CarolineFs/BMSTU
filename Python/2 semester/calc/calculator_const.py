@@ -162,7 +162,8 @@ def insert(root, entry_a, entry_b, entry_c, string):
 
 
 def create_button(canvas, text, bg, activebackground, width=6, height=3,
-                  fg=BUTTONS_FG_COLOR, font=BUTTONS_FONT, activeforeground=BUTTONS_FG_COLOR):
+                  fg=BUTTONS_FG_COLOR, font=BUTTONS_FONT,
+                  activeforeground=BUTTONS_FG_COLOR):
     '''
     Получает все необходимые характеристики кнопки и создает ее
     '''
@@ -207,94 +208,113 @@ def draw_canvas(root):
     entry_result.place(x=25, y=35)
 
     # Создаем кнопки
-    button_sign = create_button(canvas, '+/-', SIGNS_ACTIVE_COLOR, SIGNS_PASSIVE_COLOR)
+    button_sign = create_button(canvas, '+/-', SIGNS_ACTIVE_COLOR,
+                                SIGNS_PASSIVE_COLOR)
     button_sign.bind('<Button-1>',
-                     lambda x: insert(root, entry_a, entry_b, entry_c, string='-'))
+                     lambda x: insert(root, entry_a, entry_b,
+                                      entry_c, string='-'))
     button_sign.place(x=0, y=80)
 
 
-    button_ac = create_button(canvas, 'AC', RESULTS_PASSIVE_COLORS, RESULTS_ACTIVE_COLORS)
+    button_ac = create_button(canvas, 'AC', RESULTS_PASSIVE_COLORS,
+                              RESULTS_ACTIVE_COLORS)
     button_ac.bind('<Button-1>',
                    lambda x: clear_all(entry_a, entry_b,
                                        entry_c, entry_result))
     button_ac.place(x=75, y=80)
 
 
-    button_c = create_button(canvas, 'C', RESULTS_PASSIVE_COLORS, RESULTS_ACTIVE_COLORS)
+    button_c = create_button(canvas, 'C', RESULTS_PASSIVE_COLORS,
+                             RESULTS_ACTIVE_COLORS)
     button_c.bind('<Button-1>',
                   lambda x: clear_active_entry(root))
     button_c.place(x=150, y=80)
 
 
-    button7 = create_button(canvas, '7', NUM_BUTTONS_PASSIVE_COLOR, NUM_BUTTONS_ACTIVE_COLOR)
+    button7 = create_button(canvas, '7', NUM_BUTTONS_PASSIVE_COLOR,
+                            NUM_BUTTONS_ACTIVE_COLOR)
     button7.bind('<Button-1>',
                  lambda x: insert(root, entry_a, entry_b, entry_c, string='7'))
     button7.place(x=0, y=160)
 
 
-    button8 = create_button(canvas, '8', NUM_BUTTONS_PASSIVE_COLOR, NUM_BUTTONS_ACTIVE_COLOR)
+    button8 = create_button(canvas, '8', NUM_BUTTONS_PASSIVE_COLOR,
+                            NUM_BUTTONS_ACTIVE_COLOR)
     button8.bind('<Button-1>',
                  lambda x: insert(root, entry_a, entry_b, entry_c, string='8'))
     button8.place(x=75, y=160)
 
 
-    button9 = create_button(canvas, '9', NUM_BUTTONS_PASSIVE_COLOR, NUM_BUTTONS_ACTIVE_COLOR)
+    button9 = create_button(canvas, '9', NUM_BUTTONS_PASSIVE_COLOR,
+                            NUM_BUTTONS_ACTIVE_COLOR)
     button9.bind('<Button-1>',
                  lambda x: insert(root, entry_a, entry_b, entry_c, string='9'))
     button9.place(x=150, y=160)
 
 
-    button4 = create_button(canvas, '4', NUM_BUTTONS_PASSIVE_COLOR, NUM_BUTTONS_ACTIVE_COLOR)
+    button4 = create_button(canvas, '4', NUM_BUTTONS_PASSIVE_COLOR,
+                            NUM_BUTTONS_ACTIVE_COLOR)
     button4.bind('<Button-1>',
                  lambda x: insert(root, entry_a, entry_b, entry_c, string='4'))
     button4.place(x=0, y=240)
 
 
-    button5 = create_button(canvas, '5', NUM_BUTTONS_PASSIVE_COLOR, NUM_BUTTONS_ACTIVE_COLOR)
+    button5 = create_button(canvas, '5', NUM_BUTTONS_PASSIVE_COLOR,
+                            NUM_BUTTONS_ACTIVE_COLOR)
     button5.bind('<Button-1>',
                  lambda x: insert(root, entry_a, entry_b, entry_c, string='5'))
     button5.place(x=75, y=240)
 
 
-    button6 = create_button(canvas, '6', NUM_BUTTONS_PASSIVE_COLOR, NUM_BUTTONS_ACTIVE_COLOR)
+    button6 = create_button(canvas, '6', NUM_BUTTONS_PASSIVE_COLOR,
+                            NUM_BUTTONS_ACTIVE_COLOR)
     button6.bind('<Button-1>',
                  lambda x: insert(root, entry_a, entry_b, entry_c, string='6'))
     button6.place(x=150, y=240)
 
 
-    button1 = create_button(canvas, '1', NUM_BUTTONS_PASSIVE_COLOR, NUM_BUTTONS_ACTIVE_COLOR)
+    button1 = create_button(canvas, '1', NUM_BUTTONS_PASSIVE_COLOR,
+                            NUM_BUTTONS_ACTIVE_COLOR)
     button1.bind('<Button-1>',
                  lambda x: insert(root, entry_a, entry_b, entry_c, string='1'))
     button1.place(x=0, y=320)
 
 
-    button2 = create_button(canvas, '2', NUM_BUTTONS_PASSIVE_COLOR, NUM_BUTTONS_ACTIVE_COLOR)
+    button2 = create_button(canvas, '2', NUM_BUTTONS_PASSIVE_COLOR,
+                            NUM_BUTTONS_ACTIVE_COLOR)
     button2.bind('<Button-1>',
                  lambda x: insert(root, entry_a, entry_b, entry_c, string='2'))
     button2.place(x=75, y=320)
 
 
-    button3 = create_button(canvas, '3', NUM_BUTTONS_PASSIVE_COLOR, NUM_BUTTONS_ACTIVE_COLOR)
+    button3 = create_button(canvas, '3', NUM_BUTTONS_PASSIVE_COLOR,
+                            NUM_BUTTONS_ACTIVE_COLOR)
     button3.bind('<Button-1>',
                  lambda x: insert(root, entry_a, entry_b, entry_c, string='3'))
     button3.place(x=150, y=320)
 
 
-    button0 = create_button(canvas, '0', NUM_BUTTONS_PASSIVE_COLOR, NUM_BUTTONS_ACTIVE_COLOR)
+    button0 = create_button(canvas, '0', NUM_BUTTONS_PASSIVE_COLOR,
+                            NUM_BUTTONS_ACTIVE_COLOR)
     button0.bind('<Button-1>',
                  lambda x: insert(root, entry_a, entry_b, entry_c, string='0'))
     button0.place(x=0, y=400)
 
 
-    button_point = create_button(canvas, '.', SIGNS_ACTIVE_COLOR, SIGNS_PASSIVE_COLOR)
+    button_point = create_button(canvas, '.', SIGNS_ACTIVE_COLOR,
+                                 SIGNS_PASSIVE_COLOR)
     button_point.bind('<Button-1>',
-                      lambda x: insert(root, entry_a, entry_b, entry_c, string='.'))
+                      lambda x: insert(root, entry_a, entry_b,
+                                       entry_c, string='.'))
     button_point.place(x=75, y=400)
 
 
-    button_equasion = create_button(canvas, '=', RESULTS_PASSIVE_COLORS, RESULTS_ACTIVE_COLORS)
+    button_equasion = create_button(canvas, '=',
+                                    RESULTS_PASSIVE_COLORS,
+                                    RESULTS_ACTIVE_COLORS)
     button_equasion.bind('<Button-1>',
-                         lambda x: getter(entry_a, entry_b, entry_c, entry_result))
+                         lambda x: getter(entry_a, entry_b,
+                                          entry_c, entry_result))
     button_equasion.place(x=150, y=400)
 
     # Создаем выпадающее меню
