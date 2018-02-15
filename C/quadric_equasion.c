@@ -1,19 +1,9 @@
 #include <stdio.h>
 #include <math.h>
 
-int main()
+void solve_quadric_equasion(float a, float b, float c)
 {
-    float a, b, c, x1, x2, d;
-
-    printf("Input a: ");
-    scanf("%f", &a);
-
-    printf("Input b: ");
-    scanf("%f", &b);
-
-    printf("Input c: ");
-    scanf("%f", &c);
-
+    float x1, x2, d;
     if (a == 0)
     {
         if (b != 0)
@@ -24,7 +14,7 @@ int main()
         else
         {
             if (c == 0)
-                printf("x ∈ (-∞; +∞)");
+                printf("x can be every real number.");
             else
                 printf("No solutions.");
         }
@@ -47,6 +37,22 @@ int main()
             printf("x = %f \n", x1);
         }
     }
+}
+
+int main()
+{
+    float a, b, c;
+
+    printf("Input a: ");
+    scanf("%f", &a);
+
+    printf("Input b: ");
+    scanf("%f", &b);
+
+    printf("Input c: ");
+    scanf("%f", &c);
+
+    solve_quadric_equasion(a, b, c);
 
     return 0;
 }
