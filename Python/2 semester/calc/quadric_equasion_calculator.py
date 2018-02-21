@@ -1,9 +1,12 @@
+'''
+Каьлкулятор, решающий квадратные уравнения.
+
+Создатель: Овчинникова Анастасия
+'''
+
+
 import tkinter as tk
 from quadric_equasion import solve_quadric_equasion
-
-# CONST
-CANVAS_WIDTH = 225
-CANVAS_HEIGHT = 480
 
 
 def info_program(root):
@@ -159,6 +162,11 @@ def draw_canvas(root):
     Создает холст, поля ввода, кнопки и выпадающее меню
     :return: Nothing
     '''
+    
+    # CONST
+    CANVAS_WIDTH = 225
+    CANVAS_HEIGHT = 480
+
     # Создаем холст
     canvas = tk.Canvas(root, height=CANVAS_HEIGHT,
                        width=CANVAS_WIDTH,
@@ -168,6 +176,7 @@ def draw_canvas(root):
     # Создаем поля ввода 
     entry_a = tk.Entry(canvas, width=4, bg='SkyBlue1')
     entry_a.place(x=25, y=10)
+    entry_a.focus()
 
     canvas.create_text(80, 10, text='x^2+',
                        font='Verdana 12', fill='white',
