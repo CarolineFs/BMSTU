@@ -2,7 +2,10 @@ import tkinter as tk
 from math import trunc
 
 # CONST
-BASE = 8
+BASE8 = 8
+BASE10 = 10
+CANVAS_HEIGHT = 200
+CANVAS_WIDTH = 300
 
 
 def clear_all(entry_8, entry_10):
@@ -26,12 +29,11 @@ def get_8(entry_8, entry_10):
     res = 0
 
     for i in range(len(integer)):
-        res += (int(integer[i]) * (BASE ** i))
+        res += (int(integer[i]) * (BASE8 ** i))
 
     ind = -1
     for i in fraction:
-        res += int(i)*(BASE**ind)
-        print(len(fraction)*-1, ind)
+        res += int(i)*(BASE8**ind)
         '''if ind == -1*len(fraction):
             print('YES')
             break'''
@@ -58,21 +60,21 @@ def get_10(entry_8, entry_10):
     fraction = fraction/(10**len(str(fraction)))
 
     res = ''
-    while integer >= BASE:
-        div = int(integer // BASE)
-        mod = int(integer % BASE)
+    while integer >= BASE8:
+        div = int(integer // BASE8)
+        mod = int(integer % BASE8)
         if div == 0:
             res = str(mod) + res
             break
         else:
             res = str(mod) + res
-        integer //= BASE
+        integer //= BASE8
     res = str(int(integer)) + res
     if fraction > 0:
         res += '.'
         k = 0
         while (fraction > 0) and (k <= 10):
-            fraction *= BASE
+            fraction *= BASE8
             res += str(trunc(fraction))
             fraction = round(float('0.' + str(fraction).split('.')[1]), 10)
             print(fraction)
@@ -90,11 +92,7 @@ def create_button(canvas, text):
     return button
 
 
-def draw_canwas(root):
-    # CONST
-    CANVAS_HEIGHT = 200
-    CANVAS_WIDTH = 300
-
+def draw_canvas(root):
     canvas = tk.Canvas(root, height=CANVAS_HEIGHT,
                        width=CANVAS_WIDTH)
     canvas.grid(row=0, column=0)
@@ -130,7 +128,7 @@ def main():
     root.title('Calculator')
     root.resizable(width=False, height=False)
 
-    draw_canwas(root)
+    draw_canvas(root)
 
     root.mainloop()
 
