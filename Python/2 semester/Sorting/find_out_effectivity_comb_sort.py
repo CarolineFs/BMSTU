@@ -1,10 +1,20 @@
+'''
+Составление таблицы замеров времени сортировки методом расчески
+массивов трех различных размерностей.
+Для каждой размерности массива исследуется случайный массив,
+упорядоченный массив и отсортированный в обратном порядке массив.
+
+Автор: Овчинникова Анастасия
+'''
+
 import tkinter as tk
 import random
 import time
+from tkinter import messagebox
 
 # CONST
-CANVAS_HEIGHT = 400
-CANVAS_WIDTH = 500
+CANVAS_HEIGHT = 500
+CANVAS_WIDTH = 510
 FLOOR_FOR_ARRAYS = -50
 CEIL_FOR_ARRAYS = 50
 STEP_FOR_ARRAYS = 1
@@ -14,11 +24,19 @@ STEP_FOR_ADDING = 1
 
 
 def create_button(canvas, text):
+    ''' Создание кнопки '''
+
     button = tk.Button(canvas, text=text)
     return button
 
 
 def comb_sort(array):
+    '''
+    Сортировка методом расчески
+    :param array: массив
+    :return: отсортированный массив
+    '''
+
     time_begin = time.time()
     alen = len(array)
     gap = (alen*10//13) if alen > 1 else 0
@@ -32,9 +50,7 @@ def comb_sort(array):
                 swapped = 1
         gap = (gap * 10 // 13) or swapped
     time_end = time.time()
-    # print('Me', time_begin, time_end)
-    # print(time_end-time_begin)
-    return array, time_end-time_begin
+    return (time_end-time_begin)*1000
 
 
 def create_labels():
@@ -59,9 +75,16 @@ def create_labels():
     label_reversed.place(x=5, y=210)
     label_random = tk.Label(text='{:^30}'.format('Случайный'))
     label_random.place(x=5, y=250)
+    label_units = tk.Label(text='{:^80}'.format('Время указано в миллисекундах'))
+    label_units.place(x=60, y=290)
 
 
 def create_changeable_labels_text(sizes):
+    '''
+    Выводит header таблицы (размер массивов)
+    :param sizes:
+    :return:
+    '''
     label_min_size = tk.Label(text='{:^30}'.format(str(sizes[0])))
     label_min_size.place(x=135, y=130)
     label_middle_size = tk.Label(text='{:^30}'.format(str(sizes[1])))
@@ -71,11 +94,25 @@ def create_changeable_labels_text(sizes):
 
 
 def create_changeable_label_time(time, x, y):
-    label = tk.Label(text=':^30.10f'.format(time))
+    '''
+    Создает лейблы со временем (таблицу)
+    :param time: время, за которое отсортировался какой-либо массив
+    :param x: координата x, где разместить лэйбл со временем
+    :param y: координата y, где разместить лэйбл со временем
+    :return: ничего
+    '''
+
+    label = tk.Label(text='{:^30.7f}'.format(time))
     label.place(x=x, y=y)
 
 
 def create_random_array(size):
+    '''
+    Генерирует случайный масиив заданной длины
+    :param size: размер массива
+    :return: случайно сгенерированный массив
+    '''
+
     array = []
     for i in range(size):
         array.append(random.randrange(FLOOR_FOR_ARRAYS, CEIL_FOR_ARRAYS,
@@ -84,6 +121,12 @@ def create_random_array(size):
 
 
 def create_straight_sorted_array(size):
+    '''
+    Генерирует случайный отсортированный массив
+    :param size: размер массива
+    :return: случайно сгенерированный отсортированный массив
+    '''
+
     array = [0]
     for i in range(1, size):
         array.append(array[i-1]+random.randrange(FLOOR_FOR_ADDING,
@@ -94,6 +137,12 @@ def create_straight_sorted_array(size):
 
 
 def create_reversed_array(size):
+    '''
+    Генерирует обратно отсортированный случайный массив
+    :param size: размер массива
+    :return: случайно сгенерированный обратно отсортированный массив
+    '''
+
     array = [0]
     for i in range(1, size):
         array.append(array[i - 1] - random.randrange(FLOOR_FOR_ADDING,
@@ -103,28 +152,75 @@ def create_reversed_array(size):
     return array
 
 
+def checker(value, entry):
+    try:
+        value = int(value)
+    except ValueError:
+        entry.delete(0, len(entry.get()))
+        entry['bg'] = 'deep pink'
+    else:
+        entry['bg'] = '#2d2d2d'
+    return value
+
+
+def open_warning_window(message):
+    messagebox.showwarning('Warning', message)
+
+
 def get_size(entry_min, entry_middle, entry_max):
+    '''
+    Считывает введенные в поля ввода данные
+    :param entry_min: поле ввода для размера малого массива
+    :param entry_middle: поле ввода для размера среднего массива
+    :param entry_max: поле ввода для размера большого массива
+    :return:
+    '''
+
     sizes = [0, 0, 0]
-    sizes[0] = int(entry_min.get())
-    sizes[1] = int(entry_middle.get())
-    sizes[2] = int(entry_max.get())
-    create_changeable_labels_text(sizes)
-    for i in sizes:
-        min_array = create_straight_sorted_array(i)
-        middle_array = create_reversed_array(i)
-        max_array = create_random_array(i)
+    sizes[0] = entry_min.get()
+    sizes[1] = entry_middle.get()
+    sizes[2] = entry_max.get()
 
-        min_array, time_for_min = comb_sort(min_array)
-        middle_array, time_for_middle = comb_sort(min_array)
-        max_array, time_for_max = comb_sort(min_array)
-        # ДОДЕЛАТЬ, ВЫВОД ПОДСЧИТАНОГО ВРЕМЕНИ
-        # ПРИДУМАТЬ, КАК ПЕРЕДАТЬ ФУНКЦИИ ВЫВОДА КООРДИНАТЫ
+    sizes[0] = checker(sizes[0], entry_min)
+    sizes[1] = checker(sizes[1], entry_middle)
+    sizes[2] = checker(sizes[2], entry_max)
+    if type(sizes[0]) is int and \
+        type(sizes[1]) is int and \
+        type(sizes[2]) is int:
+        if not (sizes[0] < sizes[1] < sizes[2]):
+            open_warning_window('Размеры массивов указаны неточно! ')
+        create_changeable_labels_text(sizes)
+        x = 135  # Как у вертикальных хэдэров таблицы с длиной массива
+        for i in sizes:
+            y = 170  # Как у горизонтальных хэдэров таблицы с типом массива
+            min_array = create_straight_sorted_array(i)
+            middle_array = create_reversed_array(i)
+            max_array = create_random_array(i)
 
+            time_for_min = comb_sort(min_array)
+            time_for_middle = comb_sort(middle_array)
+            time_for_max = comb_sort(max_array)
 
+            create_changeable_label_time(time_for_min, x, y)
+            y += 40
+            create_changeable_label_time(time_for_middle, x, y)
+            y += 40
+            create_changeable_label_time(time_for_max, x, y)
 
+            x += 125
 
 
 def create_entry(canvas, y, size, x=250):
+    '''
+    Создает поля ввода
+    :param canvas: холст
+    :param y: координата y поля ввода
+    :param size: размер массива по умолчанию выводится в поле ввода при первом
+    запуске программы
+    :param x: координата x поля ввода
+    :return: поле ввода
+    '''
+
     entry = tk.Entry(canvas, width=30)
     entry.insert(0, size)
     entry.place(x=x, y=y)
@@ -150,7 +246,6 @@ def main():
     button_sort = create_button(canvas, 'Go')
     button_sort.bind('<Button-1>', lambda x: get_size(entry_min, entry_middle, entry_max))
     button_sort.place(x=240, y=360)
-
 
     root.mainloop()
 
