@@ -3,7 +3,6 @@
 массивов трех различных размерностей.
 Для каждой размерности массива исследуется случайный массив,
 упорядоченный массив и отсортированный в обратном порядке массив.
-
 Автор: Овчинникова Анастасия
 '''
 
@@ -24,7 +23,7 @@ STEP_FOR_ADDING = 1
 
 
 def create_button(canvas, text):
-    ''' Создание кнопки '''
+    ''' Создание кнопок '''
 
     button = tk.Button(canvas, text=text)
     return button
@@ -50,7 +49,7 @@ def comb_sort(array):
                 swapped = 1
         gap = (gap * 10 // 13) or swapped
     time_end = time.time()
-    return (time_end-time_begin)*1000
+    return (time_end-time_begin)*1000, array
 
 
 def create_labels():
@@ -60,23 +59,27 @@ def create_labels():
     '''
 
     label_min = tk.Label(text='Размер малого массива')
-    label_min.place(x=60, y=10)
+    label_min.place(x=60, y=150)
     label_medium = tk.Label(text='Размер среднего массива')
-    label_medium.place(x=60, y=50)
+    label_medium.place(x=60, y=190)
     label_max = tk.Label(text='Размер большого массива')
-    label_max.place(x=60, y=90)
+    label_max.place(x=60, y=230)
     label_size = tk.Label(text='{:^30}'.format('Тип/Размер'))
-    label_size.place(x=5, y=130)
+    label_size.place(x=5, y=270)
     label_straight_sorted = tk.Label(text='{:^20}'.format('Сортированный\n') +
                                           '{:^20}'.format('в прямом подядке'))
-    label_straight_sorted.place(x=5, y=170)
+    label_straight_sorted.place(x=5, y=310)
     label_reversed = tk.Label(text='{:^20}'.format('Сортированный\n') +
                                    '{:^20}'.format('в обратном подядке'))
-    label_reversed.place(x=5, y=210)
+    label_reversed.place(x=5, y=350)
     label_random = tk.Label(text='{:^30}'.format('Случайный'))
-    label_random.place(x=5, y=250)
+    label_random.place(x=5, y=390)
     label_units = tk.Label(text='{:^80}'.format('Время указано в миллисекундах'))
-    label_units.place(x=60, y=290)
+    label_units.place(x=60, y=430)
+    label_rand_array = tk.Label(text='Случайный массив')
+    label_rand_array.place(x=10, y=10)
+    label_sorted_rand_array = tk.Label(text='Сортировка методом расчески')
+    label_sorted_rand_array.place(x=10, y=50)
 
 
 def create_changeable_labels_text(sizes):
@@ -86,11 +89,11 @@ def create_changeable_labels_text(sizes):
     :return:
     '''
     label_min_size = tk.Label(text='{:^30}'.format(str(sizes[0])))
-    label_min_size.place(x=135, y=130)
+    label_min_size.place(x=135, y=270)
     label_middle_size = tk.Label(text='{:^30}'.format(str(sizes[1])))
-    label_middle_size.place(x=260, y=130)
+    label_middle_size.place(x=260, y=270)
     label_max_size = tk.Label(text='{:^30}'.format(str(sizes[2])))
-    label_max_size.place(x=385, y=130)
+    label_max_size.place(x=385, y=270)
 
 
 def create_changeable_label_time(time, x, y):
@@ -192,14 +195,14 @@ def get_size(entry_min, entry_middle, entry_max):
         create_changeable_labels_text(sizes)
         x = 135  # Как у вертикальных хэдэров таблицы с длиной массива
         for i in sizes:
-            y = 170  # Как у горизонтальных хэдэров таблицы с типом массива
+            y = 310  # Как у горизонтальных хэдэров таблицы с типом массива
             min_array = create_straight_sorted_array(i)
             middle_array = create_reversed_array(i)
             max_array = create_random_array(i)
 
-            time_for_min = comb_sort(min_array)
-            time_for_middle = comb_sort(middle_array)
-            time_for_max = comb_sort(max_array)
+            time_for_min, a = comb_sort(min_array)
+            time_for_middle, a = comb_sort(middle_array)
+            time_for_max, a = comb_sort(max_array)
 
             create_changeable_label_time(time_for_min, x, y)
             y += 40
@@ -227,6 +230,23 @@ def create_entry(canvas, y, size, x=250):
     return entry
 
 
+def convert_array_to_string(array):
+    str_array = ''
+    for i in array:
+        str_array += str(i) + ','
+    str_array = str_array[:-1]
+    return str_array
+
+
+def new_example_array(canvas):
+    rand_array = create_random_array(10)
+    a, sorted_rand_array = comb_sort(rand_array)
+    rand_array = convert_array_to_string(rand_array)
+    sorted_rand_array = convert_array_to_string(sorted_rand_array)
+    entry_rand_array = create_entry(canvas, 10, rand_array)
+    entry_sorted_rand_array = create_entry(canvas, 50, sorted_rand_array)
+
+
 def main():
     root = tk.Tk()
     root.title("Comb sorting")
@@ -237,15 +257,21 @@ def main():
 
     create_labels()
 
-    entry_min = create_entry(canvas, 10, 10)
-    entry_middle = create_entry(canvas, 50, 100)
-    entry_max = create_entry(canvas, 90, 1000)
+    entry_min = create_entry(canvas, 150, 10)
+    entry_middle = create_entry(canvas, 190, 100)
+    entry_max = create_entry(canvas, 230, 1000)
+
+    new_example_array(canvas)
 
     get_size(entry_min, entry_middle, entry_max)
 
-    button_sort = create_button(canvas, 'Go')
+    button_sort = create_button(canvas, 'Пересчитать')
     button_sort.bind('<Button-1>', lambda x: get_size(entry_min, entry_middle, entry_max))
-    button_sort.place(x=240, y=360)
+    button_sort.place(x=200, y=460)
+
+    button_new_array = create_button(canvas, 'Другой массив')
+    button_new_array.bind('<Button-1>', lambda x: new_example_array(canvas))
+    button_new_array.place(x=220, y=90)
 
     root.mainloop()
 
