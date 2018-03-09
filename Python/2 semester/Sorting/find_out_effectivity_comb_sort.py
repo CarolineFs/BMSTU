@@ -20,6 +20,11 @@ STEP_FOR_ARRAYS = 1
 FLOOR_FOR_ADDING = 0
 CEIL_FOR_ADDING = 25
 STEP_FOR_ADDING = 1
+DEFAULT_MIN_ARRAY_LEN = 10
+DEFAULT_MIDDLE_ARRAY_LEN = 100
+DEFAULT_MAX_ARRAY_LEN = 1000
+ERROR_ENTRY_BG = 'deep pink'
+DEFAULT_BG = '#2d2d2d'
 
 
 def create_button(canvas, text):
@@ -160,9 +165,9 @@ def checker(value, entry):
         value = int(value)
     except ValueError:
         entry.delete(0, len(entry.get()))
-        entry['bg'] = 'deep pink'
+        entry['bg'] = ERROR_ENTRY_BG
     else:
-        entry['bg'] = '#2d2d2d'
+        entry['bg'] = DEFAULT_BG
     return value
 
 
@@ -240,10 +245,11 @@ def convert_array_to_string(array):
 
 def new_example_array(canvas):
     rand_array = create_random_array(10)
+    print_rand_array = convert_array_to_string(rand_array)
     a, sorted_rand_array = comb_sort(rand_array)
     rand_array = convert_array_to_string(rand_array)
     sorted_rand_array = convert_array_to_string(sorted_rand_array)
-    entry_rand_array = create_entry(canvas, 10, rand_array)
+    entry_rand_array = create_entry(canvas, 10, print_rand_array)
     entry_sorted_rand_array = create_entry(canvas, 50, sorted_rand_array)
 
 
@@ -257,9 +263,9 @@ def main():
 
     create_labels()
 
-    entry_min = create_entry(canvas, 150, 10)
-    entry_middle = create_entry(canvas, 190, 100)
-    entry_max = create_entry(canvas, 230, 1000)
+    entry_min = create_entry(canvas, 150, DEFAULT_MIN_ARRAY_LEN)
+    entry_middle = create_entry(canvas, 190, DEFAULT_MIDDLE_ARRAY_LEN)
+    entry_max = create_entry(canvas, 230, DEFAULT_MAX_ARRAY_LEN)
 
     new_example_array(canvas)
 
