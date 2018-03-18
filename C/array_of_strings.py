@@ -6,17 +6,28 @@
 
 #include <stdio.h>
 #include <string.h>
-#define LEN 10
+#define ARRAY_LEN 10
 #define MAX_STR_LEN 255
+
+
+char* get_array(char* two_dim_array[ARRAY_LEN][MAX_STR_LEN])
+{
+
+
+    return *two_dim_array;
+}
+
 
 int main()
 {
-    char* str;
-    char* two_dim_array[LEN][MAX_STR_LEN];
-    for (size_t i; i < LEN; i++)
-    {
-        printf("Input new string: ");
-        fgets(two_dim_array[i], 10);
+   char* two_dim_array[ARRAY_LEN][MAX_STR_LEN];
+   //get_array(two_dim_array);
 
-    }
+   for (size_t i = 0; i < ARRAY_LEN; ++i)
+   {
+       printf("Input new string: ");
+       fgets(*two_dim_array[i], MAX_STR_LEN, stdin);
+       fputs(*two_dim_array[i], stdout);
+   }
+   return 0;
 }
