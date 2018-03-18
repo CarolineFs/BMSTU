@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
-import matplotlib
+import matplotlib.pyplot as plt
 from math import sin
 
 # CONST
@@ -21,7 +21,7 @@ def open_warning_window(message):
     messagebox.showwarning('Warning', message)
 
 
-def create_labels(bg='misty rose'):
+def create_static_labels(bg='misty rose'):
     label_epsilon = tk.Label(text='Точность', bg=bg)
     label_epsilon.place(x=10, y=10)
 
@@ -34,8 +34,23 @@ def create_labels(bg='misty rose'):
     label_step = tk.Label(text='Шаг', bg=bg)
     label_step.place(x=10, y=130)
 
+    label_n = tk.Label(text='{:^20}'.format('N'), bg=bg)
+    label_n.place(x=0, y=210)
 
-def create_chart():
+    label_interval = tk.Label(text='{:^20}'.format('Интервал'), bg=bg)
+    label_interval.place(x=100, y=210)
+
+    label_root_value = tk.Label(text='{:^20}'.format('Значение\nкорня'), bg=bg)
+    label_root_value.place(x=200, y=210)
+
+    label_f_root = tk.Label(text='{:^20}'.format('Значение\nфункции\nв корне'), bg=bg)
+    label_f_root.place(x=300, y=210)
+
+    label_iters = tk.Label(text='{:^20}'.format('Количество\nитераций'), bg=bg)
+    label_iters.place(x=400, y=210)
+
+
+def create_chart(canvas):
     pass
 
 
@@ -93,7 +108,7 @@ def main():
 
     canvas = canvas_creator(root)
 
-    create_labels()
+    create_static_labels()
 
     entry_epsilon = create_entry(canvas, 10, 80, 20)
     entry_start = create_entry(canvas, 50, 80, 20)
@@ -108,6 +123,8 @@ def main():
                                             entry_epsilon,
                                             entry_step))
     result_button.place(x=230, y=460)
+
+    create_chart(canvas)
 
     root.mainloop()
 
