@@ -1,4 +1,3 @@
-
 #include <err.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,7 +10,7 @@ int main(void)
     char* two_dim_array [ARRAY_LEN] = {NULL};
     size_t len;
 
-    for (size_t i = 0; i < ARRAY_LEN; ++i)
+    for (unsigned int i = 0; i < ARRAY_LEN; ++i)
     {
         puts("Input a line:");
         if(getline(&two_dim_array[i], &len, stdin) == -1 && ferror(stdin))
