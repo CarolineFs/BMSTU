@@ -46,22 +46,24 @@ int main(void)
     }
 
 
-    /*unsigned int change_idx;
+    unsigned int change_idx;
     size_t l;
-
-    printf("Input the number of string you want to edit: ");
+    printf("\nInput the number of string you want to edit: ");
     scanf("%u", &change_idx);
     //fflush(stdin);
     const size_t idx = change_idx;
     puts("Input a line: ");
-    //fflush(stdin);
+    scanf(" \n");
     if(getline(&two_dim_array[idx], &l, stdin) == -1 && ferror(stdin))
-        err(1, "getline");*/
+        err(1, "getline");
+    //fgets(two_dim_array[idx], 10, stdin);
 
     //compare_strings(two_dim_array);
 
     char* comp_string = NULL;
+    unsigned int flag = 0;
 
+    fflush(stdin);
     puts("\nInput a string you want to compare with strings in the array: ");
     if(getline(&comp_string, &len, stdin) == -1 && ferror(stdin))
         err(1, "getline");
@@ -70,8 +72,11 @@ int main(void)
         if (strcmp(two_dim_array[i], comp_string) == 0)
         {
             printf("Your string coincides with the %u string in the array.\n", i);
+            flag = 1;
             break;
         }
+    if (flag == 0)
+        printf("No such strings in the array.\n");
 
     for (size_t i = 0; i < ARRAY_LEN; ++i)
         free(two_dim_array[i]);
