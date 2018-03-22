@@ -51,6 +51,20 @@ def create_static_labels(bg='misty rose'):
 
     label_error = tk.Label(text='{:^35}'.format('Код ошибки'), bg=bg)
     label_error.place(x=700, y=210)
+    codes_labels = tk.Label(text='Код ошибки', bg=DEFAULT_CANVAS_BG)
+    codes_labels.place(x=460, y=20)
+    
+    code1 = tk.Label(text='00 - без ошибок', bg=DEFAULT_CANVAS_BG)
+    code1.place(x=460, y=40)
+
+    code1 = tk.Label(text='01 - превышение количества итераций', bg=DEFAULT_CANVAS_BG)
+    code1.place(x=460, y=60)
+
+    code1 = tk.Label(text='10 - выход за пределы интервала', bg=DEFAULT_CANVAS_BG)
+    code1.place(x=460, y=80)
+
+    code1 = tk.Label(text='11 - производная равна нулю', bg=DEFAULT_CANVAS_BG)
+    code1.place(x=460, y=100)
 
 
 def create_chart(canvas):
@@ -149,17 +163,6 @@ def main():
     '''frame_error = tk.LabelFrame(canvas, width=350, height=180,
                            bg='RosyBrown1', text='Коды ошибок')
     frame_error.place(x=450, y=10)'''
-
-    codes_labels = tk.Label(text='Код ошибки', bg=DEFAULT_CANVAS_BG)
-    codes_labels.place(x=460, y=20)
-    code1 = tk.Label(text='00 - без ошибок', bg=DEFAULT_CANVAS_BG)
-    code1.place(x=460, y=40)
-    code1 = tk.Label(text='01 - превышение количества итераций', bg=DEFAULT_CANVAS_BG)
-    code1.place(x=460, y=60)
-    code1 = tk.Label(text='10 - выход за пределы интервала', bg=DEFAULT_CANVAS_BG)
-    code1.place(x=460, y=80)
-    code1 = tk.Label(text='11 - производная равна нулю', bg=DEFAULT_CANVAS_BG)
-    code1.place(x=460, y=100)
 
     root.mainloop()
 
