@@ -1,283 +1,165 @@
-'''
-Составление таблицы замеров времени сортировки методом расчески
-массивов трех различных размерностей.
-Для каждой размерности массива исследуется случайный массив,
-упорядоченный массив и отсортированный в обратном порядке массив.
-Автор: Овчинникова Анастасия
-'''
-
 import tkinter as tk
-import random
-import time
 from tkinter import messagebox
+import matplotlib.pyplot as plt
+from math import sin
 
 # CONST
 CANVAS_HEIGHT = 500
-CANVAS_WIDTH = 510
-FLOOR_FOR_ARRAYS = -50
-CEIL_FOR_ARRAYS = 50
-STEP_FOR_ARRAYS = 1
-FLOOR_FOR_ADDING = 0
-CEIL_FOR_ADDING = 25
-STEP_FOR_ADDING = 1
-DEFAULT_MIN_ARRAY_LEN = 10
-DEFAULT_MIDDLE_ARRAY_LEN = 100
-DEFAULT_MAX_ARRAY_LEN = 1000
-ERROR_ENTRY_BG = 'deep pink'
-DEFAULT_BG = '#2d2d2d'
+CANVAS_WIDTH = 840
+DEFAULT_CANVAS_BG = 'misty rose'
+DEFAULT_ENTRY_BG = 'lavender blush'
+DEFAULT_LABEL_BG = 'misty rose'
+DEFAULT_BUTTON_BG = 'lavender blush'
+ERROR_ENTRY_BG = 'pink'
 
 
-def create_button(canvas, text):
-    ''' Создание кнопок '''
-
-    button = tk.Button(canvas, text=text)
-    return button
-
-
-def comb_sort(array):
-    '''
-    Сортировка методом расчески
-    :param array: массив
-    :return: отсортированный массив
-    '''
-
-    time_begin = time.time()
-    alen = len(array)
-    gap = (alen*10//13) if alen > 1 else 0
-    while gap:
-        if 8 < gap < 11:
-            gap = 11
-        swapped = 0
-        for i in range(alen - gap):
-            if array[i+gap] < array[i]:
-                array[i], array[i+gap] = array[i+gap], array[i]
-                swapped = 1
-        gap = (gap * 10 // 13) or swapped
-    time_end = time.time()
-    return (time_end-time_begin)*1000, array
-
-
-def create_labels():
-    '''
-    Создает надписи
-    :return: ничего
-    '''
-
-    label_min = tk.Label(text='Размер малого массива')
-    label_min.place(x=60, y=150)
-    label_medium = tk.Label(text='Размер среднего массива')
-    label_medium.place(x=60, y=190)
-    label_max = tk.Label(text='Размер большого массива')
-    label_max.place(x=60, y=230)
-    label_size = tk.Label(text='{:^30}'.format('Тип/Размер'))
-    label_size.place(x=5, y=270)
-    label_straight_sorted = tk.Label(text='{:^20}'.format('Сортированный\n') +
-                                          '{:^20}'.format('в прямом подядке'))
-    label_straight_sorted.place(x=5, y=310)
-    label_reversed = tk.Label(text='{:^20}'.format('Сортированный\n') +
-                                   '{:^20}'.format('в обратном подядке'))
-    label_reversed.place(x=5, y=350)
-    label_random = tk.Label(text='{:^30}'.format('Случайный'))
-    label_random.place(x=5, y=390)
-    label_units = tk.Label(text='{:^80}'.format('Время указано в миллисекундах'))
-    label_units.place(x=60, y=430)
-    label_rand_array = tk.Label(text='Случайный массив')
-    label_rand_array.place(x=10, y=10)
-    label_sorted_rand_array = tk.Label(text='Сортировка методом расчески')
-    label_sorted_rand_array.place(x=10, y=50)
-
-
-def create_changeable_labels_text(sizes):
-    '''
-    Выводит header таблицы (размер массивов)
-    :param sizes:
-    :return:
-    '''
-    label_min_size = tk.Label(text='{:^30}'.format(str(sizes[0])))
-    label_min_size.place(x=135, y=270)
-    label_middle_size = tk.Label(text='{:^30}'.format(str(sizes[1])))
-    label_middle_size.place(x=260, y=270)
-    label_max_size = tk.Label(text='{:^30}'.format(str(sizes[2])))
-    label_max_size.place(x=385, y=270)
-
-
-def create_changeable_label_time(time, x, y):
-    '''
-    Создает лейблы со временем (таблицу)
-    :param time: время, за которое отсортировался какой-либо массив
-    :param x: координата x, где разместить лэйбл со временем
-    :param y: координата y, где разместить лэйбл со временем
-    :return: ничего
-    '''
-
-    label = tk.Label(text='{:^30.7f}'.format(time))
-    label.place(x=x, y=y)
-
-
-def create_random_array(size):
-    '''
-    Генерирует случайный масиив заданной длины
-    :param size: размер массива
-    :return: случайно сгенерированный массив
-    '''
-
-    array = []
-    for i in range(size):
-        array.append(random.randrange(FLOOR_FOR_ARRAYS, CEIL_FOR_ARRAYS,
-                                      STEP_FOR_ARRAYS))
-    return array
-
-
-def create_straight_sorted_array(size):
-    '''
-    Генерирует случайный отсортированный массив
-    :param size: размер массива
-    :return: случайно сгенерированный отсортированный массив
-    '''
-
-    array = [0]
-    for i in range(1, size):
-        array.append(array[i-1]+random.randrange(FLOOR_FOR_ADDING,
-                                                 CEIL_FOR_ADDING,
-                                                 STEP_FOR_ADDING))
-    array = array[1:]
-    return array
-
-
-def create_reversed_array(size):
-    '''
-    Генерирует обратно отсортированный случайный массив
-    :param size: размер массива
-    :return: случайно сгенерированный обратно отсортированный массив
-    '''
-
-    array = [0]
-    for i in range(1, size):
-        array.append(array[i - 1] - random.randrange(FLOOR_FOR_ADDING,
-                                                     CEIL_FOR_ADDING,
-                                                     STEP_FOR_ADDING))
-    array = array[1:]
-    return array
-
-
-def checker(value, entry):
-    try:
-        value = int(value)
-    except ValueError:
-        entry.delete(0, len(entry.get()))
-        entry['bg'] = ERROR_ENTRY_BG
-    else:
-        entry['bg'] = DEFAULT_BG
-    return value
+def f(x):
+    return sin(x)
 
 
 def open_warning_window(message):
     messagebox.showwarning('Warning', message)
 
 
-def get_size(entry_min, entry_middle, entry_max):
-    '''
-    Считывает введенные в поля ввода данные
-    :param entry_min: поле ввода для размера малого массива
-    :param entry_middle: поле ввода для размера среднего массива
-    :param entry_max: поле ввода для размера большого массива
-    :return:
-    '''
+def create_static_labels(bg='misty rose'):
+    label_epsilon = tk.Label(text='Точность', bg=bg)
+    label_epsilon.place(x=10, y=10)
 
-    sizes = [0, 0, 0]
-    sizes[0] = entry_min.get()
-    sizes[1] = entry_middle.get()
-    sizes[2] = entry_max.get()
+    label_start = tk.Label(text='Начало', bg=bg)
+    label_start.place(x=10, y=50)
 
-    sizes[0] = checker(sizes[0], entry_min)
-    sizes[1] = checker(sizes[1], entry_middle)
-    sizes[2] = checker(sizes[2], entry_max)
-    if type(sizes[0]) is int and \
-        type(sizes[1]) is int and \
-        type(sizes[2]) is int:
-        if not (sizes[0] < sizes[1] < sizes[2]):
-            open_warning_window('Размеры массивов указаны неточно! ')
-        create_changeable_labels_text(sizes)
-        x = 135  # Как у вертикальных хэдэров таблицы с длиной массива
-        for i in sizes:
-            y = 310  # Как у горизонтальных хэдэров таблицы с типом массива
-            min_array = create_straight_sorted_array(i)
-            middle_array = create_reversed_array(i)
-            max_array = create_random_array(i)
+    label_end = tk.Label(text='Конец', bg=bg)
+    label_end.place(x=10, y=90)
 
-            time_for_min, a = comb_sort(min_array)
-            time_for_middle, a = comb_sort(middle_array)
-            time_for_max, a = comb_sort(max_array)
+    label_step = tk.Label(text='Шаг', bg=bg)
+    label_step.place(x=10, y=130)
 
-            create_changeable_label_time(time_for_min, x, y)
-            y += 40
-            create_changeable_label_time(time_for_middle, x, y)
-            y += 40
-            create_changeable_label_time(time_for_max, x, y)
+    label_n = tk.Label(text='{:^35}'.format('№'), bg=bg)
+    label_n.place(x=0, y=210)
 
-            x += 125
+    label_interval = tk.Label(text='{:^35}'.format('Интервал'), bg=bg)
+    label_interval.place(x=140, y=210)
+
+    label_root_value = tk.Label(text='{:^35}'.format('Значение корня'), bg=bg)
+    label_root_value.place(x=280, y=210)
+
+    label_f_root = tk.Label(text='{:^35}'.format('Значение функции'), bg=bg)
+    label_f_root.place(x=420, y=210)
+
+    label_iters = tk.Label(text='{:^35}'.format('№ итерации'), bg=bg)
+    label_iters.place(x=560, y=210)
+
+    label_error = tk.Label(text='{:^35}'.format('Код ошибки'), bg=bg)
+    label_error.place(x=700, y=210)
 
 
-def create_entry(canvas, y, size, x=250):
-    '''
-    Создает поля ввода
-    :param canvas: холст
-    :param y: координата y поля ввода
-    :param size: размер массива по умолчанию выводится в поле ввода при первом
-    запуске программы
-    :param x: координата x поля ввода
-    :return: поле ввода
-    '''
+def create_chart(canvas):
+    pass
 
-    entry = tk.Entry(canvas, width=30)
-    entry.insert(0, size)
+
+def create_entry(canvas, y, x, width):
+    entry = tk.Entry(canvas, width=width, bg=DEFAULT_ENTRY_BG)
     entry.place(x=x, y=y)
     return entry
 
 
-def convert_array_to_string(array):
-    str_array = ''
-    for i in array:
-        str_array += str(i) + ','
-    str_array = str_array[:-1]
-    return str_array
+def create_listbox(canvas, x, y, width=20, height=12):
+    listbox = tk.Listbox(canvas, width=width, height=height,
+                         bg=DEFAULT_ENTRY_BG)
+    listbox.place(x=x, y=y)
+    return listbox
 
 
-def new_example_array(canvas):
-    rand_array = create_random_array(10)
-    print_rand_array = convert_array_to_string(rand_array)
-    a, sorted_rand_array = comb_sort(rand_array)
-    rand_array = convert_array_to_string(rand_array)
-    sorted_rand_array = convert_array_to_string(sorted_rand_array)
-    entry_rand_array = create_entry(canvas, 10, print_rand_array)
-    entry_sorted_rand_array = create_entry(canvas, 50, sorted_rand_array)
+def canvas_creator(root):
+    canvas = tk.Canvas(root,
+                       height=CANVAS_HEIGHT,
+                       width=CANVAS_WIDTH,
+                       bg=DEFAULT_CANVAS_BG)
+    canvas.grid(row=0, column=0)
+    return canvas
+
+
+def checker(value, entry):
+    try:
+        value = float(value)
+    except ValueError:
+        entry.delete(0, len(entry.get()))
+        entry['bg'] = ERROR_ENTRY_BG
+    else:
+        entry['bg'] = DEFAULT_ENTRY_BG
+    return value
+
+
+def get_values(entry_start, entry_end, entry_epsilon, entry_step):
+    a = entry_start.get()
+    b = entry_end.get()
+    eps = entry_epsilon.get()
+    h = entry_step.get()
+    a = checker(a, entry_start)
+    b = checker(b, entry_end)
+    eps = checker(eps, entry_epsilon)
+    h = checker(h, entry_step)
+    if type(a) is float and\
+        type(b) is float and\
+        type(eps) is float and\
+        type(h) is float:
+        if a >= b or h <= 0:
+            entry_start['bg'] = ERROR_ENTRY_BG
+            entry_end['bg'] = ERROR_ENTRY_BG
+            open_warning_window('Начальное значение отрезка больше или равно конечного. ')
+        else:
+            pass
 
 
 def main():
     root = tk.Tk()
-    root.title("Comb sorting")
+    root.title('Roots')
     root.resizable(width=False, height=False)
-    canvas = tk.Canvas(root, height=CANVAS_HEIGHT,
-                       width=CANVAS_WIDTH)
-    canvas.grid(row=1, column=0)
 
-    create_labels()
+    canvas = canvas_creator(root)
 
-    entry_min = create_entry(canvas, 150, DEFAULT_MIN_ARRAY_LEN)
-    entry_middle = create_entry(canvas, 190, DEFAULT_MIDDLE_ARRAY_LEN)
-    entry_max = create_entry(canvas, 230, DEFAULT_MAX_ARRAY_LEN)
+    create_static_labels()
 
-    new_example_array(canvas)
+    entry_epsilon = create_entry(canvas, 10, 80, 20)
+    entry_start = create_entry(canvas, 50, 80, 20)
+    entry_end = create_entry(canvas, 90, 80, 20)
+    entry_step = create_entry(canvas, 130, 80, 20)
 
-    get_size(entry_min, entry_middle, entry_max)
+    listbox_n = create_listbox(canvas, 5, 240)
+    listbox_interval = create_listbox(canvas, 145, 240)
+    listbox_root = create_listbox(canvas, 285, 240)
+    listbox_func = create_listbox(canvas, 425, 240)
+    listbox_iter = create_listbox(canvas, 565, 240)
+    listbox_error = create_listbox(canvas, 705, 240)
 
-    button_sort = create_button(canvas, 'Пересчитать')
-    button_sort.bind('<Button-1>', lambda x: get_size(entry_min, entry_middle, entry_max))
-    button_sort.place(x=200, y=460)
+    result_button = tk.Button(canvas, text='Найти корни',
+                              bg=DEFAULT_BUTTON_BG)
+    result_button.bind('<Button-1>',
+                       lambda x: get_values(entry_start,
+                                            entry_end,
+                                            entry_epsilon,
+                                            entry_step))
+    result_button.place(x=300, y=90)
+    chart_button = tk.Button(canvas, text='Показать график',
+                              bg=DEFAULT_BUTTON_BG)
+    chart_button.bind('<Button-1>',
+                       lambda x: create_chart(canvas))
+    chart_button.place(x=300, y=50)
 
-    button_new_array = create_button(canvas, 'Другой массив')
-    button_new_array.bind('<Button-1>', lambda x: new_example_array(canvas))
-    button_new_array.place(x=220, y=90)
+    '''frame_error = tk.LabelFrame(canvas, width=350, height=180,
+                           bg='RosyBrown1', text='Коды ошибок')
+    frame_error.place(x=450, y=10)'''
+
+    codes_labels = tk.Label(text='Код ошибки', bg=DEFAULT_CANVAS_BG)
+    codes_labels.place(x=460, y=20)
+    code1 = tk.Label(text='00 - без ошибок', bg=DEFAULT_CANVAS_BG)
+    code1.place(x=460, y=40)
+    code1 = tk.Label(text='01 - превышение количества итераций', bg=DEFAULT_CANVAS_BG)
+    code1.place(x=460, y=60)
+    code1 = tk.Label(text='10 - выход за пределы интервала', bg=DEFAULT_CANVAS_BG)
+    code1.place(x=460, y=80)
+    code1 = tk.Label(text='11 - производная равна нулю', bg=DEFAULT_CANVAS_BG)
+    code1.place(x=460, y=100)
 
     root.mainloop()
 
