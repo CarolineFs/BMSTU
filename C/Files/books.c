@@ -50,15 +50,15 @@ int input_error_preventer()
 void write_in_file(char* filename)
 {
     FILE *f;
-    char pos_resp[] = "y";
+    char pos_resp = 'y';
     int copies, year;
-    char response[] = "y";
+    char response = 'y';
 
     f = fopen(filename, "w");
     if (f != NULL)
     {
 
-        while (strcmp(response, pos_resp) == 0)
+        while (pos_resp==response)
         {
             char title[MAX_TITLE_LEN];
 
@@ -161,7 +161,7 @@ void the_longest_title(char* filename)
 }
 
 
-the_earliest_year(char* filename)
+void the_earliest_year(char* filename)
 {
     FILE* f;
     f = fopen(filename, "r");
