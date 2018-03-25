@@ -10,18 +10,18 @@
 #define CURRENT_YEAR 2018
 
 int input_error_preventer();
-void write_in_file();
-void output_from_file();
-void the_longest_title();
-void the_earliest_year();
+void write_in_file(char*);
+void output_from_file(char*);
+void the_longest_title(char*);
+void the_earliest_year(char*);
 
 int main()
 {
-    char filename[] = "/home/bellatrix/Desktop/git/iu7-cprog-labs-2018-ovchinnikovaanastasia/lab_seminar/working_with_files/test.txt";
-
+    //char filename[] = "/home/bellatrix/Desktop/git/iu7-cprog-labs-2018-ovchinnikovaanastasia/lab_seminar/working_with_files/test.txt";
+    char filename[] = "C:\\Users\\novoc\\Desktop\\test.txt";
     write_in_file(filename);
-    //output_from_file(filename);
-    //the_longest_title(filename);
+    output_from_file(filename);
+    the_longest_title(filename);
     the_earliest_year(filename);
 
     return 0;
@@ -51,7 +51,6 @@ void write_in_file(char* filename)
 {
     FILE *f;
     char pos_resp[] = "y";
-    char* title[MAX_TITLE_LEN];
     int copies, year;
     char response[] = "y";
 
@@ -61,13 +60,12 @@ void write_in_file(char* filename)
 
         while (strcmp(response, pos_resp) == 0)
         {
+            char title[MAX_TITLE_LEN];
+
+            fflush(stdin);
+
             printf("Input the title of the book: ");
-            //scanf("%s", title);
-
-            scanf("\n");
-
             fgets(title, MAX_TITLE_LEN, stdin);
-            //fputs(title, stdout);
 
             printf("Input the number of copies sold: ");
             copies = input_error_preventer();
@@ -112,6 +110,7 @@ void output_from_file(char* filename)
 
     if (f != NULL)
     {
+        printf("Information from the file: ");
         while (!feof(f))
         {
             fgets(title, MAX_TITLE_LEN, f);
@@ -136,7 +135,7 @@ void the_longest_title(char* filename)
     FILE* f;
     f = fopen(filename, "r");
     char* longest_title;
-    char* title[MAX_TITLE_LEN];
+    char title[MAX_TITLE_LEN];
     int copies, year;
 
 
@@ -148,10 +147,10 @@ void the_longest_title(char* filename)
             fscanf(f, " %d %d\n", &copies, &year);
             if (sizeof(title)/sizeof(char) >
                  sizeof(longest_title)/sizeof(char))
-                    longest_title = *title;
+                    longest_title = title;
         }
-        printf("The book with the longest title: ");
-        fputs(*longest_title, stdout);
+        printf("\nThe book with the longest title: ");
+        fputs(longest_title, stdout);
     }
     else
     {
@@ -167,7 +166,7 @@ the_earliest_year(char* filename)
     FILE* f;
     f = fopen(filename, "r");
     char* earliest_title;
-    char* title[MAX_TITLE_LEN];
+    char title[MAX_TITLE_LEN];
     int copies, year, earliest_year = CURRENT_YEAR, earliest_copies;
 
 
@@ -177,15 +176,16 @@ the_earliest_year(char* filename)
         {
             fgets(title, MAX_TITLE_LEN, f);
             fscanf(f, " %d %d\n", &copies, &year);
-            if (year < earliest_year)
+            if (year <= earliest_year)
             {
                 earliest_copies = copies;
                 earliest_year = year;
-                earliest_title = *title;
+                earliest_title = title;
             }
         }
         printf("\nThe book with the year of publishing: \n");
         printf("Name: ");
+        fputs(earliest_title, stdout);
         printf("The number of copies sold: %d\n", earliest_copies);
         printf("The year of publishing: %d\n", earliest_year);
     }
