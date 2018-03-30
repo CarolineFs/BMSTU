@@ -6,17 +6,60 @@
 #include <stdio.h>
 #define FILENAME "/home/bellatrix/Desktop/ip.txt"
 #define ARRAY_SIZE 32
+#define OCTET_SIZE 8
 
 void write_in_file();
 int input_error_preventer();
 void find_adress();
 int* mask_array();
+int* ip_array();
+int* adress();
 
 int main()
 {
+    //int ip[ARRAY_SIZE];
     write_in_file();
     find_adress();
     return 0;
+}
+
+
+
+int* binary_code_array(int* ip, int oct, size_t i)
+{
+    while (oct > 0)
+    {
+        ip[i] = oct % 2;
+        --i;
+        oct /= 2;
+    }
+    return ip;
+}
+
+
+int* ip_array(int oct1, int oct2, int oct3, int oct4, int* ip)
+{
+    size_t i = OCTET_SIZE*4 - 1;
+
+    binary_code_array(ip, oct4, i);
+
+    /*i = OCTET_SIZE*3 - 1;
+    binary_code_array(ip, oct3, i);
+
+    i = OCTET_SIZE*2 - 1;
+    binary_code_array(ip, oct2, i);
+
+    i = OCTET_SIZE - 1;
+    binary_code_array(ip, oct1, i);*/
+
+    return ip;
+
+}
+
+
+int* adress()
+{
+
 }
 
 
@@ -49,6 +92,7 @@ void find_adress()
         }
 
         mask_array(mask, mask_a);
+        ip_array(oct1, oct2, oct3, oct4, ip);
     }
     else
     {
