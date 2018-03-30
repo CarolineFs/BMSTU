@@ -4,6 +4,8 @@
  */
 
 #include <stdio.h>
+#include <ctype.h>
+#include <math.h>
 #define FILENAME "/home/bellatrix/Desktop/ip.txt"
 #define ARRAY_SIZE 32
 #define OCTET_SIZE 8
@@ -11,59 +13,65 @@
 void write_in_file();
 int input_error_preventer();
 void find_adress();
-int* mask_array();
-int* ip_array();
-int* adress();
+void mask_array();
+void ip_array();
+void bitwise_multiplication();
+int binary_to_decimal();
 
 int main()
 {
-    //int ip[ARRAY_SIZE];
     write_in_file();
     find_adress();
     return 0;
 }
 
 
-
-int* binary_code_array(int* ip, int oct, size_t i)
+int binary_to_decimal(int* adress, size_t start)
 {
-    while (oct > 0)
+    int res = 0, value = 7;
+    for (size_t i = start; i < start + 8; ++i)
     {
-        ip[i] = oct % 2;
-        --i;
-        oct /= 2;
+       res += adress[i]*pow(2, value--);
     }
-    return ip;
+
+    return res;
 }
 
 
-int* ip_array(int oct1, int oct2, int oct3, int oct4, int* ip)
+void binary_code_array(int* ip, int oct, size_t i)
+{
+    while (oct > 0)
+    {
+        ip[i--] = oct % 2;
+        oct /= 2;
+    }
+}
+
+
+void ip_array(int oct1, int oct2, int oct3, int oct4, int* ip)
 {
     size_t i = OCTET_SIZE*4 - 1;
 
     binary_code_array(ip, oct4, i);
 
-    /*i = OCTET_SIZE*3 - 1;
+    i = OCTET_SIZE*3 - 1;
     binary_code_array(ip, oct3, i);
-
     i = OCTET_SIZE*2 - 1;
     binary_code_array(ip, oct2, i);
-
     i = OCTET_SIZE - 1;
-    binary_code_array(ip, oct1, i);*/
-
-    return ip;
+    binary_code_array(ip, oct1, i);
 
 }
 
 
-int* adress()
+void bitwise_multiplication(int* mask_a, int* ip, int* adress)
 {
-
+    for (size_t i = 0; i < ARRAY_SIZE; ++i)
+        adress[i] = mask_a[i]*ip[i];
 }
 
 
-int* mask_array(int mask, int* mask_a)
+void mask_array(int mask, int* mask_a)
 {
     for (int i = 0; i < ARRAY_SIZE; ++i)
     {
@@ -72,16 +80,16 @@ int* mask_array(int mask, int* mask_a)
         else
             mask_a[i] = 0;
     }
-    return mask_a;
 }
 
 
 void find_adress()
 {
     FILE *f;
-    int mask_a[ARRAY_SIZE], ip[ARRAY_SIZE], adress[ARRAY_SIZE];
+    int mask_a[ARRAY_SIZE] = {0}, ip[ARRAY_SIZE] = {0}, adress[ARRAY_SIZE] = {0};
 
     int oct1, oct2, oct3, oct4, mask;
+    int a_oct1, a_oct2, a_oct3, a_oct4;
 
     f = fopen(FILENAME, "r");
     if (f != NULL)
@@ -89,10 +97,19 @@ void find_adress()
         while (!feof(f))
         {
             fscanf(f, "%d.%d.%d.%d/%d\n", &oct1, &oct2, &oct3, &oct4, &mask);
-        }
+
 
         mask_array(mask, mask_a);
         ip_array(oct1, oct2, oct3, oct4, ip);
+        bitwise_multiplication(mask_a, ip, adress);
+
+        a_oct1 = binary_to_decimal(adress, 0);
+        a_oct2 = binary_to_decimal(adress, 8);
+        a_oct3 = binary_to_decimal(adress, 16);
+        a_oct4 = binary_to_decimal(adress, 24);
+
+        printf("\nNetwork adress: %d.%d.%d.%d\n", a_oct1, a_oct2, a_oct3, a_oct4);
+        }
     }
     else
     {
