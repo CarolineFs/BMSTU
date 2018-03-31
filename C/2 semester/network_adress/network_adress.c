@@ -4,7 +4,6 @@
  */
 
 #include <stdio.h>
-#include <ctype.h>
 #include <math.h>
 #define FILENAME "/home/bellatrix/Desktop/ip.txt"
 #define ARRAY_SIZE 32
@@ -50,17 +49,10 @@ void binary_code_array(int* ip, int oct, size_t i)
 
 void ip_array(int oct1, int oct2, int oct3, int oct4, int* ip)
 {
-    size_t i = OCTET_SIZE*4 - 1;
-
-    binary_code_array(ip, oct4, i);
-
-    i = OCTET_SIZE*3 - 1;
-    binary_code_array(ip, oct3, i);
-    i = OCTET_SIZE*2 - 1;
-    binary_code_array(ip, oct2, i);
-    i = OCTET_SIZE - 1;
-    binary_code_array(ip, oct1, i);
-
+    binary_code_array(ip, oct4, OCTET_SIZE*4 - 1);
+    binary_code_array(ip, oct3, OCTET_SIZE*3 - 1);
+    binary_code_array(ip, oct2, OCTET_SIZE*2 - 1);
+    binary_code_array(ip, oct1, OCTET_SIZE - 1);
 }
 
 
@@ -73,13 +65,8 @@ void bitwise_multiplication(int* mask_a, int* ip, int* adress)
 
 void mask_array(int mask, int* mask_a)
 {
-    for (int i = 0; i < ARRAY_SIZE; ++i)
-    {
-        if (i < mask)
-            mask_a[i] = 1;
-        else
-            mask_a[i] = 0;
-    }
+    for (int i = 0; i < mask; ++i)
+        mask_a[i] = 1;
 }
 
 
@@ -97,18 +84,16 @@ void find_adress()
         while (!feof(f))
         {
             fscanf(f, "%d.%d.%d.%d/%d\n", &oct1, &oct2, &oct3, &oct4, &mask);
+            mask_array(mask, mask_a);
+            ip_array(oct1, oct2, oct3, oct4, ip);
+            bitwise_multiplication(mask_a, ip, adress);
 
+            a_oct1 = binary_to_decimal(adress, 0);
+            a_oct2 = binary_to_decimal(adress, 8);
+            a_oct3 = binary_to_decimal(adress, 16);
+            a_oct4 = binary_to_decimal(adress, 24);
 
-        mask_array(mask, mask_a);
-        ip_array(oct1, oct2, oct3, oct4, ip);
-        bitwise_multiplication(mask_a, ip, adress);
-
-        a_oct1 = binary_to_decimal(adress, 0);
-        a_oct2 = binary_to_decimal(adress, 8);
-        a_oct3 = binary_to_decimal(adress, 16);
-        a_oct4 = binary_to_decimal(adress, 24);
-
-        printf("\nNetwork adress: %d.%d.%d.%d\n", a_oct1, a_oct2, a_oct3, a_oct4);
+            printf("\nNetwork adress: %d.%d.%d.%d\n", a_oct1, a_oct2, a_oct3, a_oct4);
         }
     }
     else
@@ -116,6 +101,18 @@ void find_adress()
         printf("Unable to open file.\n");
     }
     fclose(f);
+}
+
+
+int value_checker(int value, char* message, int comp_lower, int comp_upper)
+{
+    value = input_error_preventer();
+    while ((value < comp_lower) || (value > comp_upper))
+    {
+        printf(message);
+        value = input_error_preventer();
+    }
+    return value;
 }
 
 
@@ -133,44 +130,19 @@ void write_in_file()
         {
 
             printf("Inpit first octet: ");
-            oct1 = input_error_preventer();
-            while ((oct1 < 0) || (oct1 > 255))
-            {
-                printf("Wrong value! Try again: ");
-                oct1 = input_error_preventer();
-            }
+            oct1 = value_checker(oct1, "Wrong value! Try again: ", 0, 255);
 
             printf("Inpit second octet: ");
-            oct2 = input_error_preventer();
-            while ((oct2 < 0) || (oct2 > 255))
-            {
-                printf("Wrong value! Try again: ");
-                oct2 = input_error_preventer();
-            }
+            oct2 = value_checker(oct2, "Wrong value! Try again: ", 0, 255);
 
             printf("Inpit third octet: ");
-            oct3 = input_error_preventer();
-            while ((oct3 < 0) || (oct3 > 255))
-            {
-                printf("Wrong value! Try again: ");
-                oct3 = input_error_preventer();
-            }
+            oct3 = value_checker(oct3, "Wrong value! Try again: ", 0, 255);
 
             printf("Inpit forth octet: ");
-            oct4 = input_error_preventer();
-            while ((oct4 < 0) || (oct4 > 255))
-            {
-                printf("Wrong value! Try again: ");
-                oct4 = input_error_preventer();
-            }
+            oct4 = value_checker(oct4, "Wrong value! Try again: ", 0, 255);
 
             printf("Inpit mask: ");
-            mask = input_error_preventer();
-            while ((mask < 0) || (mask > 32))
-            {
-                printf("Wrong value! Try again: ");
-                mask = input_error_preventer();
-            }
+            mask = value_checker(oct1, "Wrong value! Try again: ", 0, 32);
 
             fprintf(f, "%d.%d.%d.%d/%d\n", oct1, oct2, oct3, oct4, mask);
 
