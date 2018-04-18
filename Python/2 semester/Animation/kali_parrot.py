@@ -1,17 +1,17 @@
 import pygame
-from math import radians
 
 # Define colors
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
+YELLOW = (255, 255, 0)
 PARROT_BODY = [[500, 100], [550, 130], [590, 210], [570, 220], [500, 160]]
 NAIL_RAD_CENTER = [(PARROT_BODY[2][0] + PARROT_BODY[3][0])//2, (PARROT_BODY[2][1] + PARROT_BODY[3][1])//2]
 PARROT_TAIL = [PARROT_BODY[2], PARROT_BODY[3], [600, 400]]
-PARROT_NECK = [[500, 105], [500, 140], [475, 120], [480, 95]]
+PARROT_NECK = [[PARROT_BODY[0][0], PARROT_BODY[0][1] + 5], [PARROT_BODY[4][0], PARROT_BODY[4][1] - 20], [475, 120], [480, 95]]
 PARROT_HEAD = [[460, 95], [480, 95], [475, 120], [460, 140]]
-PARROT_F_WING = []
+PARROT_F_WING = [[530, 145], [530, 155], [540, 165], [690, 165], [565, 120], [545, 125]]
 
 
 def nail_move(arg):
@@ -40,10 +40,27 @@ def main():
         screen.fill(BLACK)
 
         pygame.draw.polygon(screen, WHITE, PARROT_BODY, 3)
-        pygame.draw.polygon(screen, WHITE, PARROT_TAIL, 3)
-        pygame.draw.polygon(screen, WHITE, PARROT_NECK, 3)
-        pygame.draw.polygon(screen, WHITE, PARROT_HEAD, 3)
+        for i in range(len(PARROT_BODY)):
+            PARROT_BODY[i][0] -= 1
+            PARROT_BODY[i][1] += 1
 
+        pygame.draw.polygon(screen, WHITE, PARROT_TAIL, 3)
+        PARROT_TAIL[2][0] -= 1
+        PARROT_TAIL[2][1] += 1
+        pygame.draw.polygon(screen, WHITE, PARROT_NECK, 3)
+        for i in range(len(PARROT_NECK)):
+            PARROT_NECK[i][0] -= 1
+            PARROT_NECK[i][1] += 1
+        pygame.draw.polygon(screen, WHITE, PARROT_HEAD, 3)
+        for i in range(len(PARROT_HEAD)):
+            PARROT_HEAD[i][0] -= 1
+            PARROT_HEAD[i][1] += 1
+
+        for i in range(len(PARROT_F_WING)):
+            PARROT_F_WING[i][0] -= 1
+            PARROT_F_WING[i][1] += 1
+        pygame.draw.polygon(screen, WHITE, PARROT_F_WING, 3)
+        clock.tick(100)
         pygame.display.flip()
 
     pygame.quit()
