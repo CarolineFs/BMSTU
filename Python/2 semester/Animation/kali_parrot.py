@@ -4,8 +4,12 @@ from math import radians
 # Define colors
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
-LAWNGREEN = (124,252,0)
-DARKTURQUOSE = (0,206,209)
+BROWN = (179, 89, 0)
+WATERBLUE = (0, 153, 255)
+DARKGREEN = (0, 128, 0)
+LAWNGREEN = (124, 252, 0)
+GRAYBLUE = (133, 133, 173)
+DARKTURQUOSE = (0, 206, 209)
 SUN_SHADES = ((153, 255, 255), (230, 255, 255), (255, 255, 204),
               (255, 255, 153), (255, 255, 102), (255, 255, 26),
               (255, 255, 0))
@@ -17,61 +21,92 @@ PARROT_TAIL_COLOR = (255, 102, 0)
 
 DRAGON_WING_COLOR = (0, 102, 0)
 
-WING_LEN = 200
-PARROT_BODY = [[500, 100], [550, 130], [590, 210], [570, 220], [500, 160]]
-NAIL_RAD_CENTER = [(PARROT_BODY[2][0] + PARROT_BODY[3][0])//2, (PARROT_BODY[2][1] + PARROT_BODY[3][1])//2]
-PARROT_TAIL = [PARROT_BODY[2], PARROT_BODY[3], [600, 400]]
-PARROT_NECK = [[PARROT_BODY[0][0], PARROT_BODY[0][1] + 5], [PARROT_BODY[4][0], PARROT_BODY[4][1] - 20], [475, 120], [480, 95]]
-PARROT_HEAD = [[460, 95], [480, 95], [475, 120], [460, 140]]
-PARROT_F_WING = [[520, 145], [550, 115], [720, 145]]
+CLOUD1 = [800, 40]
+CLOUD2 = [830, 40]
+CLOUD3 = [860, 40]
+
+
 CENTER = (450, 350)
 
 
-def nail_move(arg):
-    # x [480, 680]
-    pass
+def draw_background(screen):
+    pygame.draw.rect(screen, LAWNGREEN, ((0, 350), (900, 350)), 0)
+    pygame.draw.rect(screen, SUN_SHADES[0], ((0, 0), (900, 350)), 0)
+
+    pygame.draw.circle(screen, WHITE, CLOUD1, 30, 0)
+    pygame.draw.circle(screen, WHITE, CLOUD2, 30, 0)
+    pygame.draw.circle(screen, WHITE, CLOUD3, 30, 0)
+
+    sun_r = 200
+    for sun_color in SUN_SHADES:
+        pygame.draw.circle(screen, sun_color, (50, 50), sun_r, 0)
+        sun_r -= 20
+
+    pygame.draw.polygon(screen, GRAYBLUE, [[50, 350], [250, 50], [450, 350]], 0)
+    pygame.draw.polygon(screen, GRAYBLUE, [[350, 350], [450, 150], [550, 350]], 0)
+
+    pygame.draw.rect(screen, BROWN, [[600, 220], [20, 260]], 0)
+    pygame.draw.ellipse(screen, DARKGREEN, [[560, 120], [100, 200]], 0)
+
+    pygame.draw.polygon(screen, WATERBLUE, [[150, 350], [70, 445], [120, 440]], 0)
+    pygame.draw.polygon(screen, WATERBLUE, [[70, 445], [120, 440], [500, 700], [130, 700]], 0)
+
+
 
 
 def main():
     pygame.init()
     size = (900, 700)
     screen = pygame.display.set_mode(size)
-
     pygame.display.set_caption("My animation")
-
     done = False
 
     clock = pygame.time.Clock()
-    end_line = [20, 20]
-    start_line = [0, 0]
-    increment = 1
 
     q = 0
+    q2 = 0
     inc = 1
+    inc2 = 1
     line1_start = [[240, 440], [100, 360]]
     line2_start = [[240, 440], [100, 430]]
     line3_start = [[240, 440], [110, 470]]
     arcs = [[200, 400], [30, 400], [45, 447], [47, 447], [-36, 477], [-79, 472], [-40, 477]]
     ell_start = [280, 390]
     dragon_eye = [310, 410]
+    parr_body_start = [980, 125]
+    parr_wing = [[990, 135],  [1000, 110], [1020, 100]]
+    parr_head_start = [970, 125]
+    parr_eye = [975, 130]
+    parr_tail = [[1000, 135], [1020, 130], [1020, 140]]
 
     while not done:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 done = True
-        screen.fill(BLACK)
 
-        pygame.draw.rect(screen, LAWNGREEN, ((0, 350), (900, 350)), 0)
-        pygame.draw.rect(screen, SUN_SHADES[0], ((0, 0), (900, 350)), 0)
+        if arcs[6][0] > 900:
+            done = True
 
-        sun_r = 200
-        for sun_color in SUN_SHADES:
-            pygame.draw.circle(screen, sun_color, (50, 50), sun_r, 0)
-            sun_r -= 20
 
+
+        draw_background(screen)
 
         pygame.draw.arc(screen, BLACK, [arcs[0], [200, 200]], radians(90), radians(190), 30)
+
+        if parr_body_start[0] >= 640:
+            pygame.draw.ellipse(screen, PARROT_BODY_COLOR, [parr_body_start, [30, 20]], 0)
+            pygame.draw.ellipse(screen, PARROT_BODY_COLOR, [parr_head_start, [17, 17]], 0)
+            pygame.draw.ellipse(screen, BLACK, [parr_eye, [2, 2]], 0)
+            pygame.draw.polygon(screen, PARROT_F_WING_COLOR, parr_wing, 0)
+            pygame.draw.polygon(screen, PARROT_BODY_COLOR, parr_tail, 0)
+
         pygame.draw.ellipse(screen, BLACK, [ell_start, [80, 50]], 0)
+
+        if ell_start[1] <= 100 and ell_start[0] <= 590:
+            pygame.draw.polygon(screen, SUN_SHADES[0], [[ell_start[0]+40, ell_start[1]+25],
+                                                        [ell_start[0]+80, ell_start[1]+10],
+                                                        [ell_start[0]+80, ell_start[1]+50]])
+
         pygame.draw.arc(screen, BLACK, [arcs[1], [200, 200]], radians(260), radians(360), 30)
         pygame.draw.arc(screen, BLACK, [arcs[2], [150, 150]], radians(225), radians(270), 25)
 
@@ -80,40 +115,82 @@ def main():
         pygame.draw.arc(screen, BLACK, [arcs[5], [150, 150]], radians(45), radians(70), 10)
         pygame.draw.arc(screen, BLACK, [arcs[6], [100, 100]], radians(70), radians(90), 5)
 
+
         pygame.draw.polygon(screen, DRAGON_WING_COLOR, [line1_start[0], line1_start[1], line2_start[1]], 0)
         pygame.draw.polygon(screen, DRAGON_WING_COLOR, [line1_start[0], line2_start[1], line3_start[1]], 0)
 
         pygame.draw.circle(screen, WHITE, dragon_eye, 2, 0)
 
-
         for arc in arcs:
             arc[0] += 1
-            arc[1] -= 1
+            if ell_start[1] >= 100:
+                arc[1] -= 1
 
         ell_start[0] += 1
-        ell_start[1] -= 1
+        if ell_start[1] >= 100:
+            ell_start[1] -= 1
+
+        CLOUD1[0] -= q % 2
+        CLOUD2[0] -= q % 2
+        CLOUD3[0] -= q % 2
+
+        if parr_body_start[0] >= 640:
+            parr_body_start[0] -= 1
+            parr_wing[0][0] -= 1
+            parr_wing[1][0] -= 1
+            parr_wing[2][0] -= 1
+            parr_head_start[0] -= 1
+            parr_eye[0] -= 1
+            parr_tail[0][0] -= 1
+            parr_tail[1][0] -= 1
+            parr_tail[2][0] -= 1
+
 
         dragon_eye[0] += 1
-        dragon_eye[1] -= 1
+        if ell_start[1] >= 100:
+            dragon_eye[1] -= 1
 
         pygame.draw.line(screen, BLACK, line1_start[0], line1_start[1], 7)
         line1_start[0][0] += 1
-        line1_start[0][1] -= 1
+        if ell_start[1] >= 100:
+            line1_start[0][1] -= 1
         line1_start[1][0] += 1
-        line1_start[1][1] -= 1
-
+        if ell_start[1] >= 100:
+            line1_start[1][1] -= 1
 
         pygame.draw.line(screen, BLACK, line2_start[0], line2_start[1], 7)
         line2_start[0][0] += 1
-        line2_start[0][1] -= 1
+        if ell_start[1] >= 100:
+            line2_start[0][1] -= 1
         line2_start[1][0] += 1
-        line2_start[1][1] -= 1
+        if ell_start[1] >= 100:
+            line2_start[1][1] -= 1
 
         pygame.draw.line(screen, BLACK, line3_start[0], line3_start[1], 7)
         line3_start[0][0] += 1
-        line3_start[0][1] -= 1
+        if ell_start[1] >= 100:
+            line3_start[0][1] -= 1
         line3_start[1][0] += 1
-        line3_start[1][1] -= 1
+        if ell_start[1] >= 100:
+            line3_start[1][1] -= 1
+
+        q2 += inc2
+        if inc2 > 0:
+            parr_wing[1][0] += 1
+            parr_wing[1][1] += 1
+
+            parr_wing[2][0] += 1
+            parr_wing[2][1] += 1
+        if inc2 < 0:
+            parr_wing[1][0] -= 1
+            parr_wing[1][1] -= 1
+            parr_wing[2][0] -= 1
+            parr_wing[2][1] -= 1
+
+        if q2 == 15:
+            inc2 = -1
+        if q2 == 0:
+            inc2 = 1
 
         q += inc
         if inc > 0:
@@ -139,45 +216,7 @@ def main():
         if q == 0:
             inc = 1
 
-
-        pygame.draw.polygon(screen, PARROT_BODY_COLOR, PARROT_BODY, 0)
-        for i in range(len(PARROT_BODY)):
-            PARROT_BODY[i][0] -= 1
-            PARROT_BODY[i][1] += 1
-
-        pygame.draw.polygon(screen, PARROT_TAIL_COLOR, PARROT_TAIL, 0)
-        PARROT_TAIL[2][0] -= 1
-        PARROT_TAIL[2][1] += 1
-        pygame.draw.polygon(screen, PARROT_NECK_COLOR, PARROT_NECK, 0)
-        for i in range(len(PARROT_NECK)):
-            PARROT_NECK[i][0] -= 1
-            PARROT_NECK[i][1] += 1
-        pygame.draw.polygon(screen, PARROT_HEAD_COLOR, PARROT_HEAD, 0)
-        for i in range(len(PARROT_HEAD)):
-            PARROT_HEAD[i][0] -= 1
-            PARROT_HEAD[i][1] += 1
-
-        pygame.draw.polygon(screen, PARROT_F_WING_COLOR, PARROT_F_WING, 0)
-        for i in range(len(PARROT_F_WING)):
-            PARROT_F_WING[i][0] -= 1
-            PARROT_F_WING[i][1] += 1
-        q += inc
-        if inc > 0:
-            PARROT_F_WING[1][0] -= 1
-            PARROT_F_WING[1][1] += 1
-            PARROT_F_WING[2][0] -= 1
-            PARROT_F_WING[2][1] += 1
-        if inc < 0:
-            PARROT_F_WING[1][0] += 1
-            PARROT_F_WING[1][1] -= 1
-            PARROT_F_WING[2][0] += 1
-            PARROT_F_WING[2][1] -= 1
-        if q == 60:
-            inc = -1
-        if q == 0:
-            inc = 1
-
-        clock.tick(70)
+        clock.tick(60)
         pygame.display.flip()
 
     pygame.quit()
