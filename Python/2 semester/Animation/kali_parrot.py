@@ -3,6 +3,7 @@ from math import radians
 
 # Define colors
 BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
 LAWNGREEN = (124,252,0)
 DARKTURQUOSE = (0,206,209)
 SUN_SHADES = ((153, 255, 255), (230, 255, 255), (255, 255, 204),
@@ -50,6 +51,9 @@ def main():
     line1_start = [[240, 440], [100, 360]]
     line2_start = [[240, 440], [100, 430]]
     line3_start = [[240, 440], [110, 470]]
+    arcs = [[200, 400], [30, 400], [45, 447], [47, 447], [-36, 477], [-79, 472], [-40, 477]]
+    ell_start = [280, 390]
+    dragon_eye = [310, 410]
 
     while not done:
         for event in pygame.event.get():
@@ -65,19 +69,32 @@ def main():
             pygame.draw.circle(screen, sun_color, (50, 50), sun_r, 0)
             sun_r -= 20
 
-        pygame.draw.arc(screen, BLACK, [[200, 400], [200, 200]], radians(90), radians(190), 30)
-        pygame.draw.ellipse(screen, BLACK, [[280, 390], [80, 50]], 0)
-        pygame.draw.arc(screen, BLACK, [[30, 400], [200, 200]], radians(260), radians(360), 30)
-        pygame.draw.arc(screen, BLACK, [[45, 447], [150, 150]], radians(225), radians(270), 25)
 
-        pygame.draw.arc(screen, BLACK, [[47, 447], [150, 150]], radians(180), radians(225), 20)
-        pygame.draw.arc(screen, BLACK, [[-36, 477], [100, 100]], radians(0), radians(45), 15)
-        pygame.draw.arc(screen, BLACK, [[-79, 472], [150, 150]], radians(45), radians(70), 10)
-        pygame.draw.arc(screen, BLACK, [[-40, 477], [100, 100]], radians(70), radians(90), 5)
+        pygame.draw.arc(screen, BLACK, [arcs[0], [200, 200]], radians(90), radians(190), 30)
+        pygame.draw.ellipse(screen, BLACK, [ell_start, [80, 50]], 0)
+        pygame.draw.arc(screen, BLACK, [arcs[1], [200, 200]], radians(260), radians(360), 30)
+        pygame.draw.arc(screen, BLACK, [arcs[2], [150, 150]], radians(225), radians(270), 25)
+
+        pygame.draw.arc(screen, BLACK, [arcs[3], [150, 150]], radians(180), radians(225), 20)
+        pygame.draw.arc(screen, BLACK, [arcs[4], [100, 100]], radians(0), radians(45), 15)
+        pygame.draw.arc(screen, BLACK, [arcs[5], [150, 150]], radians(45), radians(70), 10)
+        pygame.draw.arc(screen, BLACK, [arcs[6], [100, 100]], radians(70), radians(90), 5)
 
         pygame.draw.polygon(screen, DRAGON_WING_COLOR, [line1_start[0], line1_start[1], line2_start[1]], 0)
         pygame.draw.polygon(screen, DRAGON_WING_COLOR, [line1_start[0], line2_start[1], line3_start[1]], 0)
 
+        pygame.draw.circle(screen, WHITE, dragon_eye, 2, 0)
+
+
+        for arc in arcs:
+            arc[0] += 1
+            arc[1] -= 1
+
+        ell_start[0] += 1
+        ell_start[1] -= 1
+
+        dragon_eye[0] += 1
+        dragon_eye[1] -= 1
 
         pygame.draw.line(screen, BLACK, line1_start[0], line1_start[1], 7)
         line1_start[0][0] += 1
@@ -123,14 +140,7 @@ def main():
             inc = 1
 
 
-        '''pygame.draw.arc(screen, BLACK, [[185, 600], [220, 150]], radians(0), radians(90), 3)
-        pygame.draw.arc(screen, BLACK, [[-15, 580], [600, 500]], radians(40), radians(90), 3)
-        # pygame.draw.arc(screen, BLACK, [[355, 650], [200, 200]], radians(55), radians(125), 3)
-        pygame.draw.arc(screen, BLACK, [[300, 400], [50, 50]], radians(180), radians(270), 3)
-        pygame.draw.line(screen, BLACK, [325, 450], [355, 460], 3)
-        pygame.draw.arc(screen, BLACK, [[355, 450], [50, 20]], radians(110), radians(180), 3)'''
-
-        '''pygame.draw.polygon(screen, PARROT_BODY_COLOR, PARROT_BODY, 0)
+        pygame.draw.polygon(screen, PARROT_BODY_COLOR, PARROT_BODY, 0)
         for i in range(len(PARROT_BODY)):
             PARROT_BODY[i][0] -= 1
             PARROT_BODY[i][1] += 1
@@ -165,7 +175,7 @@ def main():
         if q == 60:
             inc = -1
         if q == 0:
-            inc = 1'''
+            inc = 1
 
         clock.tick(70)
         pygame.display.flip()
