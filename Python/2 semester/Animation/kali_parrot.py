@@ -51,7 +51,7 @@ PARROT_TAIL = [[1000, 135], [1020, 130], [1020, 140]]
 
 
 def draw_background(screen):
-    # Рисуем задний фон
+    # Рисуем задний план
 
     # Небо
     pygame.draw.rect(screen, LAWNGREEN, ((0, 350), (900, 350)), 0)
@@ -108,64 +108,77 @@ def main():
             done = True
 
         draw_background(screen)
-
-        pygame.draw.arc(screen, BLACK, [ARCS[0], [200, 200]], 
-                        radians(90), radians(190), 30)
-
+    
+        # Рисуем птицу, когда дракон поднялся на определенную высоту
         if PARROT_BODY[0] >= 640:
-            pygame.draw.ellipse(screen, PARROT_BODY_COLOR, 
+            pygame.draw.ellipse(screen, PARROT_BODY_COLOR,
                                 [PARROT_BODY, [30, 20]], 0)
-            pygame.draw.ellipse(screen, PARROT_BODY_COLOR, 
+            pygame.draw.ellipse(screen, PARROT_BODY_COLOR,
                                 [PARROT_HEAD, [17, 17]], 0)
-            pygame.draw.ellipse(screen, BLACK, 
+            pygame.draw.ellipse(screen, BLACK,
                                 [PARROT_EYE, [2, 2]], 0)
             pygame.draw.polygon(screen, PARROT_F_WING_COLOR,
                                 PARROT_WING, 0)
-            pygame.draw.polygon(screen, PARROT_BODY_COLOR, 
+            pygame.draw.polygon(screen, PARROT_BODY_COLOR,
                                 PARROT_TAIL, 0)
-
+        
+        # Рисуем голову дракона
         pygame.draw.ellipse(screen, BLACK, [DRAGON_HEAD, [80, 50]], 0)
-
+        
+        # Рисуем открытый рот, когда дракон находится в определенном положении
         if DRAGON_HEAD[1] <= 100 and DRAGON_HEAD[0] <= 590:
-            pygame.draw.polygon(screen, SUN_SHADES[0], 
+            pygame.draw.polygon(screen, SUN_SHADES[0],
                                 [[DRAGON_HEAD[0]+40, DRAGON_HEAD[1]+25],
                                 [DRAGON_HEAD[0]+80, DRAGON_HEAD[1]+10],
                                 [DRAGON_HEAD[0]+80, DRAGON_HEAD[1]+50]])
 
-        pygame.draw.arc(screen, BLACK, [ARCS[1], [200, 200]], 
+        # Рисуем тело дракона
+        pygame.draw.arc(screen, BLACK, [ARCS[0], [200, 200]],
+                        radians(90), radians(190), 30)
+        pygame.draw.arc(screen, BLACK, [ARCS[1], [200, 200]],
                         radians(260), radians(360), 30)
-        pygame.draw.arc(screen, BLACK, [ARCS[2], [150, 150]], 
+        pygame.draw.arc(screen, BLACK, [ARCS[2], [150, 150]],
                         radians(225), radians(270), 25)
-
-        pygame.draw.arc(screen, BLACK, [ARCS[3], [150, 150]], 
+        pygame.draw.arc(screen, BLACK, [ARCS[3], [150, 150]],
                         radians(180), radians(225), 20)
-        pygame.draw.arc(screen, BLACK, [ARCS[4], [100, 100]], 
+        pygame.draw.arc(screen, BLACK, [ARCS[4], [100, 100]],
                         radians(0), radians(45), 15)
-        pygame.draw.arc(screen, BLACK, [ARCS[5], [150, 150]], 
+        pygame.draw.arc(screen, BLACK, [ARCS[5], [150, 150]],
                         radians(45), radians(70), 10)
-        pygame.draw.arc(screen, BLACK, [ARCS[6], [100, 100]], 
+        pygame.draw.arc(screen, BLACK, [ARCS[6], [100, 100]],
                         radians(70), radians(90), 5)
-
-        pygame.draw.polygon(screen, DRAGON_WING_COLOR, 
+        
+        # Рисуем крылья дракона
+        pygame.draw.polygon(screen, DRAGON_WING_COLOR,
                             [WING_LINE1[0], WING_LINE1[1], WING_LINE2[1]], 0)
-        pygame.draw.polygon(screen, DRAGON_WING_COLOR, 
+        pygame.draw.polygon(screen, DRAGON_WING_COLOR,
                             [WING_LINE1[0], WING_LINE2[1], WING_LINE3[1]], 0)
-
+        
+        # Рисуем глаз дракона
         pygame.draw.circle(screen, WHITE, DRAGON_EYE, 2, 0)
-
+        
+        # Рисуем основание крыльев дракона
+        pygame.draw.line(screen, BLACK, WING_LINE1[0], WING_LINE1[1], 7)
+        pygame.draw.line(screen, BLACK, WING_LINE2[0], WING_LINE2[1], 7)
+        pygame.draw.line(screen, BLACK, WING_LINE3[0], WING_LINE3[1], 7)
+        
+        # Задаем движение тела дракона
         for arc in ARCS:
             arc[0] += 1
             if DRAGON_HEAD[1] >= 100:
                 arc[1] -= 1
 
+        # Задаем движение головы дракона
         DRAGON_HEAD[0] += 1
         if DRAGON_HEAD[1] >= 100:
             DRAGON_HEAD[1] -= 1
 
+        # Задаем движение облака
         CLOUD1[0] -= q % 2
         CLOUD2[0] -= q % 2
         CLOUD3[0] -= q % 2
 
+        # Задаем движение птицы, если она не достигла точки, где ее едят
         if PARROT_BODY[0] >= 640:
             PARROT_BODY[0] -= 1
             PARROT_WING[0][0] -= 1
@@ -177,6 +190,7 @@ def main():
             PARROT_TAIL[1][0] -= 1
             PARROT_TAIL[2][0] -= 1
 
+        # Задаем изменение x координат глаза и оснований крыльев
         DRAGON_EYE[0] += 1
         WING_LINE1[0][0] += 1
         WING_LINE1[1][0] += 1
@@ -185,6 +199,7 @@ def main():
         WING_LINE3[0][0] += 1
         WING_LINE3[1][0] += 1
 
+        # Задаем изменение y координат глаза и снований крыльев дракона
         if DRAGON_HEAD[1] >= 100:
             DRAGON_EYE[1] -= 1
             WING_LINE1[0][1] -= 1
@@ -194,15 +209,11 @@ def main():
             WING_LINE2[1][1] -= 1
             WING_LINE3[0][1] -= 1
 
-        pygame.draw.line(screen, BLACK, WING_LINE1[0], WING_LINE1[1], 7)
-        pygame.draw.line(screen, BLACK, WING_LINE2[0], WING_LINE2[1], 7)
-        pygame.draw.line(screen, BLACK, WING_LINE3[0], WING_LINE3[1], 7)
-
+        # Задаем махи крыльями птицы
         q2 += inc2
         if inc2 > 0:
             PARROT_WING[1][0] += 1
             PARROT_WING[1][1] += 1
-
             PARROT_WING[2][0] += 1
             PARROT_WING[2][1] += 1
         if inc2 < 0:
@@ -210,29 +221,25 @@ def main():
             PARROT_WING[1][1] -= 1
             PARROT_WING[2][0] -= 1
             PARROT_WING[2][1] -= 1
-
         if q2 == 15:
             inc2 = -1
         if q2 == 0:
             inc2 = 1
 
+        # Задаем махи крыльями дракона
         q += inc
         if inc > 0:
             WING_LINE1[1][0] += 1
             WING_LINE1[1][1] += 1
-
             WING_LINE2[1][0] += 1
             WING_LINE2[1][1] += 1
-
             WING_LINE3[1][0] += 1
             WING_LINE3[1][1] += 1
         if inc < 0:
             WING_LINE1[1][0] -= 1
             WING_LINE1[1][1] -= 1
-
             WING_LINE2[1][0] -= 1
             WING_LINE2[1][1] -= 1
-
             WING_LINE3[1][0] -= 1
             WING_LINE3[1][1] -= 1
         if q == 60:
