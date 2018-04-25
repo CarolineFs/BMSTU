@@ -83,6 +83,54 @@ def draw_background(screen):
     pygame.draw.polygon(screen, WATERBLUE, [[70, 445], [120, 440], [500, 700], [130, 700]], 0)
 
 
+def draw_dragon(screen):
+    # Рисуем тело дракона
+    pygame.draw.arc(screen, BLACK, [ARCS[0], [200, 200]],
+                    radians(90), radians(190), 30)
+    pygame.draw.arc(screen, BLACK, [ARCS[1], [200, 200]],
+                    radians(260), radians(360), 30)
+    pygame.draw.arc(screen, BLACK, [ARCS[2], [150, 150]],
+                    radians(225), radians(270), 25)
+    pygame.draw.arc(screen, BLACK, [ARCS[3], [150, 150]],
+                    radians(180), radians(225), 20)
+    pygame.draw.arc(screen, BLACK, [ARCS[4], [100, 100]],
+                    radians(0), radians(45), 15)
+    pygame.draw.arc(screen, BLACK, [ARCS[5], [150, 150]],
+                    radians(45), radians(70), 10)
+    pygame.draw.arc(screen, BLACK, [ARCS[6], [100, 100]],
+                    radians(70), radians(90), 5)
+
+    # Рисуем крылья дракона
+    pygame.draw.polygon(screen, DRAGON_WING_COLOR,
+                        [WING_LINE1[0], WING_LINE1[1], WING_LINE2[1]], 0)
+    pygame.draw.polygon(screen, DRAGON_WING_COLOR,
+                        [WING_LINE1[0], WING_LINE2[1], WING_LINE3[1]], 0)
+
+    # Рисуем основание крыльев дракона
+    pygame.draw.line(screen, BLACK, WING_LINE1[0], WING_LINE1[1], 7)
+    pygame.draw.line(screen, BLACK, WING_LINE2[0], WING_LINE2[1], 7)
+    pygame.draw.line(screen, BLACK, WING_LINE3[0], WING_LINE3[1], 7)
+
+    # Рисуем голову дракона
+    pygame.draw.ellipse(screen, BLACK, [DRAGON_HEAD, [80, 50]], 0)
+
+    # Рисуем глаз дракона
+    pygame.draw.circle(screen, WHITE, DRAGON_EYE, 4, 0)
+
+
+def draw_parrot(screen):
+    pygame.draw.ellipse(screen, PARROT_BODY_COLOR,
+                        [PARROT_BODY, [30, 20]], 0)
+    pygame.draw.ellipse(screen, PARROT_BODY_COLOR,
+                        [PARROT_HEAD, [17, 17]], 0)
+    pygame.draw.ellipse(screen, BLACK,
+                        [PARROT_EYE, [2, 2]], 0)
+    pygame.draw.polygon(screen, PARROT_F_WING_COLOR,
+                        PARROT_WING, 0)
+    pygame.draw.polygon(screen, PARROT_BODY_COLOR,
+                        PARROT_TAIL, 0)
+
+
 def main():
     pygame.init()
     screen = pygame.display.set_mode(SIZE)
@@ -107,24 +155,16 @@ def main():
         if ARCS[6][0] > 900:
             done = True
 
+        # Рисуем задний план
         draw_background(screen)
-    
+
         # Рисуем птицу, когда дракон поднялся на определенную высоту
         if PARROT_BODY[0] >= 640:
-            pygame.draw.ellipse(screen, PARROT_BODY_COLOR,
-                                [PARROT_BODY, [30, 20]], 0)
-            pygame.draw.ellipse(screen, PARROT_BODY_COLOR,
-                                [PARROT_HEAD, [17, 17]], 0)
-            pygame.draw.ellipse(screen, BLACK,
-                                [PARROT_EYE, [2, 2]], 0)
-            pygame.draw.polygon(screen, PARROT_F_WING_COLOR,
-                                PARROT_WING, 0)
-            pygame.draw.polygon(screen, PARROT_BODY_COLOR,
-                                PARROT_TAIL, 0)
-        
-        # Рисуем голову дракона
-        pygame.draw.ellipse(screen, BLACK, [DRAGON_HEAD, [80, 50]], 0)
-        
+            draw_parrot(screen)
+
+        # Рисуем дракона
+        draw_dragon(screen)
+
         # Рисуем открытый рот, когда дракон находится в определенном положении
         if DRAGON_HEAD[1] <= 100 and DRAGON_HEAD[0] <= 590:
             pygame.draw.polygon(screen, SUN_SHADES[0],
@@ -132,36 +172,6 @@ def main():
                                 [DRAGON_HEAD[0]+80, DRAGON_HEAD[1]+10],
                                 [DRAGON_HEAD[0]+80, DRAGON_HEAD[1]+50]])
 
-        # Рисуем тело дракона
-        pygame.draw.arc(screen, BLACK, [ARCS[0], [200, 200]],
-                        radians(90), radians(190), 30)
-        pygame.draw.arc(screen, BLACK, [ARCS[1], [200, 200]],
-                        radians(260), radians(360), 30)
-        pygame.draw.arc(screen, BLACK, [ARCS[2], [150, 150]],
-                        radians(225), radians(270), 25)
-        pygame.draw.arc(screen, BLACK, [ARCS[3], [150, 150]],
-                        radians(180), radians(225), 20)
-        pygame.draw.arc(screen, BLACK, [ARCS[4], [100, 100]],
-                        radians(0), radians(45), 15)
-        pygame.draw.arc(screen, BLACK, [ARCS[5], [150, 150]],
-                        radians(45), radians(70), 10)
-        pygame.draw.arc(screen, BLACK, [ARCS[6], [100, 100]],
-                        radians(70), radians(90), 5)
-        
-        # Рисуем крылья дракона
-        pygame.draw.polygon(screen, DRAGON_WING_COLOR,
-                            [WING_LINE1[0], WING_LINE1[1], WING_LINE2[1]], 0)
-        pygame.draw.polygon(screen, DRAGON_WING_COLOR,
-                            [WING_LINE1[0], WING_LINE2[1], WING_LINE3[1]], 0)
-        
-        # Рисуем глаз дракона
-        pygame.draw.circle(screen, WHITE, DRAGON_EYE, 2, 0)
-        
-        # Рисуем основание крыльев дракона
-        pygame.draw.line(screen, BLACK, WING_LINE1[0], WING_LINE1[1], 7)
-        pygame.draw.line(screen, BLACK, WING_LINE2[0], WING_LINE2[1], 7)
-        pygame.draw.line(screen, BLACK, WING_LINE3[0], WING_LINE3[1], 7)
-        
         # Задаем движение тела дракона
         for arc in ARCS:
             arc[0] += 1
