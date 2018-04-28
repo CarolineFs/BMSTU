@@ -1,240 +1,209 @@
-# Нахождение приближенных коней функции методом касательных
-# На графике точками отмечаются экстремумы
-# Овчинникова А.П.
+# Нахождение корней функции методом касателных (Ньютона)
+# Овчинникова Анастасия
 
 import tkinter as tk
-from tkinter import END
+from tkinter import LEFT, END
 from tkinter import messagebox
+from math import sin, cos, log, trunc
 import matplotlib.pyplot as plt
-from math import sin, cos
 import numpy as np
 
-# CONST
-CANVAS_HEIGHT = 500
-CANVAS_WIDTH = 840
-ERROR_ENTRY_BG = 'pink'
-DEFAULT_ENTRY_BG = 'dark grey'
+def Newton(a, b, eps, N, num):
+    err = 0
+    x0 = a
+    count = 1
+    x = x0 - f(x0) / f1(x0) if f1(x0) != 0 else x0 + eps / 10
+    while count < N:
+        x = x0 - f(x0) / f1(x0) if f1(x0) != 0 else x + eps / 10
+        if abs(x - x0) < eps:
+            break
+        x0 = x
+        count += 1
+    if x < a or x > b:
+        x0 = b
+        count = 0
+        x = x0 - f(x0) / f1(x0) if f1(x0) != 0 else x0 - eps / 10
+        while count < N:
+            x = x0 - f(x0) / f1(x0) if f1(x0) != 0 else x - eps / 10
+            if abs(x - x0) < eps: break
+            x0 = x
+            count += 1
 
+    if x >= a and x <= b and (f(a) >= 0 and f(b) <= 0 or f(b) >= 0 and f(a) <= 0):
+        x, a, b = round(x, 9), round(a, 2), round(b, 2)
+        if count == N:
+            err = 2
+            x = 9 * '-'
+        elif f(x) > 1 or f(x) < -1:
+            err = 1
+            x = 9 * '-'
+    # ввод данных в словарь
+    if a != b and ((f(a) >= 0 and f(b) <= 0) or (f(b) >= 0 and f(a) <= 0) or \
+                   round(f(x), 2) == 0 and a <= x <= b):
+        table['n'].append(num)
+        table['ab'].append([(round(a, 8)), (round(b, 8))])
 
-def F(x, n):
-    if n == 0: return sin(2 * x)
-    if n == 1:
-        return 2 * cos(2 * x)
-    else:
-        return -4 * sin(2 * x)
-
-
-def Newton(a, b, eps, n):
-    try:
-        xn = (a + b) / 2
-        xn1 = xn - F(xn, n) / F(xn, n + 1)
-        i = 0
-        while abs(xn1 - xn) > eps:
-            i += 1
-            if i > 3: return xn1, i, 1
-            xn = xn1
-            xn1 = xn - F(xn, n) / F(xn, n + 1)
-            if xn < a or xn > b: return 0, i, 2
-        return xn1, i, 0
-    except ValueError:
-        return 0, i, 3
-
-
-def open_warning_window(message):
-    messagebox.showwarning('Warning', message)
-
-
-def create_static_labels():
-    label_epsilon = tk.Label(text='Точность')
-    label_epsilon.place(x=10, y=10)
-
-    label_start = tk.Label(text='Начало')
-    label_start.place(x=10, y=50)
-
-    label_end = tk.Label(text='Конец')
-    label_end.place(x=10, y=90)
-
-    label_step = tk.Label(text='Шаг')
-    label_step.place(x=10, y=130)
-
-    label_n = tk.Label(text='{:^35}'.format('№'))
-    label_n.place(x=0, y=210)
-
-    label_interval = tk.Label(text='{:^35}'.format('Интервал'))
-    label_interval.place(x=140, y=210)
-
-    label_root_value = tk.Label(text='{:^35}'.format('Значение корня'))
-    label_root_value.place(x=280, y=210)
-
-    label_f_root = tk.Label(text='{:^35}'.format('Значение функции'))
-    label_f_root.place(x=420, y=210)
-
-    label_iters = tk.Label(text='{:^35}'.format('№ итерации'))
-    label_iters.place(x=560, y=210)
-
-    label_error = tk.Label(text='{:^35}'.format('Код ошибки'))
-    label_error.place(x=700, y=210)
-    codes_labels = tk.Label(text='Код ошибки')
-    codes_labels.place(x=460, y=20)
-
-    code1 = tk.Label(text='0 - корень найдет')
-    code1.place(x=460, y=40)
-
-    code1 = tk.Label(text='1 - превышение количества итераций')
-    code1.place(x=460, y=60)
-
-    code1 = tk.Label(text='2 - выход за пределы интервала')
-    code1.place(x=460, y=80)
-
-    code1 = tk.Label(text='3 - производная равна нулю')
-    code1.place(x=460, y=100)
-
-
-def create_entry(canvas, y, x, width):
-    entry = tk.Entry(canvas, width=width, bg=DEFAULT_ENTRY_BG)
-    entry.place(x=x, y=y)
-    return entry
-
-
-def create_listbox(canvas, x, y, sb, width=20, height=12):
-    listbox = tk.Listbox(canvas, width=width, height=height, yscrollcommand=sb.set,
-                         bg=DEFAULT_ENTRY_BG)
-    listbox.place(x=x, y=y)
-    return listbox
-
-
-def canvas_creator(root):
-    canvas = tk.Canvas(root,
-                       height=CANVAS_HEIGHT,
-                       width=CANVAS_WIDTH)
-    canvas.grid(row=0, column=0)
-    return canvas
-
-
-def checker(value, entry):
-    try:
-        value = float(value)
-    except ValueError:
-        entry.delete(0, len(entry.get()))
-        entry['bg'] = ERROR_ENTRY_BG
-    else:
-        entry['bg'] = DEFAULT_ENTRY_BG
-    return value
-
-
-def get_values(canvas, entry_start, entry_end, entry_epsilon, entry_step, button):
-    flag = 0
-    a = entry_start.get()
-    b = entry_end.get()
-    eps = entry_epsilon.get()
-    h = entry_step.get()
-    a = checker(a, entry_start)
-    b = checker(b, entry_end)
-    eps = checker(eps, entry_epsilon)
-    h = checker(h, entry_step)
-    if type(a) is float and type(b) is float and \
-        type(eps) is float and type(h) is float:
-        flag = 1
-
-    if type(a) is float and type(b) is float:
-        if a >= b:
-            entry_start['bg'] = ERROR_ENTRY_BG
-            entry_end['bg'] = ERROR_ENTRY_BG
-            entry_start.delete(0, len(entry_start.get()))
-            entry_end.delete(0, len(entry_end.get()))
-            open_warning_window('Начальное значение отрезка больше или равно конечного!')
-            flag = 0
-    if type(h) is float:
-        if h <= 0:
-            entry_step.delete(0, len(entry_step.get()))
-            entry_step['bg'] = ERROR_ENTRY_BG
-            open_warning_window('Задан шаг меньший или равный нулю!')
-            flag = 0
-    if type(eps) is float:
-        '''if eps == 0:
-            entry_epsilon.delete(0, len(entry_epsilon.get()))
-            open_warning_window('Неправильно указана точность!')
-            entry_epsilon['bg'] = DEFAULT_ENTRY_BG
-            flag = 0'''
-        if eps <= 1e-323:
-            entry_epsilon.delete(0, len(entry_epsilon.get()))
-            open_warning_window('Слишком высокая точность!')
-            entry_epsilon['bg'] = ERROR_ENTRY_BG
-            flag = 0
-    if type(h) is float and type(a) is float and type(b) is float and (h > b-a):
-        entry_start.delete(0, len(entry_epsilon.get()))
-        entry_step.delete(0, len(entry_epsilon.get()))
-        entry_end.delete(0, len(entry_epsilon.get()))
-        open_warning_window('Шаг больше длины отрезка!')
-        entry_step['bg'] = ERROR_ENTRY_BG
-        entry_start['bg'] = ERROR_ENTRY_BG
-        entry_end['bg'] = ERROR_ENTRY_BG
-        flag = 0
-    if flag:
-        n = int((b - a) // h)
-        find_roots(a, b, eps, n, h)
-
-
-def find_roots(a, b, eps, n, h):
-    xkor = []
-    ykor = []
-    xextmas = []
-    yextmas = []
-    for i in range(n+1):
-        a1, b1 = a + i * h, a + (i + 1) * h
-        x, j, code = Newton(a1, b1, eps, 0)
-        xext, jj, codeext = Newton(a1, b1, eps, 1)
-        # print(xext, codeext)
-
-        listbox_n.insert(END, '{:g}'.format(i) + '\n')
-        listbox_interval.insert(END, '[' + '{:g}'.format(a1) + ' ,' + '{:g}'.format(b1) + ']'  '\n')
-        listbox_iter.insert(END, '{:g}'.format(j) + '\n')
-        listbox_error.insert(END, '{:g}'.format(code) + '\n')
-        if not code:
-            xkor.append(x)
-            ykor.append(F(x, n))
-            listbox_root.insert(END, '{:g}'.format(x) + '\n')
-            listbox_func.insert(END, '{:g}'.format(F(x, 0)) + '\n')
+        if x != 9 * '-':
+            if a <= x <= b and num == 0 or a < x <= b and num != 0:
+                if str(x) == '-0.0': x = 0
+                table['fx'].append(f(x))
+                table['x'].append(x)
+            else:
+                err = 3
+                table['x'].append(9 * '-')
+                table['fx'].append(9 * '-')
         else:
-            listbox_root.insert(END, '\n')
-            listbox_func.insert(END, '\n')
+            table['x'].append(9 * '-')
+            table['fx'].append(9 * '-')
+        table['N'].append(count)
+        if type(x) == float:
+            if x < a or x > b: err = 3
+        table['err'].append(err)
 
-        if not codeext and F(xext - eps, 1) * F(xext + eps, 1) < 0:
-            xextmas.append(xext)
-            yextmas.append(F(xext, 0))
+def main(a, b, h, eps, n):
+    table['n'] = []
+    table['ab'] = []
+    table['x'] = []
+    table['fx'] = []
+    table['N'] = []
+    table['err'] =[]
 
-    # Создание графика matplotlib
-    xplot = np.arange(a, b, h)
-    yplot = [F(x, 0) for x in xplot]
+    # Заполняем таблицу
+    a1, b1 = a, b
+    num = 0
+    while a < b:
+        if f(a) == 0 and num != 0:
+            num -= 1
+        else:
+            Newton(a, a + h, eps, n, num)
+        a += h
+        num += 1
 
-    fig = plt.figure()
-    plt.plot(xplot, yplot)
+    listbox_n.delete(0, END)
+    listbox_interval.delete(0, END)
+    listbox_root.delete(0, END)
+    listbox_func.delete(0, END)
+    listbox_iter.delete(0, END)
+    listbox_error.delete(0, END)
 
-    plt.title('Plot')
-    plt.ylabel('sin(2x)')
+    if table['n'] == []:
+        messagebox.showerror("Error", 'На заданном интервале [' + str(a1) + ', ' + \
+                             str(b1) + '] нет корней')
+
+    # вывод таблицы
+    i = 0
+    num = 1
+    for i in range(len(table['n'])):
+        listbox_n.insert(END, ''.join(str(num)).center(3))
+        num += 1
+        listbox_interval.insert(END, '{:30}'.format(str(table['ab'][i])))
+        try:
+            if str(table['x'][i])[0] == '-':
+                listbox_root.insert(END, ''.join \
+                    ('{:g}'.format(table['x'][i]).center(12)))
+            else:
+                listbox_root.insert(END, ''.join('{:g}'.format(table['x'][i]).center(13)))
+            if str(table['fx'][i])[0] == '-':
+                listbox_func.insert(END, ''.join \
+                    ('{:2.2e}'.format(table['fx'][i]).center(12)))
+            else:
+                listbox_func.insert(END, ''.join('{:2.2e}'.format \
+                                              (table['fx'][i]).center(13)))
+        except:
+            listbox_root.insert(END, ''.join(table['x'][i]).center(14))
+            listbox_func.insert(END, ''.join(table['fx'][i]).center(14))
+
+        listbox_iter.insert(END, '{:10}'.format(str(table['N'][i])))
+        listbox_error.insert(END, '{:10}'.format(str(table['err'][i])))
+
+    # Строим график
+    x = []
+    y = []
+    x_e = []
+    y_e = []
+    x_ox = [a1, b1]
+    y_ox = [0, 0]
+    x0 = []
+    y0 = []
+    a2 = a1
+    while a1 < b1:            # нахождение экстремумов
+        if f(a1 - 0.001) < f(a1) and f(a1 + 0.001) < f(a1) or f(a1 - 0.001) > f(a1) \
+                and f(a1 + 0.001) > f(a1):
+            x_e.append(a1)
+            y_e.append(f(a1))
+        # нахождения корней функции
+        if f(a1 - 0.001) < 0 and f(a1 + 0.001) > 0 or f(a1 - 0.001) > 0 \
+                and f(a1 + 0.001) < 0:
+            x0.append(a1)
+            y0.append(f(a1))
+            a += 0.01
+        elif abs(round(float('{:g}'.format(f(a1))), 6)) == 0:
+            x0.append(a1)
+            y0.append(f(a1))
+            a += 0.01
+
+        x.append(a1)
+        y.append(f(a1))
+        a1 += 0.001
+    y_oy = [0, 0]
+    if min(y) < 0:
+        y_oy[0] = min(y)
+    else:
+        y_oy[0] = -0.5
+    if max(y) > 0:
+        y_oy[1] = max(y)
+    else:
+        y_oy[1] = 0.5
+    x_oy = [0, 0]
+
+    plt.clf()
+    if a2 <= 0 <= b1: plt.plot(x_oy, y_oy, color='black')
+    plt.plot(x, y)
+    plt.plot(x_ox, y_ox, color='black')
+    plt.scatter(x_e, y_e, label='экстремумы', color='blue')
+    plt.scatter(x0, y0, label='корни', color='red')
     plt.xlabel('X')
-    for i in range(len(xkor)):
-        plt.scatter(xkor[i], ykor[i])
-    for i in range(len(xextmas)):
-        plt.scatter(xextmas[i], yextmas[i])
+    plt.ylabel('Y')
+    plt.legend()
     plt.grid(True)
-
     plt.show()
 
+def f(x):
+    return sin(x)*x
 
-root = tk.Tk()
-root.title('Roots')
-root.resizable(width=False, height=False)
+def f1(x):
+    return cos(x) * x + sin(x)
 
-canvas = canvas_creator(root)
+def checker(a, b, h, eps, n):
+    if a >= b:
+        messagebox.showerror('Error', 'Неправильно задан интервал!')
+    if h < 0 or h > abs(b-a):
+        messagebox.showerror('Error', 'Неправильно задан шаг!')
+    if eps <= 0:
+        messagebox.showerror('Error', 'Неправильно задана точноть!')
+    if n <= 0 or n - trunc(n) > 0:
+        messagebox.showerror('Error', 'Неправильно задано количество итераций!')
+    else:
+        main(a, b, h, eps, n)
 
-create_static_labels()
+def get_values(event):
+    a = entry_start.get()
+    b = entry_end.get()
+    h = entry_step.get()
+    eps = entry_eps.get()
+    n = entry_iters.get()
+    try:
+        a = float(a)
+        b = float(b)
+        h = float(h)
+        eps = float(eps)
+        n = float(n)
+    except ValueError:
+        messagebox.showerror('Error', 'Внимание, некорректный ввод!')
+    else:
+        checker(a, b, h, eps, n)
 
-entry_epsilon = create_entry(canvas, 10, 80, 20)
-entry_start = create_entry(canvas, 50, 80, 20)
-entry_end = create_entry(canvas, 90, 80, 20)
-entry_step = create_entry(canvas, 130, 80, 20)
-
+# Прокручивание
 def scroll(*args):
     listbox_n.yview(*args)
     listbox_interval.yview(*args)
@@ -243,25 +212,92 @@ def scroll(*args):
     listbox_iter.yview(*args)
     listbox_error.yview(*args)
 
+table = {'n': [], 'ab': [], 'x': [], 'fx': [], 'N': [], 'err': []}
+
+# Создаем окно
+root = tk.Tk()
+root.title('Нахождение корней функции.')
+root.geometry('720x400')
+root.resizable(width=False, height=False)
+
+# Создаем виджеты
 sb = tk.Scrollbar(root, command=scroll)
-sb.place(x=830, y=240)
 
-listbox_n = create_listbox(canvas, 5, 240, sb)
-listbox_interval = create_listbox(canvas, 145, 240, sb)
-listbox_root = create_listbox(canvas, 285, 240, sb)
-listbox_func = create_listbox(canvas, 425, 240, sb)
-listbox_iter = create_listbox(canvas, 565, 240, sb)
-listbox_error = create_listbox(canvas, 705, 240, sb)
+label_start = tk.Label(text='Начало')
+label_end = tk.Label(text='Конец')
+label_step = tk.Label(text='Шаг')
+label_eps = tk.Label(text='Точность')
+label_iters = tk.Label(text='Количество итераций')
 
-result_button = tk.Button(canvas, text='Найти корни')
-result_button.bind('<Button-1>',
-                    lambda x: get_values(canvas,
-                                        entry_start,
-                                        entry_end,
-                                        entry_epsilon,
-                                        entry_step,
-                                        'roots'))
-result_button.place(x=300, y=90)
+label_n = tk.Label(text='N')
+label_interval = tk.Label(text='[a, b]')
+label_root = tk.Label(text='x')
+label_f_root = tk.Label(text='f(x)')
+label_iter = tk.Label(text='№ итерации')
+label_error = tk.Label(text='Код ошибки')
 
+entry_start = tk.Entry(root, width=20)
+entry_end = tk.Entry(root, width=20)
+entry_step = tk.Entry(root, width=20)
+entry_eps = tk.Entry(root, width=20)
+entry_iters = tk.Entry(root, width=20)
+
+listbox_n = tk.Listbox(root, width=10, height=12,
+                       yscrollcommand=sb.set)
+listbox_interval = tk.Listbox(root, width=20, height=12,
+                              yscrollcommand=sb.set)
+listbox_root = tk.Listbox(root, width=20, height=12,
+                          yscrollcommand=sb.set)
+listbox_func = tk.Listbox(root, width=20, height=12,
+                          yscrollcommand=sb.set)
+listbox_iter = tk.Listbox(root, width=20, height=12,
+                          yscrollcommand=sb.set)
+listbox_error = tk.Listbox(root, width=10, height=12,
+                           yscrollcommand=sb.set)
+
+err_codes = tk.Label(root, text='Ошибки:\n0 - корень найден\n'+
+                                '1 - производная равна нулю\n'+
+                                '2 - превышено количество итераций\n'+
+                                '3 - выход за пределы интервала',
+                     justify=LEFT)
+
+button_roots = tk.Button(root, text='Найти корни')
+
+# Bindings
+button_roots.bind('<Button-1>', get_values)
+root.bind('<Return>', get_values)
+
+# Размещаем виджеты
+sb.place(x=700, y=150, height=165)
+
+button_roots.grid(row=2, column=2)
+
+label_start.grid(row=0, column=0, sticky='w')
+label_end.grid(row=1, column=0, sticky='w')
+label_step.grid(row=2, column=0, sticky='w')
+label_eps.grid(row=3, column=0, sticky='w')
+label_iters.grid(row=4, column=0, sticky='w')
+
+entry_start.grid(row=0, column=1, columnspan=1)
+entry_end.grid(row=1, column=1, columnspan=1)
+entry_step.grid(row=2, column=1, columnspan=1)
+entry_eps.grid(row=3, column=1, columnspan=1)
+entry_iters.grid(row=4, column=1, columnspan=1)
+
+err_codes.grid(row=0, column=3, rowspan=4, columnspan=2)
+
+label_n.grid(row=7, column=0, columnspan=1)
+label_interval.grid(row=7, column=1, columnspan=1)
+label_root.grid(row=7, column=2, columnspan=1)
+label_f_root.grid(row=7, column=3, columnspan=1)
+label_iter.grid(row=7, column=4, columnspan=1)
+label_error.grid(row=7, column=5, columnspan=1)
+
+listbox_n.grid(row=9, column=0)
+listbox_interval.grid(row=9, column=1)
+listbox_root.grid(row=9, column=2)
+listbox_func.grid(row=9, column=3)
+listbox_iter.grid(row=9, column=4)
+listbox_error.grid(row=9, column=5)
 
 root.mainloop()
