@@ -86,3 +86,42 @@ class PlaceLayout(Layout):
         pass
 
 
+class VerticalLayout(GridLayout):
+    def __init__(self, start_pos, size, col, parent):
+        GridLayout.__init__(self, start_pos, size, parent, col=col, row=0)
+
+    def set_item(self):
+        pass
+
+    def get_item(self):
+        pass
+
+    def remove_item(self):
+        pass
+
+    def move_item(self):
+        pass
+
+    def clear_all(self):
+        pass
+
+
+class HorizontalLayout(GridLayout):
+    def __init__(self, start_pos, size, row, parent):
+        GridLayout.__init__(self, start_pos, size, parent, row=row, col=0)
+
+    def set_item(self):
+        pass
+
+    def get_item(self):
+        pass
+
+    def remove_item(self):
+        pass
+
+    def move_item(self):
+        pass
+
+    def clear_all(self):
+        pass
+
