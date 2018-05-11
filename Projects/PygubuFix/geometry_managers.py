@@ -22,19 +22,27 @@ class Layout:
         pass
 
     @abstractmethod
-    def get_item(self, obj):
+    def get_item_by_cords(self, pos1, pos2):
         pass
 
     @abstractmethod
-    def remove_item(self):
+    def get_item_cords(self, obj):
         pass
 
     @abstractmethod
-    def move_item(self):
+    def remove_item(self, obj):
+        pass
+
+    @abstractmethod
+    def move_item(self, pos1, pos2, obj):
         pass
 
     @abstractmethod
     def clear_all(self):
+        pass
+
+    @abstractmethod
+    def change_parent(self):
         pass
 
 
@@ -44,16 +52,21 @@ class GridLayout(Layout):
         self.mRow = row
         self.mCol = col
 
-    def set_item(self, col, row, obj):
+    def set_item(self, row, col, obj):
+        obj.grid(row=row, column=col)
+
+    def get_item_by_cords(self, row, col):
         pass
 
-    def get_item(self, obj):
+    def get_item_cords(self, obj):
+        info = obj.grid_info()
+        position = (info['row'], info['column'])
+        return position
+
+    def remove_item(self, obj):
         pass
 
-    def remove_item(self):
-        pass
-
-    def move_item(self):
+    def move_item(self, row, col, obj):
         pass
 
     def resize_grid(self):
@@ -65,6 +78,9 @@ class GridLayout(Layout):
     def remove_grid(self):
         pass
 
+    def change_parent(self):
+        pass
+
 
 class PlaceLayout(Layout):
     def __init__(self, start_pos, size, parent):
@@ -73,57 +89,73 @@ class PlaceLayout(Layout):
     def set_item(self, x, y, obj):
         pass
 
-    def get_item(self, obj):
+    def get_item_by_cords(self, x, y):
         pass
 
-    def remove_item(self):
+    def get_item_cords(self, obj):
         pass
 
-    def move_item(self):
+    def remove_item(self, obj):
+        pass
+
+    def move_item(self, x, y, obj):
         pass
 
     def clear_all(self):
+        pass
+
+    def change_parent(self):
         pass
 
 
 class VerticalLayout(GridLayout):
-    def __init__(self, start_pos, size, col, parent):
-        GridLayout.__init__(self, start_pos, size, parent, col=col, row=0)
-        self.mCol = col
+    def __init__(self, start_pos, size, row, parent):
+        GridLayout.__init__(self, start_pos, size, parent, col=0, row=row)
+        self.mRow = row
 
-    def set_item(self):
+    def set_item(self, row, col, obj):
         pass
 
-    def get_item(self):
+    def get_item_by_cords(self, row, col=0):
         pass
 
-    def remove_item(self):
+    def remove_item(self, obj):
         pass
 
-    def move_item(self):
+    def move_item(self, row, col, obj):
         pass
 
     def clear_all(self):
+        pass
+
+    def change_parent(self):
         pass
 
 
 class HorizontalLayout(GridLayout):
-    def __init__(self, start_pos, size, row, parent):
-        GridLayout.__init__(self, start_pos, size, parent, row=row, col=0)
-        self.mRow = row
+    def __init__(self, start_pos, size, col, parent):
+        GridLayout.__init__(self, start_pos, size, parent, row=0, col=col)
+        self.mCol = col
 
-    def set_item(self):
+    def set_item(self, row, col, obj):
         pass
 
-    def get_item(self):
+    def get_item_by_cords(self, col, row=0):
         pass
 
-    def remove_item(self):
+    def get_item_cords(self, obj):
         pass
 
-    def move_item(self):
+    def remove_item(self, obj):
+        pass
+
+    def move_item(self, row, col, obj):
         pass
 
     def clear_all(self):
         pass
+
+    def change_parent(self):
+        pass
+
 
