@@ -26,7 +26,7 @@ class Layout:
         pass
 
     @abstractmethod
-    def get_item_cords(self, obj):
+    def get_item_position(self, obj):
         pass
 
     @abstractmethod
@@ -58,13 +58,14 @@ class GridLayout(Layout):
     def get_item_by_cords(self, row, col):
         pass
 
-    def get_item_cords(self, obj):
+    def get_item_position(self, obj):
         info = obj.grid_info()
         position = (info['row'], info['column'])
         return position
 
     def remove_item(self, obj):
-        pass
+        obj.grid_forget()
+        return obj
 
     def move_item(self, row, col, obj):
         pass
@@ -87,12 +88,12 @@ class PlaceLayout(Layout):
         Layout.__init__(self, start_pos, size, parent)
 
     def set_item(self, x, y, obj):
-        pass
+        obj.place(x=x, y=y)
 
     def get_item_by_cords(self, x, y):
         pass
 
-    def get_item_cords(self, obj):
+    def get_item_position(self, obj):
         pass
 
     def remove_item(self, obj):
@@ -114,13 +115,19 @@ class VerticalLayout(GridLayout):
         self.mRow = row
 
     def set_item(self, row, col, obj):
-        pass
+        obj.grid(row=row, column=col)
 
     def get_item_by_cords(self, row, col=0):
         pass
 
+    def get_item_position(self, obj):
+        info = obj.grid_info()
+        position = (info['row'], info['column'])
+        return position
+
     def remove_item(self, obj):
-        pass
+        obj.grid_forget()
+        return obj
 
     def move_item(self, row, col, obj):
         pass
@@ -138,16 +145,19 @@ class HorizontalLayout(GridLayout):
         self.mCol = col
 
     def set_item(self, row, col, obj):
-        pass
+        obj.grid(row=row, column=col)
 
     def get_item_by_cords(self, col, row=0):
         pass
 
-    def get_item_cords(self, obj):
-        pass
+    def get_item_position(self, obj):
+        info = obj.grid_info()
+        position = (info['row'], info['column'])
+        return position
 
     def remove_item(self, obj):
-        pass
+        obj.grid_forget()
+        return obj
 
     def move_item(self, row, col, obj):
         pass
