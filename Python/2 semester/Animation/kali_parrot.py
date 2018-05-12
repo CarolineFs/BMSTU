@@ -121,58 +121,71 @@ class PlaceLayout(Layout):
         Layout.__init__(self, start_pos, size, parent)
 
     def set_item(self, x, y, obj):
-        obj.place(x=x, y=y)
+        try:
+            obj.place(x=x, y=y)
+        except AttributeError:
+            return None
 
     def get_item_by_position(self, x, y):
-        pass
+        ''' Возвращает объект на искомой позиции либо None '''
+        try:
+            for item in self.frame.place_slaves():
+                info = item.place_info()
+                if info['x'] == x and info['y'] == y:
+                    return item
+        finally:
+            return None
 
     def get_item_position(self, obj):
-        pass
+        ''' Возвращает позицию объекта в виде (ряд, столбец) либо None'''
+        try:
+            info = obj.place_info()
+        except AttributeError:
+            return None
+        else:
+            position = (info['x'], info['y'])
+            if len(info) == 0:
+                return None
+        return position
 
     def remove_item(self, obj):
-        pass
+        try:
+            obj.place_forget()
+            return obj
+        except AttributeError:
+            return None
 
-    def move_item(self, x, y, obj):
-        pass
+    def move_item(self, new_x, new_y, obj):
+        try:
+            obj.place_forget()
+            obj.grid(row=new_x, col=new_y)
+        except AttributeError:
+            return None
 
     def clear_all(self):
-        pass
+        forgot_items = []
+        try:
+            for item in self.frame.place_slaves():
+                item.place_forget()
+                forgot_items.append(item)
+        except AttributeError:
+            return None
+        return forgot_items
 
     def change_layout_parent(self, new_parent):
-        pass
+        self.mParent = new_parent
 
     def move_layout(self, new_x, new_y):
-        pass
+        self.mStartPos[0] = new_x
+        self.mStartPos[1] = new_y
 
 
 class VerticalLayout(GridLayout):
     def __init__(self, start_pos, size, row, parent):
         GridLayout.__init__(self, start_pos, size, parent, col=0, row=row)
-        self.mRow = row
 
-    def set_item(self, row, col, obj):
+    def set_item(self, row, obj, col=0):
         obj.grid(row=row, column=col)
-
-    def get_item_by_position(self, row, col=0):
-        pass
-
-    def get_item_position(self, obj):
-        info = obj.grid_info()
-        position = (info['row'], info['column'])
-        return position
-
-    def remove_item(self, obj):
-        obj.grid_forget()
-        return obj
-
-    def move_item(self, row, col, obj):
-        pass
-
-    def clear_all(self):
-        pass
-
-    def change_parent(self):
-        pass
 
 
 class HorizontalLayout(GridLayout):
@@ -182,37 +195,4 @@ class HorizontalLayout(GridLayout):
 
     def set_item(self, row, col, obj):
         obj.grid(row=row, column=col)
-
-    def get_item_by_position(self, col, row=0):
-        pass
-
-    def get_item_position(self, obj):
-        info = obj.grid_info()
-        position = (info['row'], info['column'])
-        return position
-
-    def remove_item(self, obj):
-        obj.grid_forget()
-        return obj
-
-    def move_item(self, row, col, obj):
-        pass
-
-    def clear_all(self):
-        pass
-
-    def change_parent(self):
-        pass
-
-
-root = tk.Tk()
-t = tk.Frame(root, height=-20)
-t.grid(row=0, column=0)
-root.mainloop()
-
-
-
-
-
-
-
+        
