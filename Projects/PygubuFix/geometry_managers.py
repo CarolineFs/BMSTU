@@ -56,6 +56,7 @@ class GridLayout(Layout):
         obj.grid(row=row, column=col)
 
     def get_item_by_position(self, row, col):
+        ''' Возвращает объект на искомой позиции либо None '''
         for item in self.frame.grid_slaves():
             info = item.grid_info()
             if info['row'] == row and info['column'] == col:
@@ -63,8 +64,15 @@ class GridLayout(Layout):
         return None
 
     def get_item_position(self, obj):
-        info = obj.grid_info()
-        position = (info['row'], info['column'])
+        ''' Возвращает позицию объекта в виде (ряд, столбец) либо None'''
+        try:
+            info = obj.grid_info()
+        except AttributeError:
+            return None
+        else:
+            position = (info['row'], info['column'])
+            if len(info) == 0:
+                return None
         return position
 
     def remove_item(self, obj):
@@ -182,13 +190,10 @@ b.grid(row=0, column=0)
 b2 = tk.Button(t, text='zzz')
 b2.grid(row=1, column=1)
 
-b3 = tk.Button(t, text='xxx')
-b3.grid(row=2, column=3)
+b3 = tk.Button(root, text='xxx')
+b3.place(x=0,y=0)
+a = 9
+r = a.grid_info()
+print(r)
 
-for i in t.grid_slaves():
-    r = i.grid_info()
-    print(r)
 
-'''x = b.grid_info()
-print(x)
-root.mainloop()'''
