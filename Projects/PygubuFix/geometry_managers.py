@@ -22,7 +22,7 @@ class Layout:
         pass
 
     @abstractmethod
-    def get_item_by_cords(self, pos1, pos2):
+    def get_item_by_position(self, pos1, pos2):
         pass
 
     @abstractmethod
@@ -55,8 +55,12 @@ class GridLayout(Layout):
     def set_item(self, row, col, obj):
         obj.grid(row=row, column=col)
 
-    def get_item_by_cords(self, row, col):
-        pass
+    def get_item_by_position(self, row, col):
+        for item in self.frame.grid_slaves():
+            info = item.grid_info()
+            if info['row'] == row and info['column'] == col:
+                return item
+        return None
 
     def get_item_position(self, obj):
         info = obj.grid_info()
@@ -90,7 +94,7 @@ class PlaceLayout(Layout):
     def set_item(self, x, y, obj):
         obj.place(x=x, y=y)
 
-    def get_item_by_cords(self, x, y):
+    def get_item_by_position(self, x, y):
         pass
 
     def get_item_position(self, obj):
@@ -117,7 +121,7 @@ class VerticalLayout(GridLayout):
     def set_item(self, row, col, obj):
         obj.grid(row=row, column=col)
 
-    def get_item_by_cords(self, row, col=0):
+    def get_item_by_position(self, row, col=0):
         pass
 
     def get_item_position(self, obj):
@@ -147,7 +151,7 @@ class HorizontalLayout(GridLayout):
     def set_item(self, row, col, obj):
         obj.grid(row=row, column=col)
 
-    def get_item_by_cords(self, col, row=0):
+    def get_item_by_position(self, col, row=0):
         pass
 
     def get_item_position(self, obj):
@@ -169,3 +173,22 @@ class HorizontalLayout(GridLayout):
         pass
 
 
+root = tk.Tk()
+t = tk.Frame(root)
+t.grid(row=0, column=0)
+b = tk.Button(t, text='rrr')
+b.grid(row=0, column=0)
+
+b2 = tk.Button(t, text='zzz')
+b2.grid(row=1, column=1)
+
+b3 = tk.Button(t, text='xxx')
+b3.grid(row=2, column=3)
+
+for i in t.grid_slaves():
+    r = i.grid_info()
+    print(r)
+
+'''x = b.grid_info()
+print(x)
+root.mainloop()'''
