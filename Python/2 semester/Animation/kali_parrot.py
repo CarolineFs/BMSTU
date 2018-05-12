@@ -1,266 +1,217 @@
-import pygame
-from math import radians
+import tkinter as tk
+from abc import ABCMeta, abstractmethod
 
-# Определим некоторые цвета
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
-BROWN = (179, 89, 0)
-WATERBLUE = (0, 153, 255)
-DARKGREEN = (0, 128, 0)
-LAWNGREEN = (124, 252, 0)
-GRAYBLUE = (133, 133, 173)
-DARKTURQUOSE = (0, 206, 209)
-SUN_SHADES = ((153, 255, 255), (230, 255, 255), (255, 255, 204),
-              (255, 255, 153), (255, 255, 102), (255, 255, 26),
-              (255, 255, 0))
-PARROT_BODY_COLOR = (255, 153, 51)
-PARROT_F_WING_COLOR = (255, 204, 0)
-DRAGON_WING_COLOR = (0, 102, 0)
+class Layout:
+    __metaclass__ = ABCMeta
 
-# Определим начальные координаты некоторых фигур
-# Координаты центров окружностей, образущих облако
-CLOUD1 = [800, 40]
-CLOUD2 = [830, 40]
-CLOUD3 = [860, 40]
+    def __init__(self, start_pos, size, parent):
+        self.mStartPos = start_pos
+        self.mSize = size
+        self.mParent = parent
 
-# Размер окна
-SIZE = (900, 700)
+        self.frame = tk.Frame(self.mParent,
+                              height=self.mSize[1],
+                              width=self.mSize[0])
 
-# Название окна
-WINDOW_NAME = "My animation"
+        self.frame.place(x=self.mStartPos[0],
+                         y=self.mStartPos[1])
 
-# Крылья дракона
-WING_LINE1 = [[240, 440], [100, 360]]
-WING_LINE2 = [[240, 440], [100, 430]]
-WING_LINE3 = [[240, 440], [110, 470]]
+    @abstractmethod
+    def set_item(self, pos1, pos2, obj):
+        pass
 
-# Эллипсы, составляющие тело дракона
-ARCS = [[200, 400], [30, 400], [45, 447], [47, 447],
-        [-36, 477], [-79, 472], [-40, 477]]
+    @abstractmethod
+    def get_item_by_position(self, pos1, pos2):
+        pass
 
-# Голова и глаз дракона
-DRAGON_HEAD = [280, 390]
-DRAGON_EYE = [310, 410]
+    @abstractmethod
+    def get_item_position(self, obj):
+        pass
 
-# Тело птицы
-PARROT_BODY = [980, 125]
-PARROT_WING = [[990, 135],  [1000, 110], [1020, 100]]
-PARROT_HEAD = [970, 125]
-PARROT_EYE = [975, 130]
-PARROT_TAIL = [[1000, 135], [1020, 130], [1020, 140]]
+    @abstractmethod
+    def remove_item(self, obj):
+        pass
 
+    @abstractmethod
+    def move_item(self, new_pos1, new_pos2, obj):
+        pass
 
-def draw_background(screen):
-    # Рисуем задний план
+    @abstractmethod
+    def clear_all(self):
+        pass
 
-    # Небо
-    pygame.draw.rect(screen, LAWNGREEN, ((0, 350), (900, 350)), 0)
-
-    # Земля
-    pygame.draw.rect(screen, SUN_SHADES[0], ((0, 0), (900, 350)), 0)
-
-    # Облако
-    pygame.draw.circle(screen, WHITE, CLOUD1, 30, 0)
-    pygame.draw.circle(screen, WHITE, CLOUD2, 30, 0)
-    pygame.draw.circle(screen, WHITE, CLOUD3, 30, 0)
-
-    # Солнце
-    sun_r = 200
-    for sun_color in SUN_SHADES:
-        pygame.draw.circle(screen, sun_color, (50, 50), sun_r, 0)
-        sun_r -= 20
-
-    # Горы
-    pygame.draw.polygon(screen, GRAYBLUE, [[50, 350], [250, 50], [450, 350]], 0)
-    pygame.draw.polygon(screen, GRAYBLUE, [[350, 350], [450, 150], [550, 350]], 0)
-
-    # Дерево
-    pygame.draw.rect(screen, BROWN, [[600, 220], [20, 260]], 0)
-    pygame.draw.ellipse(screen, DARKGREEN, [[560, 120], [100, 200]], 0)
-
-    # Река
-    pygame.draw.polygon(screen, WATERBLUE, [[150, 350], [70, 445], [120, 440]], 0)
-    pygame.draw.polygon(screen, WATERBLUE, [[70, 445], [120, 440], [500, 700], [130, 700]], 0)
+    @abstractmethod
+    def change_layout_parent(self):
+        pass
+    
+    @abstractmethod
+    def move_layout(self, new_parent):
+        pass
 
 
-def draw_dragon(screen):
-    # Рисуем тело дракона
-    pygame.draw.arc(screen, BLACK, [ARCS[0], [200, 200]],
-                    radians(90), radians(190), 30)
-    pygame.draw.arc(screen, BLACK, [ARCS[1], [200, 200]],
-                    radians(260), radians(360), 30)
-    pygame.draw.arc(screen, BLACK, [ARCS[2], [150, 150]],
-                    radians(225), radians(270), 25)
-    pygame.draw.arc(screen, BLACK, [ARCS[3], [150, 150]],
-                    radians(180), radians(225), 20)
-    pygame.draw.arc(screen, BLACK, [ARCS[4], [100, 100]],
-                    radians(0), radians(45), 15)
-    pygame.draw.arc(screen, BLACK, [ARCS[5], [150, 150]],
-                    radians(45), radians(70), 10)
-    pygame.draw.arc(screen, BLACK, [ARCS[6], [100, 100]],
-                    radians(70), radians(90), 5)
+class GridLayout(Layout):
+    ''' Все методы возвращают None в случае ошибки '''
+    def __init__(self, start_pos, size, parent, col, row):
+        Layout.__init__(self, start_pos, size, parent)
+        self.mRow = row
+        self.mCol = col
 
-    # Рисуем крылья дракона
-    pygame.draw.polygon(screen, DRAGON_WING_COLOR,
-                        [WING_LINE1[0], WING_LINE1[1], WING_LINE2[1]], 0)
-    pygame.draw.polygon(screen, DRAGON_WING_COLOR,
-                        [WING_LINE1[0], WING_LINE2[1], WING_LINE3[1]], 0)
+    def set_item(self, row, col, obj):
+        try:
+            obj.grid(row=row, column=col)
+        except AttributeError:
+            return None
 
-    # Рисуем основание крыльев дракона
-    pygame.draw.line(screen, BLACK, WING_LINE1[0], WING_LINE1[1], 7)
-    pygame.draw.line(screen, BLACK, WING_LINE2[0], WING_LINE2[1], 7)
-    pygame.draw.line(screen, BLACK, WING_LINE3[0], WING_LINE3[1], 7)
+    def get_item_by_position(self, row, col):
+        ''' Возвращает объект на искомой позиции либо None '''
+        for item in self.frame.grid_slaves():
+            info = item.grid_info()
+            if info['row'] == row and info['column'] == col:
+                return item
+        return None
 
-    # Рисуем голову дракона
-    pygame.draw.ellipse(screen, BLACK, [DRAGON_HEAD, [80, 50]], 0)
+    def get_item_position(self, obj):
+        ''' Возвращает позицию объекта в виде (ряд, столбец) либо None'''
+        try:
+            info = obj.grid_info()
+        except AttributeError:
+            return None
+        else:
+            position = (info['row'], info['column'])
+            if len(info) == 0:
+                return None
+        return position
 
-    # Рисуем глаз дракона
-    pygame.draw.circle(screen, WHITE, DRAGON_EYE, 4, 0)
+    def remove_item(self, obj):
+        try:
+            obj.grid_forget()
+            return obj
+        except AttributeError:
+            return None
 
+    def move_item(self, new_row, new_col, obj):
+        try:
+            obj.grid_forget()
+            obj.grid(row=new_row, col=new_col)
+        except AttributeError:
+            return None
 
-def draw_parrot(screen):
-    pygame.draw.ellipse(screen, PARROT_BODY_COLOR,
-                        [PARROT_BODY, [30, 20]], 0)
-    pygame.draw.ellipse(screen, PARROT_BODY_COLOR,
-                        [PARROT_HEAD, [17, 17]], 0)
-    pygame.draw.ellipse(screen, BLACK,
-                        [PARROT_EYE, [2, 2]], 0)
-    pygame.draw.polygon(screen, PARROT_F_WING_COLOR,
-                        PARROT_WING, 0)
-    pygame.draw.polygon(screen, PARROT_BODY_COLOR,
-                        PARROT_TAIL, 0)
+    def clear_all(self):
+        forgot_items = []
+        try:
+            for item in self.frame.grid_slaves():
+                item.grid_forget()
+                forgot_items.append(item)
+        except AttributeError:
+            return None
+        return forgot_items
 
-
-def main():
-    pygame.init()
-    screen = pygame.display.set_mode(SIZE)
-    pygame.display.set_caption(WINDOW_NAME)
-    done = False
-    clock = pygame.time.Clock()
-
-    # Для изменения направления махов крылом дракона
-    q = 0
-    inc = 1
-
-    # Для изменения направления махов крылом птицы
-    q2 = 0
-    inc2 = 1
-
-    while not done:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                done = True
-
-        # Если хвост дракона вышел за правую границу окна
-        if ARCS[6][0] > 900:
-            done = True
-
-        # Рисуем задний план
-        draw_background(screen)
-
-        # Рисуем птицу, когда дракон поднялся на определенную высоту
-        if PARROT_BODY[0] >= 640:
-            draw_parrot(screen)
-
-        # Рисуем дракона
-        draw_dragon(screen)
-
-        # Рисуем открытый рот, когда дракон находится в определенном положении
-        if DRAGON_HEAD[1] <= 100 and DRAGON_HEAD[0] <= 590:
-            pygame.draw.polygon(screen, SUN_SHADES[0],
-                                [[DRAGON_HEAD[0]+40, DRAGON_HEAD[1]+25],
-                                [DRAGON_HEAD[0]+80, DRAGON_HEAD[1]+10],
-                                [DRAGON_HEAD[0]+80, DRAGON_HEAD[1]+50]])
-
-        # Задаем движение тела дракона
-        for arc in ARCS:
-            arc[0] += 1
-            if DRAGON_HEAD[1] >= 100:
-                arc[1] -= 1
-
-        # Задаем движение головы дракона
-        DRAGON_HEAD[0] += 1
-        if DRAGON_HEAD[1] >= 100:
-            DRAGON_HEAD[1] -= 1
-
-        # Задаем движение облака
-        CLOUD1[0] -= q % 2
-        CLOUD2[0] -= q % 2
-        CLOUD3[0] -= q % 2
-
-        # Задаем движение птицы, если она не достигла точки, где ее едят
-        if PARROT_BODY[0] >= 640:
-            PARROT_BODY[0] -= 1
-            PARROT_WING[0][0] -= 1
-            PARROT_WING[1][0] -= 1
-            PARROT_WING[2][0] -= 1
-            PARROT_HEAD[0] -= 1
-            PARROT_EYE[0] -= 1
-            PARROT_TAIL[0][0] -= 1
-            PARROT_TAIL[1][0] -= 1
-            PARROT_TAIL[2][0] -= 1
-
-        # Задаем изменение x координат глаза и оснований крыльев
-        DRAGON_EYE[0] += 1
-        WING_LINE1[0][0] += 1
-        WING_LINE1[1][0] += 1
-        WING_LINE2[0][0] += 1
-        WING_LINE2[1][0] += 1
-        WING_LINE3[0][0] += 1
-        WING_LINE3[1][0] += 1
-
-        # Задаем изменение y координат глаза и снований крыльев дракона
-        if DRAGON_HEAD[1] >= 100:
-            DRAGON_EYE[1] -= 1
-            WING_LINE1[0][1] -= 1
-            WING_LINE1[1][1] -= 1
-            WING_LINE3[1][1] -= 1
-            WING_LINE2[0][1] -= 1
-            WING_LINE2[1][1] -= 1
-            WING_LINE3[0][1] -= 1
-
-        # Задаем махи крыльями птицы
-        q2 += inc2
-        if inc2 > 0:
-            PARROT_WING[1][0] += 1
-            PARROT_WING[1][1] += 1
-            PARROT_WING[2][0] += 1
-            PARROT_WING[2][1] += 1
-        if inc2 < 0:
-            PARROT_WING[1][0] -= 1
-            PARROT_WING[1][1] -= 1
-            PARROT_WING[2][0] -= 1
-            PARROT_WING[2][1] -= 1
-        if q2 == 15:
-            inc2 = -1
-        if q2 == 0:
-            inc2 = 1
-
-        # Задаем махи крыльями дракона
-        q += inc
-        if inc > 0:
-            WING_LINE1[1][0] += 1
-            WING_LINE1[1][1] += 1
-            WING_LINE2[1][0] += 1
-            WING_LINE2[1][1] += 1
-            WING_LINE3[1][0] += 1
-            WING_LINE3[1][1] += 1
-        if inc < 0:
-            WING_LINE1[1][0] -= 1
-            WING_LINE1[1][1] -= 1
-            WING_LINE2[1][0] -= 1
-            WING_LINE2[1][1] -= 1
-            WING_LINE3[1][0] -= 1
-            WING_LINE3[1][1] -= 1
-        if q == 60:
-            inc = -1
-        if q == 0:
-            inc = 1
-
-        clock.tick(80)
-        pygame.display.flip()
-
-    pygame.quit()
+    def change_layout_parent(self):
+        pass
+    
+    def move_layout(self, new_parent):
+        pass
 
 
-main()
+class PlaceLayout(Layout):
+    def __init__(self, start_pos, size, parent):
+        Layout.__init__(self, start_pos, size, parent)
+
+    def set_item(self, x, y, obj):
+        obj.place(x=x, y=y)
+
+    def get_item_by_position(self, x, y):
+        pass
+
+    def get_item_position(self, obj):
+        pass
+
+    def remove_item(self, obj):
+        pass
+
+    def move_item(self, x, y, obj):
+        pass
+
+    def clear_all(self):
+        pass
+
+    def change_parent(self):
+        pass
+    
+    def move_layout(self, new_parent):
+        pass
+
+
+class VerticalLayout(GridLayout):
+    def __init__(self, start_pos, size, row, parent):
+        GridLayout.__init__(self, start_pos, size, parent, col=0, row=row)
+        self.mRow = row
+
+    def set_item(self, row, col, obj):
+        obj.grid(row=row, column=col)
+
+    def get_item_by_position(self, row, col=0):
+        pass
+
+    def get_item_position(self, obj):
+        info = obj.grid_info()
+        position = (info['row'], info['column'])
+        return position
+
+    def remove_item(self, obj):
+        obj.grid_forget()
+        return obj
+
+    def move_item(self, row, col, obj):
+        pass
+
+    def clear_all(self):
+        pass
+
+    def change_parent(self):
+        pass
+
+
+class HorizontalLayout(GridLayout):
+    def __init__(self, start_pos, size, col, parent):
+        GridLayout.__init__(self, start_pos, size, parent, row=0, col=col)
+        self.mCol = col
+
+    def set_item(self, row, col, obj):
+        obj.grid(row=row, column=col)
+
+    def get_item_by_position(self, col, row=0):
+        pass
+
+    def get_item_position(self, obj):
+        info = obj.grid_info()
+        position = (info['row'], info['column'])
+        return position
+
+    def remove_item(self, obj):
+        obj.grid_forget()
+        return obj
+
+    def move_item(self, row, col, obj):
+        pass
+
+    def clear_all(self):
+        pass
+
+    def change_parent(self):
+        pass
+
+
+root = tk.Tk()
+t = tk.Frame(root)
+t.grid(row=0, column=0)
+
+b = tk.Button(t, text='rrr')
+b.grid(row=0, column=0)
+
+b2 = tk.Button(t, text='zzz')
+b2.grid(row=5, column=3)
+
+t.grid(columnspan=10, rowspan=11)
+a = t.grid_size()
+print(a)
