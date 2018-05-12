@@ -1,10 +1,12 @@
 import tkinter as tk
 from abc import ABCMeta, abstractmethod
 
+
 class Layout:
     __metaclass__ = ABCMeta
 
     def __init__(self, start_pos, size, parent):
+        ''' Фреймы размещаются только по коордиатам '''
         self.mStartPos = start_pos
         self.mSize = size
         self.mParent = parent
@@ -33,7 +35,7 @@ class Layout:
         pass
 
     @abstractmethod
-    def move_item(self, new_pos1, new_pos2, obj):
+    def move_item(self, new_x, new_y, obj):
         pass
 
     @abstractmethod
@@ -41,11 +43,11 @@ class Layout:
         pass
 
     @abstractmethod
-    def change_layout_parent(self):
+    def change_layout_parent(self, new_parent):
         pass
-    
+
     @abstractmethod
-    def move_layout(self, new_parent):
+    def move_layout(self, new_pos1, new_pos2):
         pass
 
 
@@ -106,11 +108,12 @@ class GridLayout(Layout):
             return None
         return forgot_items
 
-    def change_layout_parent(self):
-        pass
-    
-    def move_layout(self, new_parent):
-        pass
+    def change_layout_parent(self, new_parent):
+        self.mParent = new_parent
+
+    def move_layout(self, new_x, new_y):
+        self.mStartPos[0] = new_x
+        self.mStartPos[1] = new_y
 
 
 class PlaceLayout(Layout):
@@ -135,10 +138,10 @@ class PlaceLayout(Layout):
     def clear_all(self):
         pass
 
-    def change_parent(self):
+    def change_layout_parent(self, new_parent):
         pass
-    
-    def move_layout(self, new_parent):
+
+    def move_layout(self, new_x, new_y):
         pass
 
 
@@ -203,15 +206,13 @@ class HorizontalLayout(GridLayout):
 
 
 root = tk.Tk()
-t = tk.Frame(root)
+t = tk.Frame(root, height=-20)
 t.grid(row=0, column=0)
+root.mainloop()
 
-b = tk.Button(t, text='rrr')
-b.grid(row=0, column=0)
 
-b2 = tk.Button(t, text='zzz')
-b2.grid(row=5, column=3)
 
-t.grid(columnspan=10, rowspan=11)
-a = t.grid_size()
-print(a)
+
+
+
+
