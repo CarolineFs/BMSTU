@@ -27,7 +27,7 @@ class Layout:
         pass
 
     @abstractmethod
-    def get_item_position(self, obj):
+    def get_item_properties(self, obj):
         pass
 
     @abstractmethod
@@ -53,14 +53,14 @@ class Layout:
 
 class GridLayout(Layout):
     ''' Все методы возвращают None в случае ошибки '''
-    def __init__(self, start_pos, size, parent, col, row):
+    def __init__(self, start_pos, size, parent):
         Layout.__init__(self, start_pos, size, parent)
-        self.mRow = row
-        self.mCol = col
 
-    def set_item(self, row, col, obj):
+    def set_item(self, row, col, obj, columnspan=1, rowspan=1, ipadx=0, ipady=0,
+                 padx=0, pady=0, sticky=''):
         try:
-            obj.grid(row=row, column=col)
+            obj.grid(row=row, column=col, columnspan=columnspan, rowspan=rowspan,
+                     ipadx=ipadx, ipady=ipady, padx=padx, pady=pady, sticky=sticky)
         except AttributeError:
             return None
 
@@ -72,17 +72,16 @@ class GridLayout(Layout):
                 return item
         return None
 
-    def get_item_position(self, obj):
+    def get_item_properties(self, obj):
         ''' Возвращает позицию объекта в виде (ряд, столбец) либо None'''
         try:
             info = obj.grid_info()
         except AttributeError:
             return None
         else:
-            position = (info['row'], info['column'])
             if len(info) == 0:
                 return None
-        return position
+        return info
 
     def remove_item(self, obj):
         try:
@@ -91,10 +90,12 @@ class GridLayout(Layout):
         except AttributeError:
             return None
 
-    def move_item(self, new_row, new_col, obj):
+    def move_item(self, new_row, new_col, obj, columnspan=1, rowspan=1, ipadx=0, ipady=0,
+                  padx=0, pady=0, sticky=''):
         try:
             obj.grid_forget()
-            obj.grid(row=new_row, col=new_col)
+            obj.grid(row=new_row, column=new_col, columnspan=columnspan, rowspan=rowspan,
+                     ipadx=ipadx, ipady=ipady, padx=padx, pady=pady, sticky=sticky)
         except AttributeError:
             return None
 
@@ -120,7 +121,7 @@ class PlaceLayout(Layout):
     def __init__(self, start_pos, size, parent):
         Layout.__init__(self, start_pos, size, parent)
 
-    def set_item(self, x, y, obj):
+    def set_item(self, x, y, obj, c=None, r=None):
         try:
             obj.place(x=x, y=y)
         except AttributeError:
@@ -155,10 +156,10 @@ class PlaceLayout(Layout):
         except AttributeError:
             return None
 
-    def move_item(self, new_x, new_y, obj):
+    def move_item(self, new_x, new_y, obj, columnspan=None, rowspan=None):
         try:
             obj.place_forget()
-            obj.grid(row=new_x, col=new_y)
+            obj.place(x=new_x, y=new_y)
         except AttributeError:
             return None
 
@@ -184,14 +185,26 @@ class VerticalLayout(GridLayout):
     def __init__(self, start_pos, size, row, parent):
         GridLayout.__init__(self, start_pos, size, parent, col=0, row=row)
 
-    def set_item(self, row, obj, col=0):
-        obj.grid(row=row, column=col)
+    def set_item(self, row, columnspan, rowspan, obj, col=0):
+        obj.grid(row=row, column=col, columnspan=columnspan, rowspan=rowspan)
 
 
 class HorizontalLayout(GridLayout):
     def __init__(self, start_pos, size, col, parent):
-        GridLayout.__init__(self, start_pos, size, parent, row=0, col=col)
+        GridLayout.__init__(self, start_pos, size, parent)
         self.mCol = col
 
-    def set_item(self, row, col, obj):
-        obj.grid(row=row, column=col)
+    def set_item(self, row, col, columnspan, rowspan, obj):
+        obj.grid(row=row, column=col, columnspan=columnspan, rowspan=rowspan)
+
+
+root = tk.Tk()
+l1 = GridLayout([20, 20], [70, 70], root)
+b = tk.Button(text='g')
+l2 = GridLayout([70, 70], [80, 80], root)
+
+b2 = tk.Button(text='4')
+b2.bind('<Button-1>', lambda x: l1.change_layout_parent(l2))
+l1.set_item(100, 1, b)
+l1.set_item(4, 700, b2)
+root.mainloop()
