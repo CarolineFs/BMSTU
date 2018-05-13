@@ -50,6 +50,10 @@ class Layout:
     def move_layout(self, new_pos1, new_pos2):
         pass
 
+    @abstractmethod
+    def get_layout_properties(self):
+        return self.frame.place_info()
+
 
 class GridLayout(Layout):
     ''' Все методы возвращают None в случае ошибки '''
@@ -109,23 +113,21 @@ class GridLayout(Layout):
             return None
         return forgot_items
 
-    def change_layout_parent(self, new_parent):
-        self.mParent = new_parent
-
-    def move_layout(self, new_x, new_y):
-        self.mStartPos[0] = new_x
-        self.mStartPos[1] = new_y
-
 
 class PlaceLayout(Layout):
     def __init__(self, start_pos, size, parent):
         Layout.__init__(self, start_pos, size, parent)
 
-    def set_item(self, x, y, obj, c=None, r=None):
+    def set_item(self, x, y, obj, width='', height='', relheight='', relwidth='',
+                 anchor='nw', bordermode='inside'):
         try:
             obj.place(x=x, y=y)
         except AttributeError:
             return None
+        
+    def set_item_relatively(self, relx, rely, obj, width='', height='', relheight='', 
+                            relwidth='', anchor='nw', bordermode='inside'):
+        pass
 
     def get_item_by_position(self, x, y):
         ''' Возвращает объект на искомой позиции либо None '''
@@ -181,6 +183,7 @@ class PlaceLayout(Layout):
         self.mStartPos[1] = new_y
 
 
+
 class VerticalLayout(GridLayout):
     def __init__(self, start_pos, size, row, parent):
         GridLayout.__init__(self, start_pos, size, parent, col=0, row=row)
@@ -202,9 +205,10 @@ root = tk.Tk()
 l1 = GridLayout([20, 20], [70, 70], root)
 b = tk.Button(text='g')
 l2 = GridLayout([70, 70], [80, 80], root)
-
+print(l1.get_layout_properties())
 b2 = tk.Button(text='4')
 b2.bind('<Button-1>', lambda x: l1.change_layout_parent(l2))
 l1.set_item(100, 1, b)
 l1.set_item(4, 700, b2)
+print(l1.get_layout_properties())
 root.mainloop()
