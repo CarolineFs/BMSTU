@@ -118,16 +118,13 @@ class PlaceLayout(Layout):
     def __init__(self, start_pos, size, parent):
         Layout.__init__(self, start_pos, size, parent)
 
-    def set_item(self, x, y, obj, width='', height='', relheight='', relwidth='',
+    def set_item(self, obj, x=0, y=0,  relx=0, rely=0,
+                 width='', height='', relheight='', relwidth='',
                  anchor='nw', bordermode='inside'):
         try:
             obj.place(x=x, y=y)
         except AttributeError:
             return None
-        
-    def set_item_relatively(self, relx, rely, obj, width='', height='', relheight='', 
-                            relwidth='', anchor='nw', bordermode='inside'):
-        pass
 
     def get_item_by_position(self, x, y):
         ''' Возвращает объект на искомой позиции либо None '''
@@ -139,17 +136,16 @@ class PlaceLayout(Layout):
         finally:
             return None
 
-    def get_item_position(self, obj):
+    def get_item_properties(self, obj):
         ''' Возвращает позицию объекта в виде (ряд, столбец) либо None'''
         try:
             info = obj.place_info()
         except AttributeError:
             return None
         else:
-            position = (info['x'], info['y'])
             if len(info) == 0:
                 return None
-        return position
+        return info
 
     def remove_item(self, obj):
         try:
@@ -158,7 +154,9 @@ class PlaceLayout(Layout):
         except AttributeError:
             return None
 
-    def move_item(self, new_x, new_y, obj, columnspan=None, rowspan=None):
+    def move_item(self, obj, new_x=0, new_y=0,  new_relx=0, new_rely=0,
+                  new_width='', new_height='', new_relheight='', new_relwidth='',
+                  new_anchor='nw', new_bordermode='inside'):
         try:
             obj.place_forget()
             obj.place(x=new_x, y=new_y)
@@ -175,21 +173,15 @@ class PlaceLayout(Layout):
             return None
         return forgot_items
 
-    def change_layout_parent(self, new_parent):
-        self.mParent = new_parent
-
-    def move_layout(self, new_x, new_y):
-        self.mStartPos[0] = new_x
-        self.mStartPos[1] = new_y
-
-
 
 class VerticalLayout(GridLayout):
     def __init__(self, start_pos, size, row, parent):
-        GridLayout.__init__(self, start_pos, size, parent, col=0, row=row)
+        GridLayout.__init__(self, start_pos, size, parent)
 
-    def set_item(self, row, columnspan, rowspan, obj, col=0):
-        obj.grid(row=row, column=col, columnspan=columnspan, rowspan=rowspan)
+    def set_item(self, row, col, obj, columnspan=1, rowspan=1, ipadx=0, ipady=0,
+                 padx=0, pady=0, sticky=''):
+        obj.grid(row=row, column=col, columnspan=columnspan, rowspan=rowspan,
+                     ipadx=ipadx, ipady=ipady, padx=padx, pady=pady, sticky=sticky)
 
 
 class HorizontalLayout(GridLayout):
@@ -197,8 +189,10 @@ class HorizontalLayout(GridLayout):
         GridLayout.__init__(self, start_pos, size, parent)
         self.mCol = col
 
-    def set_item(self, row, col, columnspan, rowspan, obj):
-        obj.grid(row=row, column=col, columnspan=columnspan, rowspan=rowspan)
+    def set_item(self, row, col, obj, columnspan=1, rowspan=1, ipadx=0, ipady=0,
+                 padx=0, pady=0, sticky=''):
+        obj.grid(row=row, column=col, columnspan=columnspan, rowspan=rowspan,
+                     ipadx=ipadx, ipady=ipady, padx=padx, pady=pady, sticky=sticky)
 
 
 root = tk.Tk()
