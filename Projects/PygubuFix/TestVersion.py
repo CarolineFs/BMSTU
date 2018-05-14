@@ -5,16 +5,44 @@ from abc import ABCMeta, abstractmethod
 class Layout:
     __metaclass__ = ABCMeta
 
-    def __init__(self, start_pos, size, parent, background, bd, bg, borderwidth, 
-                       colormap, container, cursor, height, highlightbackground,
-                       highlightcolor, highlightthickness, relief, takefocus, visual, width):
+    def __init__(self, x, y, height, width, parent, background, bd, bg, borderwidth,
+                 colormap, container, cursor,  highlightbackground, highlightcolor,
+                 highlightthickness, relief, takefocus, visual,
+                 relx, rely, relwidth, relheight, anchor, bordermode):
         """ Фреймы размещаются только по координатам """
-        self.mStartPos = start_pos
-        self.mSize = size
+        self.mX = x
+        self.mY = y
         self.mParent = parent
-
-        self.frame = tk.Frame(self.mParent,
-                              bg='red')
+        self.mBackground = background
+        self.mBd = bd
+        self.mBg = bg
+        self.mBorderwidth = borderwidth
+        self.mColormap = colormap
+        self.mContainer = container
+        self.mCursor = cursor
+        self.mHeight = height
+        self.mHighlightbackground = highlightbackground
+        self.mHighlightcolor = highlightcolor
+        self.mHighlightthickness = highlightthickness
+        self.mRelief = relief
+        self.mTakefocus = takefocus
+        self.mVisual = visual
+        self.mWidth = width
+        self.mRelx = relx
+        self.mRely = rely
+        self.mRelwidth = relwidth
+        self.mRelheight = relheight
+        self.mAnchor = anchor
+        self.mBordermode = bordermode
+        self.frame = tk.Frame(self.mParent, background=self.mBackground, bd=self.mBd, bg=self.mBg,
+                              borderwidth=self.mBorderwidth, colormap=self.mColormap,
+                              container=self.mContainer, cursor=self.mCursor, height=self.mHeight,
+                              highlightbackground=self.mHighlightbackground, highlightcolor=self.mHighlightcolor,
+                              highlightthickness=self.mHighlightthickness, relief=self.mRelief,
+                              takefocus=self.mTakefocus, visual=self.mVisual, width=self.mWidth)
+        self.frame.place(x=self.mX, y=self.mY, relx=self.mRelx, rely=self.mRely, width=self.mWidth,
+                         height=self.mHeight, relwidth=self.mRelwidth, relheight=self.mRelheight,
+                         anchor=self.mAnchor, bordermode=self.mBordermode)
 
     @abstractmethod
     def set_item(self, pos1, pos2, obj):
@@ -41,20 +69,51 @@ class Layout:
         pass
 
     @abstractmethod
-    def change_layout_parent(self, new_parent):
-        pass
-
-    @abstractmethod
-    def move_layout(self, new_pos1, new_pos2):
-        pass
+    def update_layout_properties(self):
+        self.frame['background'] = self.mBackground
+        self.frame['bd'] = self.mBd
+        self.frame['bg'] = self.mBg
+        self.frame['borderwidth'] = self.mBorderwidth
+        self.frame['colormap'] = self.mColormap
+        self.frame['container'] = self.mContainer
+        self.frame['cursor'] = self.mCursor
+        self.frame['height'] = self.mHeight
+        self.frame['highlightbackground'] = self.mHighlightbackground
+        self.frame['highlightcolor'] = self.mHighlightcolor
+        self.frame['highlightthickness'] = self.mHighlightthickness
+        self.frame['relief'] = self.mRelief
+        self.frame['takefocus'] = self.mTakefocus
+        self.frame['visual'] = self.mVisual
+        self.frame['width'] = self.mWidth
 
     @abstractmethod
     def get_layout_properties(self):
+        info = dict()
+        info['background'] = self.mBackground
+        info['bd'] = self.mBd
+        info['bg'] = self.mBg
+        info['borderwidth'] = self.mBorderwidth
+        info['borderwidth'] = self.mBorderwidth
+        info['colormap'] = self.mColormap
+        info['container'] = self.mContainer
+        info['cursor'] = self.mCursor
+        info['height'] = self.mHeight
+        info['highlightbackground'] = self.mHighlightbackground
+        info['highlightcolor'] = self.mHighlightcolor
+        info['highlightthickness'] = self.mHighlightthickness
+        info['relief'] = self.mRelief
+        info['takefocus'] = self.mTakefocus
+        info['visual'] = self.mVisual
+        info['width'] = self.mWidth
+        return info
+
+    @abstractmethod
+    def get_layout_place_properties(self):
         return self.frame.place_info()
 
 
 class GridLayout(Layout):
-    ''' Все методы возвращают None в случае ошибки '''
+    """ Все методы возвращают None в случае ошибки """
     def __init__(self, start_pos, size, parent):
         Layout.__init__(self, start_pos, size, parent)
 
@@ -210,30 +269,6 @@ class HorizontalLayout(GridLayout):
 root = tk.Tk()
 l1 = tk.Frame(root, bg='red', width=100, height=100)
 l1.place(x=100, y=100)
-print(l1.cget('width'))
-
-
-def f(event):
-    l1['bg'] = 'yellow'
-    l1.place(x=300, y=300)
-    print(l1.grid_slaves())
-    print(l1.cget('width'))
-    print(l1.cget('bg'))
-
-l1.grid_propagate(False)
-
-b = tk.Button(text='push')
-b.bind('<Button-1>', f)
-b.place(x=0, y=0)
-b2 = tk.Button(l1, text='2')
-b2.grid(row=0, column=1)
-
-b3 = tk.Button(l1, text='3')
-b3.grid(row=2, column=3)
-
-print(l1.cget('width'))
-print(l1.cget('bg'))
-
-print(l1.grid_slaves())
+print(l1.place_info())
 
 root.mainloop()
