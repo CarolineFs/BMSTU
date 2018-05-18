@@ -15,12 +15,15 @@
 #include <string.h>
 #define UPPER_LETTERS "ABCDEFGHIGKLMNOPQRSTUVWXYZ"
 #define LOWER_LETTERS "abcdefghigklmnopqrstuvwxcyz"
+void matrix_generator();
+void cut_string();
+int input_error_preventer();
+void print_matrix(size_t size, size_t len);
+
 unsigned int size;
 char separator;
 char **matrix;
 
-void matrix_generator();
-void cut_string();
 
 int main()
 {
@@ -28,11 +31,31 @@ int main()
   printf("Input a separator: ");
   scanf("%c", &separator);
   printf("Input size of matrix: ");
-  scanf("%d", &size);
+  size = input_error_preventer();
+
+  unsigned int len = size;
 
   matrix_generator();
+  print_matrix(size, len);
+
+  printf("Cut matrix:\n");
+  cut_string();
+  print_matrix(size, len);
 
   free(matrix);
+}
+
+
+void print_matrix(size_t size, size_t len)
+{
+  printf("\n");
+  for (size_t i = 0; i < size; ++i)
+  {
+    for (size_t j = 0; j < len; ++j)
+      printf("%c", matrix[i][j]);
+    printf("\n");
+  }
+  printf("\n");
 }
 
 
@@ -60,16 +83,7 @@ void matrix_generator()
       else
         matrix[i][j] = separator;
     }
-
-    printf("%s\n", matrix[i]);
-
-
   }
-  cut_string();
-
-  printf("\n\n");
-  for (size_t i = 0; i < size; ++i)
-    printf("%s\n", matrix[i]);
 }
 
 
@@ -104,7 +118,6 @@ void cut_string()
         before_sep = 0;
       k_lower += before_sep*!is_upper(matrix[i][j]);
     }
-    printf("%u %u\n", k_upper, k_lower);
 
     if (k_lower < k_upper)
     {
@@ -114,4 +127,22 @@ void cut_string()
       continue;
     }
   }
+}
+
+
+int input_error_preventer()
+{
+    int x, rc;
+    char tmp;
+
+    while (((rc = scanf("%d%c", &x, &tmp)) != 2 && rc != EOF) || tmp != '\n')
+    {
+        printf("Input error. Please, enter an integer: ");
+        do
+        {
+        rc = scanf("%c", &tmp);
+        }
+        while(rc != EOF && tmp != '\n');
+    }
+    return x;
 }
