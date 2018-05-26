@@ -28,19 +28,21 @@ def main():
     b_flag = 0
 
     sun_pos = [40, 40]
-    cloud11_pos = [900, 15]
-    cloud12_pos = [860, 10]
-    cloud13_pos = [820, 15]
+    cloud11_pos = [980, 15]
+    cloud12_pos = [940, 10]
+    cloud13_pos = [900, 15]
 
-    cloud21_pos = [900, 100]
-    cloud22_pos = [860, 90]
-    cloud23_pos = [820, 100]
+    cloud21_pos = [980, 100]
+    cloud22_pos = [940, 90]
+    cloud23_pos = [900, 100]
 
     dragon_inc = [1, 1]
 
     sky_increment = -0.5
     umouth = [[315, 400], [365, 420], [315, 420]]
     lmouth = [[315, 420], [365, 420], [315, 438]]
+
+    f = 0
 
     dragon_arc1 = [280, 400]
     dragon_arc2 = [225, 405]
@@ -62,67 +64,60 @@ def main():
     bird_body = [[805, 190], [40, 30]]
     bird_tail = [[840, 205], [860, 190], [855, 215]]
     bird_wing = [[815, 200], [830, 170], [860, 170]]
+    beak = [[790, 196], [790, 204], [785, 200]]
 
     while not done:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 done = True
 
-        draw_backgronnd(screen, sun_pos, cloud11_pos, cloud12_pos, cloud13_pos,
+        draw_background(screen, sun_pos, cloud11_pos, cloud12_pos, cloud13_pos,
                         cloud21_pos, cloud22_pos, cloud23_pos)
 
-        pygame.draw.circle(screen, ORANGE, bird_head, 10)
-        pygame.draw.circle(screen, WHITE, bird_head, 2)
-        pygame.draw.ellipse(screen, ORANGE, bird_body, 0)
-        pygame.draw.polygon(screen, ORANGE, bird_tail, 0)
-        pygame.draw.polygon(screen, DARKORANGE, bird_wing, 0)
+        if bird_tail[1][0] >= umouth[1][0]:
+            draw_bird(screen, bird_head, bird_body, bird_tail, bird_wing, beak)
 
-        pygame.draw.line(screen, BLACK, wind_line1[0], wind_line1[1], 6)
-        pygame.draw.line(screen, BLACK, wind_line2[0], wind_line2[1], 6)
-        pygame.draw.polygon(screen, DARKBLUE, wing, 0)
+        if bird_tail[1][0] <= umouth[1][0] and f == 0:
+            f = 1
+            umouth[1][1] += 20
+            lmouth[1][1] -= 20
 
-        pygame.draw.polygon(screen, BLACK, umouth)
-        pygame.draw.polygon(screen, BLACK, lmouth)
-        pygame.draw.arc(screen, BLACK, [dragon_arc1, [70, 40]], radians(90), radians(270), 20)
-        pygame.draw.arc(screen, BLACK, [dragon_arc2, [150, 190]], radians(90), radians(180), 30)
-        pygame.draw.circle(screen, WHITE, dragon_eye, 3)
-        pygame.draw.arc(screen, BLACK, [dragon_arc3, [150, 190]], radians(250), radians(0), 30)
-        pygame.draw.arc(screen, BLACK, [dragon_arc4, [100, 150]], radians(220), radians(250), 20)
-        pygame.draw.arc(screen, BLACK, [dragon_arc5, [60, 150]], radians(180), radians(220), 10)
-        pygame.draw.arc(screen, BLACK, [dragon_arc6, [80, 80]], radians(0), radians(90), 5)
+        if dragon_arc6[0] < 900:
+            draw_dragon(screen, umouth, lmouth, dragon_arc1, dragon_arc2,
+                        dragon_eye, dragon_arc3, dragon_arc4, dragon_arc5,
+                        dragon_arc6, wind_line1, wind_line2, wing)
 
-        cloud11_pos[0] -= 8
-        cloud12_pos[0] -= 8
-        cloud13_pos[0] -= 8
+        if dragon_arc6[0] > 900:
+            sun_pos[0] += int(3 * cos(a0))
+            sun_pos[1] += int(3 * sin(a0))
+            a0 += 0.0000005
+            DARKTURQUOSE[1] += sky_increment
+            DARKTURQUOSE[2] += 2 * sky_increment
 
-        cloud21_pos[0] -= 6
-        cloud22_pos[0] -= 6
-        cloud23_pos[0] -= 6
+        cloud11_pos[0] -= 1
+        cloud12_pos[0] -= 1
+        cloud13_pos[0] -= 1
 
-        sun_pos[0] += int(3 * cos(a0))
-        sun_pos[1] += int(3 * sin(a0))
-        a0 += 0.0000005
+        cloud21_pos[0] -= 0.5
+        cloud22_pos[0] -= 0.5
+        cloud23_pos[0] -= 0.5
 
         if DARKTURQUOSE[1] == 0 or DARKTURQUOSE[2] == 0:
-            sky_increment = 0.5
-            a0 = -2
+            done = True
 
         if DARKTURQUOSE[1] == 255 or DARKTURQUOSE[2] == 255:
             sky_increment = -0.5
             a0 = 1
 
-        #DARKTURQUOSE[1] += sky_increment
-        #DARKTURQUOSE[2] += 2*sky_increment
-
         if cloud13_pos[0] < -200:
-            cloud11_pos = [900, 15]
-            cloud12_pos = [860, 10]
-            cloud13_pos = [820, 15]
+            cloud11_pos = [980, 15]
+            cloud12_pos = [940, 10]
+            cloud13_pos = [900, 15]
 
         if cloud23_pos[0] < -200:
-            cloud21_pos = [900, 100]
-            cloud22_pos = [860, 90]
-            cloud23_pos = [820, 100]
+            cloud21_pos = [980, 100]
+            cloud22_pos = [940, 90]
+            cloud23_pos = [900, 100]
 
         dragon_arc1[0] += dragon_inc[0]
         dragon_arc1[1] -= dragon_inc[1]
@@ -138,18 +133,15 @@ def main():
         dragon_arc6[1] -= dragon_inc[1]
         dragon_eye[0] += dragon_inc[0]
         dragon_eye[1] -= dragon_inc[1]
-        umouth[0][0] += dragon_inc[0]
-        umouth[0][1] -= dragon_inc[1]
-        umouth[1][0] += dragon_inc[0]
-        umouth[1][1] -= dragon_inc[1]
-        umouth[2][0] += dragon_inc[0]
-        umouth[2][1] -= dragon_inc[1]
-        lmouth[0][0] += dragon_inc[0]
-        lmouth[0][1] -= dragon_inc[1]
-        lmouth[1][0] += dragon_inc[0]
-        lmouth[1][1] -= dragon_inc[1]
-        lmouth[2][0] += dragon_inc[0]
-        lmouth[2][1] -= dragon_inc[1]
+
+        for ucord in umouth:
+            ucord[0] += dragon_inc[0]
+            ucord[1] -= dragon_inc[1]
+
+        for lcord in lmouth:
+            lcord[0] += dragon_inc[0]
+            lcord[1] -= dragon_inc[1]
+
         wind_line1[0][0] += dragon_inc[0]
         wind_line1[0][1] -= dragon_inc[1]
         wind_line1[1][0] += dragon_inc[0]
@@ -158,16 +150,10 @@ def main():
         wind_line2[0][1] -= dragon_inc[1]
         wind_line2[1][0] += dragon_inc[0]
         wind_line2[1][1] -= dragon_inc[1]
-        wing[0][0] += dragon_inc[0]
-        wing[0][1] -= dragon_inc[1]
-        wing[1][0] += dragon_inc[0]
-        wing[1][1] -= dragon_inc[1]
-        wing[2][0] += dragon_inc[0]
-        wing[2][1] -= dragon_inc[1]
-        wing[3][0] += dragon_inc[0]
-        wing[3][1] -= dragon_inc[1]
-        wing[4][0] += dragon_inc[0]
-        wing[4][1] -= dragon_inc[1]
+
+        for cord in wing:
+            cord[0] += dragon_inc[0]
+            cord[1] -= dragon_inc[1]
 
         if wing_counter == 0:
             flag = 0
@@ -224,9 +210,6 @@ def main():
             lmouth[1][1] += 20
             m_flag = 1
 
-        if bird_tail[1][0] <= umouth[1][0]:
-            pass
-
         bird_head[0] -= dragon_inc[0]
 
         bird_tail[0][0] -= dragon_inc[0]
@@ -236,17 +219,46 @@ def main():
         bird_wing[0][0] -= dragon_inc[0]
         bird_wing[1][0] -= dragon_inc[0]
         bird_wing[2][0] -= dragon_inc[0]
+        beak[0][0] -= 1
+        beak[1][0] -= 1
+        beak[2][0] -= 1
 
         bird_body[0][0] -= 1
 
-        clock.tick(45)
+        clock.tick(40)
 
         pygame.display.flip()
 
     pygame.quit()
 
 
-def draw_backgronnd(screen, sun_pos, cloud11_pos, cloud12_pos, cloud13_pos,
+def draw_bird(screen, bird_head, bird_body, bird_tail, bird_wing, beak):
+    pygame.draw.polygon(screen, BROWN, beak, 0)
+    pygame.draw.circle(screen, ORANGE, bird_head, 10)
+    pygame.draw.circle(screen, WHITE, bird_head, 2)
+    pygame.draw.ellipse(screen, ORANGE, bird_body, 0)
+    pygame.draw.polygon(screen, ORANGE, bird_tail, 0)
+    pygame.draw.polygon(screen, DARKORANGE, bird_wing, 0)
+
+
+def draw_dragon(screen, umouth, lmouth, dragon_arc1, dragon_arc2,
+                dragon_eye, dragon_arc3, dragon_arc4, dragon_arc5,
+                dragon_arc6, wind_line1, wind_line2, wing):
+    pygame.draw.polygon(screen, BLACK, umouth)
+    pygame.draw.polygon(screen, BLACK, lmouth)
+    pygame.draw.arc(screen, BLACK, [dragon_arc1, [70, 40]], radians(90), radians(270), 20)
+    pygame.draw.arc(screen, BLACK, [dragon_arc2, [150, 190]], radians(90), radians(180), 30)
+    pygame.draw.circle(screen, WHITE, dragon_eye, 3)
+    pygame.draw.arc(screen, BLACK, [dragon_arc3, [150, 190]], radians(250), radians(0), 30)
+    pygame.draw.arc(screen, BLACK, [dragon_arc4, [100, 150]], radians(220), radians(250), 20)
+    pygame.draw.arc(screen, BLACK, [dragon_arc5, [60, 150]], radians(180), radians(220), 10)
+    pygame.draw.arc(screen, BLACK, [dragon_arc6, [80, 80]], radians(0), radians(90), 5)
+    pygame.draw.line(screen, BLACK, wind_line1[0], wind_line1[1], 6)
+    pygame.draw.line(screen, BLACK, wind_line2[0], wind_line2[1], 6)
+    pygame.draw.polygon(screen, DARKBLUE, wing, 0)
+
+
+def draw_background(screen, sun_pos, cloud11_pos, cloud12_pos, cloud13_pos,
                     cloud21_pos, cloud22_pos, cloud23_pos):
     pygame.draw.rect(screen, DARKTURQUOSE, [[0, 0], [900, 700]], 0)
 
