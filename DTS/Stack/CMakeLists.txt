@@ -1,0 +1,5 @@
+project(Stack)
+set(SOURCE_EXE "main.cpp")
+set(SOURCE_LIB "absractcontainer.h" "dynamicstack.h" "staticstack.h"  "dynamicqueue.h" "dynamicstack.h")
+add_library( STATIC ${SOURCE_LIB})
+add_executable(main ${SOURCE_EXE})

@@ -1,0 +1,4 @@
+/home/syzygy/Desktop/git/c/Stack/tmp/CMakeFiles/rebuild_cache.dir
+/home/syzygy/Desktop/git/c/Stack/tmp/CMakeFiles/edit_cache.dir
+/home/syzygy/Desktop/git/c/Stack/tmp/CMakeFiles/main.dir
+/home/syzygy/Desktop/git/c/Stack/tmp/CMakeFiles/STATIC.dir

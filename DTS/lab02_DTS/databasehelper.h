@@ -1,0 +1,4 @@
+#ifndef DATABASEHELPER_H
+#define DATABASEHELPER_H
+
+#endif // DATABASEHELPER_H
